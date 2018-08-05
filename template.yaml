@@ -28,14 +28,6 @@ Resources:
         ApiHandler: !Ref PostgraphileFunction
         ApiRole: !Ref ApiRole
 
-  ApiMapping:
-    Type: AWS::ApiGateway::BasePathMapping
-    Properties:
-      BasePath: v1
-      Stage: prod
-      DomainName: 'breakdown.cazzer.io'
-      RestApiId: !Ref Api
-
   PostgraphileFunctionPolicy:
     Type: AWS::IAM::Policy
     Properties:
