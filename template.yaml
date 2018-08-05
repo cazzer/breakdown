@@ -178,6 +178,7 @@ Resources:
               - iam:*
               - lambda:*
               - sns:*
+              - ssm:*
               - rds:*
               - ecr:*
               - xray:*
