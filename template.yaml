@@ -283,7 +283,6 @@ Resources:
         - email
       LambdaConfig:
         PostConfirmation: !Ref PostConfirmationFunction
-        PreTokenGeneration:
       UsernameAttributes:
         - email
       UserPoolName: BreakdownUserPoolV1
@@ -335,3 +334,43 @@ Resources:
       Environment:
         Variables:
           DEBUG: post-confirmation*
+
+  PreTokenGenerationFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-pre-token-generation-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - "logs:*"
+              - "events:*"
+              - "rds:*"
+      Roles:
+        - !Ref PreTokenGenerationFunctionRole
+
+  PreTokenGenerationFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  PreTokenGenerationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/cognito/pre-token-generation.default
+      Role: !GetAtt PreTokenGenerationFunctionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          DEBUG: pre-token*
