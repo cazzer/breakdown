@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "graphql": "^0.13.2",
+    "knex": "^0.15.2",
     "lodash": "^4.17.10",
     "pg-pool": "^2.0.3",
     "postgraphile": "^4.0.0-rc.2"

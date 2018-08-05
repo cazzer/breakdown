@@ -8,7 +8,7 @@ alter role application_user SET search_path TO breakdown,public;
 
 create table if not exists breakdown.users_and_groups (
   id uuid default uuid_generate_v4() not null primary key,
-  name text not null,
+  name text,
   time_created timestamp without time zone default now() not null
 );
 
