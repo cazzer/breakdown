@@ -408,8 +408,6 @@ Resources:
       EngineVersion: 10.4
       MasterUsername: !Ref DatabaseUser
       MasterUserPassword: !Ref DatabasePassword
-      MonitoringRoleArn: !Ref RdsMonitoringRole
-      MonitoringInterval: 60
       StorageType: gp2
       PubliclyAccessible: true
       PreferredMaintenanceWindow: "Sun:08:30-Sun:09:30"
