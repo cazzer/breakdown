@@ -173,7 +173,7 @@ Resources:
               - iam:PassRole
               - codebuild:*
               - cloudwatch:*
-              - logs*
+              - logs:*
               - ec2:*
               - iam:*
               - lambda:*
