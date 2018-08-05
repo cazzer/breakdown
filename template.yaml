@@ -274,7 +274,25 @@ Resources:
                 StackName: !Ref AWS::StackName
               RunOrder: 2
 
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AliasAttributes:
+        - phone_number
+        - email
+      LambdaConfig:
+        PostConfirmation: !Ref PostConfirmationFunction
+      UsernameAttributes:
+        - email
+      UserPoolName: BreakdownUserPoolV1
 
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: BreakdownWebApplication
+      GenerateSecret: true
+      RefreshTokenValidity: 90
+      UserPoolId: !Ref UserPool
 
   PostConfirmationFunctionPolicy:
     Type: AWS::IAM::Policy
