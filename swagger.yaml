@@ -35,8 +35,8 @@ paths:
         type: 'aws_proxy'
         httpMethod: 'POST'
         contentHandling: "CONVERT_TO_TEXT"
-        credentials: arn:aws:iam::857778067163:role/${stageVariables.ApiRole}
-        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:857778067163:function:${stageVariables.ApiHandler}/invocations'
+        credentials: arn:aws:iam::181782121001:role/${stageVariables.ApiRole}
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:181782121001:function:${stageVariables.ApiHandler}/invocations'
         responses:
           default:
             statusCode: 200
