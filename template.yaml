@@ -80,7 +80,7 @@ Resources:
       Environment:
         Variables:
           DEBUG: postgraphile*
-          DB_HOST: !GetAtt Database.Address
+          DB_HOST: !GetAtt Database.Endpoint
           DB_NAME: !Ref DatabaseName
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
@@ -349,7 +349,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          DB_HOST: !GetAtt Database.Address
+          DB_HOST: !GetAtt Database.Endpoint
           DB_NAME: !Ref DatabaseName
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
@@ -394,7 +394,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          DB_HOST: !GetAtt Database.Address
+          DB_HOST: !GetAtt Database.Endpoint
           DB_NAME: !Ref DatabaseName
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
