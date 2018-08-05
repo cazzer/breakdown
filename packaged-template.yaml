@@ -1,0 +1,245 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Breakdown
+Parameters:
+  GitHubBranch:
+    Default: master
+    Type: String
+  GitHubRepo:
+    Default: breakdown
+    Type: String
+  GitHubToken:
+    Default: GitHubToken
+    Type: AWS::SSM::Parameter::Value<String>
+  GitHubUser:
+    Default: cazzer
+    Type: String
+Resources:
+  ApiPolicy:
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Action:
+          - lambda:InvokeFunction
+          Effect: Allow
+          Resource:
+          - Fn::GetAtt:
+            - PostgraphileHandler
+            - Arn
+        Version: '2012-10-17'
+      PolicyName:
+        Fn::Sub: ${AWS::StackName}-policy
+      Roles:
+      - Ref: ApiRole
+    Type: AWS::IAM::Policy
+  ApiRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: apigateway.amazonaws.com
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+      Path: /
+    Type: AWS::IAM::Role
+  CloudFormationRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - cloudformation.amazonaws.com
+      Path: /
+    Type: AWS::IAM::Role
+  CodebuildProject:
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+        - Name: OUTPUT_TEMPLATE_FILE
+          Value: packaged-template.yaml
+        - Name: TEMPLATE_FILE
+          Value: template.yaml
+        - Name: S3_BUCKET
+          Value:
+            Ref: LambdaSourceBucket
+        Image: aws/codebuild/nodejs:10.1.0
+        Type: LINUX_CONTAINER
+      ServiceRole:
+        Ref: CodebuildRole
+      Source:
+        BuildSpec: buildspec.yaml
+        Type: CODEPIPELINE
+    Type: AWS::CodeBuild::Project
+  CodebuildRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - codebuild.amazonaws.com
+      Path: /
+    Type: AWS::IAM::Role
+  LambdaSourceBucket:
+    Type: AWS::S3::Bucket
+  Pipeline:
+    Properties:
+      ArtifactStore:
+        Location:
+          Ref: PipelineBucket
+        Type: S3
+      RoleArn:
+        Ref: PipelineRole
+      Stages:
+      - Actions:
+        - ActionTypeId:
+            Category: Source
+            Owner: ThirdParty
+            Provider: GitHub
+            Version: 1
+          Configuration:
+            Branch:
+              Ref: GitHubBranch
+            OAuthToken:
+              Ref: GitHubToken
+            Owner:
+              Ref: GitHubUser
+            Repo:
+              Ref: GitHubRepo
+          Name: EmwSource
+          OutputArtifacts:
+          - Name: EmwSource
+          RunOrder: 1
+        Name: Source
+      - Actions:
+        - ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: 1
+          Configuration:
+            ProjectName:
+              Ref: CodebuildProject
+          InputArtifacts:
+          - Name: Source
+          Name: Build
+          OutputArtifacts:
+          - Name: Build
+          RunOrder: 1
+        Name: Build
+      - Actions:
+        - ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: 1
+          Configuration:
+            ActionMode: CHANGE_SET_REPLACE
+            Capabilities: CAPABILITY_NAMED_IAM
+            ChangeSetName: ChangeSet
+            RoleArn:
+              Ref: CloudFormationRole
+            StackName:
+              Ref: AWS::StackName
+            TemplatePath: Build::packaged-template.yaml
+          InputArtifacts:
+          - Name: Build
+          Name: CreateChangeSet
+          RunOrder: 1
+        - ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: 1
+          Configuration:
+            ActionMode: CHANGE_SET_EXECUTE
+            ChangeSetName: ChangeSet
+            RoleArn:
+              Ref: CloudFormationRole
+            StackName:
+              Ref: AWS::StackName
+          Name: ExecuteChangeSet
+          RunOrder: 2
+        Name: Deploy
+    Type: AWS::CodePipeline::Pipeline
+  PipelineBucket:
+    Type: AWS::S3::Bucket
+  PipelinePolicy:
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Action:
+          - s3:*
+          - cloudformation:*
+          - iam:PassRole
+          - codebuild:*
+          - ec2:*
+          - iam:*
+          - lambda:*
+          - sns:*
+          - rds:*
+          - ecr:*
+          - xray:*
+          - cloudfront:*
+          - route53:*
+          Effect: Allow
+          Resource: '*'
+        Version: '2012-10-17'
+      PolicyName:
+        Fn::Sub: ${AWS::StackName}-policy
+      Roles:
+      - Ref: PipelineRole
+      - Ref: CodebuildRole
+      - Ref: CloudFormationRole
+    Type: AWS::IAM::Policy
+  PipelineRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - codepipeline.amazonaws.com
+      Path: /
+    Type: AWS::IAM::Role
+  PostgraphileFunctionPolicy:
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Action:
+          - logs:*
+          - events:*
+          - rds:*
+          - ec2:*
+          Effect: Allow
+          Resource: '*'
+        Version: '2012-10-17'
+      PolicyName:
+        Fn::Sub: ${AWS::StackName}-policy
+      Roles:
+      - Ref: PostgraphileFunctionRole
+    Type: AWS::IAM::Policy
+  PostgraphileFunctionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+        Version: '2012-10-17'
+    Type: AWS::IAM::Role
+Transform: AWS::Serverless-2016-10-31

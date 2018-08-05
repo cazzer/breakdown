@@ -1,0 +1,278 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Breakdown
+Parameters:
+  GitHubBranch:
+    Type: String
+    Default: master
+
+  GitHubRepo:
+    Type: String
+    Default: breakdown
+
+  GitHubToken:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: GitHubToken
+
+  GitHubUser:
+    Type: String
+    Default: cazzer
+
+Resources:
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      DefinitionUri: swagger.yaml
+      StageName: prod
+      Variables:
+        ApiHandler: !Ref PostgraphileHandler
+        ApiRole: !Ref ApiRole
+
+  ApiMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: v1
+      Stage: prod
+      DomainName: 'breakdown.cazzer.io'
+      RestApiId: !Ref Api
+
+  PostgraphileFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - "logs:*"
+              - "events:*"
+              - "rds:*"
+              - "ec2:*"
+      Roles:
+        - !Ref PostgraphileFunctionRole
+
+  PostgraphileFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  PostgraphileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/postgraphile.default
+      Role: !GetAtt PostgraphileFunctionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          DEBUG: postgraphile*
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /graphql
+            Method: post
+
+  ApiPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource:
+              - !GetAtt PostgraphileFunction.Arn
+            Effect: "Allow"
+            Action:
+              - "lambda:InvokeFunction"
+      Roles:
+        - !Ref ApiRole
+
+  ApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "apigateway.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+
+  PipelineBucket:
+    Type: AWS::S3::Bucket
+
+  LambdaSourceBucket:
+    Type: AWS::S3::Bucket
+
+  PipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+  CodebuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+  CloudFormationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+  PipelinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - s3:*
+              - cloudformation:*
+              - iam:PassRole
+              - codebuild:*
+              - ec2:*
+              - iam:*
+              - lambda:*
+              - sns:*
+              - rds:*
+              - ecr:*
+              - xray:*
+              - cloudfront:*
+              - route53:*
+      Roles:
+        - !Ref PipelineRole
+        - !Ref CodebuildRole
+        - !Ref CloudFormationRole
+
+  CodebuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: "CODEPIPELINE"
+      Source:
+        Type: "CODEPIPELINE"
+        BuildSpec: buildspec.yaml
+      Environment:
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        Image: "aws/codebuild/nodejs:10.1.0"
+        Type: "LINUX_CONTAINER"
+        EnvironmentVariables:
+          - Name: OUTPUT_TEMPLATE_FILE
+            Value: 'packaged-template.yaml'
+          - Name: TEMPLATE_FILE
+            Value: 'template.yaml'
+          - Name: S3_BUCKET
+            Value: !Ref LambdaSourceBucket
+      ServiceRole: !Ref CodebuildRole
+
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      RoleArn: !Ref PipelineRole
+      ArtifactStore:
+        Type: S3
+        Location: !Ref PipelineBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: EmwSource
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: 1
+                Provider: GitHub
+              Configuration:
+                Owner: !Ref GitHubUser
+                Repo: !Ref GitHubRepo
+                Branch: !Ref GitHubBranch
+                OAuthToken: !Ref GitHubToken
+              OutputArtifacts:
+                - Name: EmwSource
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: Build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodebuildProject
+              InputArtifacts:
+                - Name: Source
+              OutputArtifacts:
+                - Name: Build
+              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: CreateChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CHANGE_SET_REPLACE
+                Capabilities: CAPABILITY_NAMED_IAM
+                ChangeSetName: ChangeSet
+                RoleArn: !Ref CloudFormationRole
+                StackName: !Ref AWS::StackName
+                TemplatePath: Build::packaged-template.yaml
+              InputArtifacts:
+                - Name: Build
+              RunOrder: 1
+            - Name: ExecuteChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: ChangeSet
+                RoleArn: !Ref CloudFormationRole
+                StackName: !Ref AWS::StackName
+              RunOrder: 2

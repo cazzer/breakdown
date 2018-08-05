@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "graphql": "^0.13.2",
+    "lodash": "^4.17.10",
+    "pg-pool": "^2.0.3",
+    "postgraphile": "^4.0.0-rc.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.56",
+    "@babel/core": "^7.0.0-beta.56",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.56",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.56",
+    "@babel/preset-env": "^7.0.0-beta.56",
+    "@babel/preset-typescript": "^7.0.0-beta.56",
+    "typescript": "^3.0.1"
+  },
+  "resolutions": {
+    "graphql": "0.13.2"
+  },
+  "scripts": {
+    "dev": "babel src --out-dir lib --extensions \".ts,.tsx\" -w",
+    "build": "babel src --out-dir lib --extensions \".ts,.tsx\"",
+    "type-check": "tsc --noEmit"
+  }
+}
