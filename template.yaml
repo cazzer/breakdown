@@ -302,7 +302,8 @@ Resources:
       UsernameAttributes:
         - email
       UserPoolName: BreakdownUserPoolV1
-   UserPoolClient:
+
+  UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       ClientName: BreakdownWebApplication
