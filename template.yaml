@@ -381,6 +381,21 @@ Resources:
           DB_USER: !Ref DatabaseUser
           DEBUG: pre-token*
 
+  RdsMonitoringRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "monitoring.rds.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole
+
   Database:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -393,6 +408,7 @@ Resources:
       EngineVersion: 10.4
       MasterUsername: !Ref DatabaseUser
       MasterUserPassword: !Ref DatabasePassword
+      MonitoringRoleArn: !Ref RdsMonitoringRole
       MonitoringInterval: 60
       StorageType: gp2
       PubliclyAccessible: true
