@@ -158,7 +158,7 @@ Resources:
             Action:
               - sts:AssumeRole
 
-  PipelinePolicy:
+  AutomationPolicy:
     Type: AWS::IAM::Policy
     Properties:
       PolicyName: !Sub ${AWS::StackName}-policy
@@ -172,6 +172,7 @@ Resources:
               - cloudformation:*
               - iam:PassRole
               - codebuild:*
+              - cloudwatch:*
               - ec2:*
               - iam:*
               - lambda:*
