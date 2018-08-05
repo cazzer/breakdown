@@ -298,7 +298,7 @@ Resources:
         - phone_number
         - email
       LambdaConfig:
-        PostConfirmation: !Ref PostConfirmationFunction
+        PostConfirmation: !GetAtt PostConfirmationFunction.Arn
       UsernameAttributes:
         - email
       UserPoolName: BreakdownUserPoolV1
