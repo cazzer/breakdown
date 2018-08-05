@@ -80,10 +80,11 @@ Resources:
       Environment:
         Variables:
           DEBUG: postgraphile*
-          DB_HOST: !GetAtt Database.Host
+          DB_HOST: !GetAtt Database.Address
           DB_NAME: !Ref DatabaseName
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
+          DB_USER: !Ref DatabaseUser
       Events:
         Api:
           Type: Api
@@ -348,6 +349,11 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
+          DB_HOST: !GetAtt Database.Address
+          DB_NAME: !Ref DatabaseName
+          DB_PASSWORD: !Ref DatabasePassword
+          DB_SCHEMA: !Ref DatabaseName
+          DB_USER: !Ref DatabaseUser
           DEBUG: post-confirmation*
 
   PreTokenGenerationFunctionPolicy:
@@ -388,6 +394,11 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
+          DB_HOST: !GetAtt Database.Address
+          DB_NAME: !Ref DatabaseName
+          DB_PASSWORD: !Ref DatabasePassword
+          DB_SCHEMA: !Ref DatabaseName
+          DB_USER: !Ref DatabaseUser
           DEBUG: pre-token*
 
   Database:
