@@ -14,23 +14,6 @@ Parameters:
     Default: cazzer
     Type: String
 Resources:
-  ApiPolicy:
-    Properties:
-      PolicyDocument:
-        Statement:
-        - Action:
-          - lambda:InvokeFunction
-          Effect: Allow
-          Resource:
-          - Fn::GetAtt:
-            - PostgraphileHandler
-            - Arn
-        Version: '2012-10-17'
-      PolicyName:
-        Fn::Sub: ${AWS::StackName}-policy
-      Roles:
-      - Ref: ApiRole
-    Type: AWS::IAM::Policy
   ApiRole:
     Properties:
       AssumeRolePolicyDocument:
@@ -99,7 +82,9 @@ Resources:
           Ref: PipelineBucket
         Type: S3
       RoleArn:
-        Ref: PipelineRole
+        Fn::GetAtt:
+        - PipelineRole
+        - Arn
       Stages:
       - Actions:
         - ActionTypeId:
@@ -116,9 +101,9 @@ Resources:
               Ref: GitHubUser
             Repo:
               Ref: GitHubRepo
-          Name: EmwSource
+          Name: Source
           OutputArtifacts:
-          - Name: EmwSource
+          - Name: Source
           RunOrder: 1
         Name: Source
       - Actions:
@@ -148,7 +133,9 @@ Resources:
             Capabilities: CAPABILITY_NAMED_IAM
             ChangeSetName: ChangeSet
             RoleArn:
-              Ref: CloudFormationRole
+              Fn::GetAtt:
+              - CloudFormationRole
+              - Arn
             StackName:
               Ref: AWS::StackName
             TemplatePath: Build::packaged-template.yaml
@@ -165,7 +152,9 @@ Resources:
             ActionMode: CHANGE_SET_EXECUTE
             ChangeSetName: ChangeSet
             RoleArn:
-              Ref: CloudFormationRole
+              Fn::GetAtt:
+              - CloudFormationRole
+              - Arn
             StackName:
               Ref: AWS::StackName
           Name: ExecuteChangeSet
