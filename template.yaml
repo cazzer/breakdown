@@ -184,6 +184,7 @@ Resources:
               - xray:*
               - cloudfront:*
               - route53:*
+              - apigateway:*
       Roles:
         - !Ref PipelineRole
         - !Ref CodebuildRole
