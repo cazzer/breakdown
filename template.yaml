@@ -276,8 +276,6 @@ Resources:
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      AdminCreateUserConfig:
-        AdminCreateUserConfig
       AliasAttributes:
         - phone_number
         - email
