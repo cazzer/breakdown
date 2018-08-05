@@ -18,6 +18,18 @@ Parameters:
     Type: String
     Default: cazzer
 
+  DatabaseName:
+    Type: String
+    Default: breakdown
+
+  DatabaseUser:
+    Type: String
+    Default: postgres
+
+  DatabasePassword:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DatabasePassword
+
 Resources:
   Api:
     Type: AWS::Serverless::Api
@@ -68,6 +80,10 @@ Resources:
       Environment:
         Variables:
           DEBUG: postgraphile*
+          DB_HOST: !GetAtt Database.Host
+          DB_NAME: !Ref DatabaseName
+          DB_PASSWORD: !Ref DatabasePassword
+          DB_SCHEMA: !Ref DatabaseName
       Events:
         Api:
           Type: Api
@@ -177,6 +193,7 @@ Resources:
               - cloudfront:*
               - route53:*
               - apigateway:*
+              - cognito-idp:*
       Roles:
         - !Ref PipelineRole
         - !Ref CodebuildRole
@@ -372,3 +389,20 @@ Resources:
       Environment:
         Variables:
           DEBUG: pre-token*
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      BackupRetentionPeriod: 7
+      DBInstanceClass: db.t2.micro
+      DBInstanceIdentifier: breakdown-rds
+      DBName: !Ref DatabaseName
+      Engine: postgres
+      EngineVersion: 10.4
+      MasterUsername: !Ref DatabaseUser
+      MasterUserPassword: !Ref DatabasePassword
+      MonitoringInterval: 60
+      StorageType: gp2
+      PubliclyAccessible: true
+      PreferredMaintenanceWindow: "Sun:08:30-Sun:09:30"
