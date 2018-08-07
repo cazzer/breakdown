@@ -280,7 +280,20 @@ Resources:
               InputArtifacts:
                 - Name: Source
               OutputArtifacts:
-                - Name: Build
+                - Name: LambdaBuild
+              RunOrder: 1
+            - Name: BuildWeb
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodebuildWebProject
+              InputArtifacts:
+                - Name: Source
+              OutputArtifacts:
+                - Name: WebBuild
               RunOrder: 1
         - Name: Deploy
           Actions:
@@ -298,7 +311,7 @@ Resources:
                 StackName: !Ref AWS::StackName
                 TemplatePath: Build::packaged-template.yaml
               InputArtifacts:
-                - Name: Build
+                - Name: LambdaBuild
               RunOrder: 1
             - Name: ExecuteChangeSet
               ActionTypeId:
