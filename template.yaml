@@ -195,6 +195,7 @@ Resources:
               - route53:*
               - apigateway:*
               - cognito-idp:*
+              - codepipeline:*
       Roles:
         - !Ref PipelineRole
         - !Ref CodebuildRole
@@ -268,7 +269,7 @@ Resources:
               RunOrder: 1
         - Name: Build
           Actions:
-            - Name: BuildLambda
+            - Name: Build
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -279,20 +280,7 @@ Resources:
               InputArtifacts:
                 - Name: Source
               OutputArtifacts:
-                - Name: LambdaBuild
-              RunOrder: 1
-            - Name: BuildWeb
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref CodebuildWebProject
-              InputArtifacts:
-                - Name: Source
-              OutputArtifacts:
-                - Name: WebBuild
+                - Name: Build
               RunOrder: 1
         - Name: Deploy
           Actions:
@@ -310,7 +298,7 @@ Resources:
                 StackName: !Ref AWS::StackName
                 TemplatePath: Build::packaged-template.yaml
               InputArtifacts:
-                - Name: LambdaBuild
+                - Name: Build
               RunOrder: 1
             - Name: ExecuteChangeSet
               ActionTypeId:
