@@ -491,4 +491,4 @@ Resources:
               - - 'arn:aws:s3:::'
                 - !Ref WebBucket
                 - /*
-      Bucket: !Ref S3Bucket
+      Bucket: !Ref WebBucket
