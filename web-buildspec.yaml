@@ -1,0 +1,22 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      # Install yarn natively https://yarnpkg.com/en/docs/install#linux-tab
+      - sudo apt-get update && sudo apt-get install apt-transport-https
+      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+      - sudo apt-get update && sudo apt-get install yarn
+      - yarn
+  build:
+    commands:
+      - yarn run web-prod
+  post_build:
+    commands:
+      - aws s3 cp dist/ s3://$S3_BUCKET --recursive --acl public-read
+artifacts:
+  type: zip
+  files:
+    - node_modules/**/*
+    - lib/**/*.js
+    - $OUTPUT_TEMPLATE_FILE

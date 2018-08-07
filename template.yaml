@@ -221,6 +221,27 @@ Resources:
             Value: !Ref LambdaSourceBucket
       ServiceRole: !Ref CodebuildRole
 
+  CodebuildWebProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: "CODEPIPELINE"
+      Source:
+        Type: "CODEPIPELINE"
+        BuildSpec: web-buildspec.yaml
+      Environment:
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        Image: "aws/codebuild/nodejs:10.1.0"
+        Type: "LINUX_CONTAINER"
+        EnvironmentVariables:
+          - Name: OUTPUT_TEMPLATE_FILE
+            Value: 'packaged-template.yaml'
+          - Name: TEMPLATE_FILE
+            Value: 'template.yaml'
+          - Name: S3_BUCKET
+            Value: !Ref WebBucket
+      ServiceRole: !Ref CodebuildRole
+
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -247,7 +268,7 @@ Resources:
               RunOrder: 1
         - Name: Build
           Actions:
-            - Name: Build
+            - Name: BuildLambda
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -258,7 +279,20 @@ Resources:
               InputArtifacts:
                 - Name: Source
               OutputArtifacts:
-                - Name: Build
+                - Name: LambdaBuild
+              RunOrder: 1
+            - Name: BuildWeb
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodebuildWebProject
+              InputArtifacts:
+                - Name: Source
+              OutputArtifacts:
+                - Name: WebBuild
               RunOrder: 1
         - Name: Deploy
           Actions:
@@ -276,7 +310,7 @@ Resources:
                 StackName: !Ref AWS::StackName
                 TemplatePath: Build::packaged-template.yaml
               InputArtifacts:
-                - Name: Build
+                - Name: LambdaBuild
               RunOrder: 1
             - Name: ExecuteChangeSet
               ActionTypeId:
@@ -431,3 +465,30 @@ Resources:
       StorageType: gp2
       PubliclyAccessible: true
       PreferredMaintenanceWindow: "Sun:08:30-Sun:09:30"
+
+  WebBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+    DeletionPolicy: Retain
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: MyPolicy
+        Version: "2012-10-17"
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref WebBucket
+                - /*
+      Bucket: !Ref S3Bucket
