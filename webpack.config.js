@@ -1,8 +1,18 @@
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
   entry: './src/web',
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    historyApiFallback: true,
+    stats: {
+      colors: true,
+    },
+  },
+  mode: 'development',
   module: {
     rules: [
       {
@@ -20,6 +30,12 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
-    new HtmlWebpackPlugin({template: './src/web/index.html'})
+    new HtmlWebpackPlugin({
+      template: './src/web/index.html'
+    }),
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[file].map'
+    }),
+    new CleanWebpackPlugin('dist')
   ]
 }
