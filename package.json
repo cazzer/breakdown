@@ -35,7 +35,7 @@
   "scripts": {
     "web:dev": "webpack-dev-server --open",
     "web-dev": "webpack-dev-server --open",
-    "web:prod": "webpack",
+    "web:prod": "webpack --environment production",
     "web-prod": "webpack",
     "dev": "babel src --out-dir lib --extensions \".ts,.tsx\" -w",
     "build": "babel src --out-dir lib --extensions \".ts,.tsx\"",

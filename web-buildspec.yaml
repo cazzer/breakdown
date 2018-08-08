@@ -10,7 +10,7 @@ phases:
       - yarn
   build:
     commands:
-      - yarn run web-prod
+      - yarn run web:prod
   post_build:
     commands:
       - aws s3 cp dist/ s3://$S3_BUCKET --recursive --acl public-read
