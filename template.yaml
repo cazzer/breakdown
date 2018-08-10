@@ -493,3 +493,10 @@ Resources:
                 - !Ref WebBucket
                 - /*
       Bucket: !Ref WebBucket
+
+  DNS:
+    Type: "AWS::Route53::HostedZone"
+    Properties:
+      HostedZoneConfig:
+        Comment: "Thin Stack zone"
+      Name: "thinstack.io"
