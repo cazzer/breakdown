@@ -471,6 +471,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: PublicRead
+      BucketName: app.thinstack.io
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
@@ -536,6 +537,16 @@ Resources:
     Properties:
       HostedZoneId: !Ref DNS
       Name: www.thinstack.io.
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt WebDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  RootDomain:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref DNS
+      Name: app.thinstack.io.
       Type: A
       AliasTarget:
         DNSName: !GetAtt WebDistribution.DomainName
