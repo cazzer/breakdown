@@ -474,7 +474,7 @@ Resources:
       BucketName: app.thinstack.io
       WebsiteConfiguration:
         IndexDocument: index.html
-        ErrorDocument: error.html
+        ErrorDocument: index.html
     DeletionPolicy: Retain
 
   BucketPolicy:
