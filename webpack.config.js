@@ -30,6 +30,12 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
+    new webpack.EnvironmentPlugin([
+      'IDENTITY_POOL_ID',
+      'AWS_REGION',
+      'USER_POOL_ID',
+      'USER_POOL_WEB_CLIENT_ID'
+    ]),
     new HtmlWebpackPlugin({
       template: './src/web/index.html'
     }),

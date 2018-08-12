@@ -241,6 +241,14 @@ Resources:
             Value: 'template.yaml'
           - Name: S3_BUCKET
             Value: !Ref WebBucket
+          - Name: IDENTITY_POOL_ID
+            Value: !Ref IdentityPool
+          - Name: AWS_REGION
+            Value: $AWS::Region
+          - Name: USER_POOL_ID
+            Value: !Ref UserPool
+          - Name: USER_POOL_WEB_CLIENT_ID
+            Value: !Ref UserPoolClient
       ServiceRole: !Ref CodebuildRole
 
   Pipeline:
@@ -325,6 +333,15 @@ Resources:
                 RoleArn: !GetAtt CloudFormationRole.Arn
                 StackName: !Ref AWS::StackName
               RunOrder: 2
+
+  IdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      AllowUnauthenticatedIdentities: false
+      CognitoIdentityProviders:
+        - ClientId: !Ref UserPool
+          ProviderName: !GetAtt UserPool.ProviderName
+          ServerSideTokenCheck: true
 
   UserPool:
     Type: AWS::Cognito::UserPool

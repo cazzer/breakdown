@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import React, { Component } from 'react'
+import { compose } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import {
   Button,
@@ -143,4 +144,32 @@ class Login extends Component {
   }
 }
 
-export default withStyles(styles)(Login)
+function withLogin(WrappedComponent) {
+  class WithLogin extends Component {
+    state = {
+      login: {
+        isLoading: false,
+      }
+    }
+
+    render(props) {
+      return <WrappedComponent
+        {...props}
+        {...this.state}
+      />
+    }
+  }
+
+  WithLogin.displayName = `withEvent(${
+    WrappedComponent.displayName
+      || WrappedComponent.name
+      || 'Component'
+  })`
+
+  return WithLogin
+}
+
+export default compose(
+  withLogin,
+  withStyles(styles)
+)(Login)
