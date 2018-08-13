@@ -340,7 +340,10 @@ Resources:
       AllowUnauthenticatedIdentities: false
       CognitoIdentityProviders:
         - ClientId: !Ref UserPool
-          ProviderName: !GetAtt UserPool.ProviderName
+          ProviderName: !Join
+            - /
+            - - cognito-idp.us-west-2.amazonaws.com
+              - !GetAtt UserPool.ProviderName
           ServerSideTokenCheck: true
 
   UserPool:
