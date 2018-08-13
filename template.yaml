@@ -196,6 +196,7 @@ Resources:
               - apigateway:*
               - cognito-idp:*
               - codepipeline:*
+              - acm:*
       Roles:
         - !Ref PipelineRole
         - !Ref CodebuildRole
@@ -531,13 +532,6 @@ Resources:
             Id: !Sub S3-thinstack.io
             S3OriginConfig:
               OriginAccessIdentity: ""
-  Certificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: "*.thinstack.io"
-      DomainValidationOptions:
-      - DomainName: thinstack.io
-        ValidationDomain: thinstack.io
 
   DNS:
     Type: AWS::Route53::HostedZone
