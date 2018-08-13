@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route } from 'react-router-dom'
-import Amplify from 'aws-amplify'
+import Amplify from '@aws-amplify/core'
 
 import Login from './login/login'
 

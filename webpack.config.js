@@ -16,10 +16,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ts|tsx)$/,
-        exclude: /node_modules/,
-        use: ['babel-loader']
-      }
+        test: /\.tsx?$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.js$/,
+        use: ['source-map-loader'],
+        enforce: 'pre'
+      },
     ]
   },
   resolve: {

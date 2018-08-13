@@ -38,7 +38,7 @@
   dependencies:
     "@aws-amplify/core" "^1.0.3"
 
-"@aws-amplify/core@^1.0.3":
+"@aws-amplify/core@^1.0.3", "@aws-amplify/core@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-1.0.4.tgz#595fd9773bb9038be49dd956bb2f9671296d9c10"
   dependencies:
@@ -218,6 +218,10 @@
   version "7.0.0-beta.56"
   resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-beta.56.tgz#e5f63cae8b3b716825d64e69ad8b59d71cd2080c"
 
+"@babel/helper-plugin-utils@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-rc.1.tgz#3e277eae59818e7d4caf4174f58a7a00d441336e"
+
 "@babel/helper-regex@7.0.0-beta.56":
   version "7.0.0-beta.56"
   resolved "https://registry.yarnpkg.com/@babel/helper-regex/-/helper-regex-7.0.0-beta.56.tgz#88d8a15c853892f603193e5adf10c428cd588fc0"
@@ -357,11 +361,11 @@
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-beta.56"
 
-"@babel/plugin-syntax-typescript@7.0.0-beta.56":
-  version "7.0.0-beta.56"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-typescript/-/plugin-syntax-typescript-7.0.0-beta.56.tgz#836a166feb51f955540f815bf936f99e17a2681e"
+"@babel/plugin-syntax-typescript@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-typescript/-/plugin-syntax-typescript-7.0.0-rc.1.tgz#f1e0afa67b62aa9659cf9995a8a46f0638faa05f"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.56"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
 
 "@babel/plugin-transform-arrow-functions@7.0.0-beta.56":
   version "7.0.0-beta.56"
@@ -571,12 +575,12 @@
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-beta.56"
 
-"@babel/plugin-transform-typescript@7.0.0-beta.56":
-  version "7.0.0-beta.56"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.0.0-beta.56.tgz#1357852a7ef303ca002b6ed7e4712578148edbeb"
+"@babel/plugin-transform-typescript@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.0.0-rc.1.tgz#5b9726c6f9ab1f8f0abd1971577da5accd232dbc"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.56"
-    "@babel/plugin-syntax-typescript" "7.0.0-beta.56"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+    "@babel/plugin-syntax-typescript" "7.0.0-rc.1"
 
 "@babel/plugin-transform-unicode-regex@7.0.0-beta.56":
   version "7.0.0-beta.56"
@@ -641,12 +645,12 @@
     "@babel/plugin-transform-react-jsx-self" "7.0.0-beta.56"
     "@babel/plugin-transform-react-jsx-source" "7.0.0-beta.56"
 
-"@babel/preset-typescript@^7.0.0-beta.56":
-  version "7.0.0-beta.56"
-  resolved "https://registry.yarnpkg.com/@babel/preset-typescript/-/preset-typescript-7.0.0-beta.56.tgz#eff0414072f018014f857c072a07e524088568b0"
+"@babel/preset-typescript@^7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/preset-typescript/-/preset-typescript-7.0.0-rc.1.tgz#bd22fc7158fde7c1dd5bb7853246b5cf5a801c9c"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.56"
-    "@babel/plugin-transform-typescript" "7.0.0-beta.56"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+    "@babel/plugin-transform-typescript" "7.0.0-rc.1"
 
 "@babel/runtime@7.0.0-beta.42":
   version "7.0.0-beta.42"
@@ -895,6 +899,12 @@ assign-symbols@^1.0.0:
 async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
+
+async@^2.5.0:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.1.tgz#b245a23ca71930044ec53fa46aa00a3e87c6a610"
+  dependencies:
+    lodash "^4.17.10"
 
 atob@^2.1.1:
   version "2.1.1"
@@ -2765,7 +2775,7 @@ loader-runner@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-2.3.0.tgz#f482aea82d543e07921700d5a46ef26fdac6b8a2"
 
-loader-utils@^0.2.16:
+loader-utils@^0.2.16, loader-utils@~0.2.2:
   version "0.2.17"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-0.2.17.tgz#f86e6374d43205a6e6c60e9196f17c0299bfb348"
   dependencies:
@@ -4100,6 +4110,14 @@ snapdragon@^0.8.1:
 source-list-map@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/source-list-map/-/source-list-map-2.0.0.tgz#aaa47403f7b245a92fbc97ea08f250d6087ed085"
+
+source-map-loader@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/source-map-loader/-/source-map-loader-0.2.3.tgz#d4b0c8cd47d54edce3e6bfa0f523f452b5b0e521"
+  dependencies:
+    async "^2.5.0"
+    loader-utils "~0.2.2"
+    source-map "~0.6.1"
 
 source-map-resolve@^0.5.0:
   version "0.5.2"
