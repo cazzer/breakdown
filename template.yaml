@@ -242,8 +242,6 @@ Resources:
             Value: 'template.yaml'
           - Name: S3_BUCKET
             Value: !Ref WebBucket
-          - Name: IDENTITY_POOL_ID
-            Value: !Ref IdentityPool
           - Name: AWS_REGION
             Value: $AWS::Region
           - Name: USER_POOL_ID
