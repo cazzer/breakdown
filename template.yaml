@@ -334,6 +334,14 @@ Resources:
                 StackName: !Ref AWS::StackName
               RunOrder: 2
 
+  IdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      AllowUnauthenticatedIdentities: false
+      CognitoIdentityProviders:
+        - ClientId: !Ref UserPool
+          ProviderName: !GetAtt UserPool.ProviderName
+          ServerSideTokenCheck: true
 
   UserPool:
     Type: AWS::Cognito::UserPool
