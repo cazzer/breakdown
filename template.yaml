@@ -357,7 +357,6 @@ Resources:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       ClientName: BreakdownWebApplication
-      GenerateSecret: true
       RefreshTokenValidity: 90
       UserPoolId: !Ref UserPool
 

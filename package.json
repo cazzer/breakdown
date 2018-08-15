@@ -6,7 +6,7 @@
     "@material-ui/icons": "^2.0.1",
     "aws-amplify-react": "^1.0.5",
     "classnames": "^2.2.6",
-    "graphql": "^0.13.2",
+    "graphql": "0.13.0",
     "knex": "^0.15.2",
     "lodash": "^4.17.10",
     "pg-pool": "^2.0.3",

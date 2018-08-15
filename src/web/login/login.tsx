@@ -1,3 +1,4 @@
+import Auth from '@aws-amplify/auth'
 import classNames from 'classnames'
 import React, { Component } from 'react'
 import { compose } from 'recompose'
@@ -69,6 +70,13 @@ class Login extends Component {
     event.preventDefault()
   }
 
+  handleLogin = () => {
+    this.props.signIn(
+      this.state.username,
+      this.state.password
+    )
+  }
+
   render() {
     const { classes } = this.props
     return (
@@ -120,6 +128,7 @@ class Login extends Component {
                 className={classes.button}
                 color="primary"
                 fullWidth
+                onClick={this.handleLogin}
                 size="large"
                 variant="contained"
               >
@@ -146,16 +155,11 @@ class Login extends Component {
 
 function withLogin(WrappedComponent) {
   class WithLogin extends Component {
-    state = {
-      login: {
-        isLoading: false,
-      }
-    }
-
     render(props) {
       return <WrappedComponent
         {...props}
         {...this.state}
+        signIn={Auth.signIn.bind(Auth)}
       />
     }
   }

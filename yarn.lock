@@ -2124,7 +2124,13 @@ graphql-parse-resolve-info@4.0.0-rc.4:
   dependencies:
     debug ">=2 <3"
 
-graphql@0.13.0, graphql@0.13.2, "graphql@>=0.6 <0.13", graphql@^0.13.2:
+graphql@0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.13.0.tgz#d1b44a282279a9ce0a6ec1037329332f4c1079b6"
+  dependencies:
+    iterall "1.1.x"
+
+graphql@0.13.2, "graphql@>=0.6 <0.13":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.13.2.tgz#4c740ae3c222823e7004096f832e7b93b2108270"
   dependencies:
@@ -2562,6 +2568,10 @@ isomorphic-fetch@^2.1.1:
   dependencies:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
+
+iterall@1.1.x:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.1.4.tgz#0db40d38fdcf53ae14dc8ec674e62ab190d52cfc"
 
 iterall@^1.2.1:
   version "1.2.2"
