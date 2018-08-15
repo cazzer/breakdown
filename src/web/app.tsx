@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route } from 'react-router-dom'
 import Amplify from '@aws-amplify/core'
-import { Authenticator } from 'aws-amplify-react'
 
 import Login from './login/login'
 
@@ -15,12 +14,10 @@ Amplify.configure({
 })
 
 export default () => (
-  <Authenticator>
     <BrowserRouter>
       <div>
         <Route path="/login" component={Login} />
         <Route path="/register" component={Login} />
       </div>
     </BrowserRouter>
-  </Authenticator>
 )

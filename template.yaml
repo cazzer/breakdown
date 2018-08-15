@@ -247,9 +247,10 @@ Resources:
             Value: $AWS::Region
           - Name: USER_POOL_ID
             Value: !Ref UserPool
-          - Name: USER_POOL_WEB_CLIENT_ID
+          - Name: USER_POOL_WEB_CLIENT_I
             Value: !Ref UserPoolClient
       ServiceRole: !Ref CodebuildRole
+      TimeoutInMinutes: 4
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
