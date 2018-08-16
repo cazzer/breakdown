@@ -15,12 +15,10 @@ Amplify.configure({
 })
 
 export default () => (
-  <Authenticator>
-    <BrowserRouter>
-      <div>
-        <Route path="/login" component={Authenticator} />
-        <Route path="/register" component={Login} />
-      </div>
-    </BrowserRouter>
-  </Authenticator>
+  <BrowserRouter>
+    <div>
+      <Route path="/login" component={Authenticator} />
+      <Route path="/register" component={Login} />
+    </div>
+  </BrowserRouter>
 )
