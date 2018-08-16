@@ -247,7 +247,7 @@ Resources:
             Value: $AWS::Region
           - Name: USER_POOL_ID
             Value: !Ref UserPool
-          - Name: USER_POOL_WEB_CLIENT_I
+          - Name: USER_POOL_WEB_CLIENT_ID
             Value: !Ref UserPoolClient
       ServiceRole: !Ref CodebuildRole
 
@@ -518,6 +518,7 @@ Resources:
         Aliases:
           - thinstack.io
           - www.thinstack.io
+          - app.thinstack.io
         DefaultCacheBehavior:
           ForwardedValues:
             QueryString: true
