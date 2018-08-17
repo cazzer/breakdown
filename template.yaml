@@ -519,6 +519,11 @@ Resources:
           - thinstack.io
           - www.thinstack.io
           - app.thinstack.io
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
         DefaultCacheBehavior:
           ForwardedValues:
             QueryString: true
@@ -531,6 +536,11 @@ Resources:
             Id: !Sub S3-thinstack.io
             S3OriginConfig:
               OriginAccessIdentity: ""
+
+  RootCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: "thinstack.io"
 
   Certificate:
     Type: AWS::CertificateManager::Certificate
