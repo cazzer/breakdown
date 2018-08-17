@@ -539,15 +539,11 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: ""
 
-  RootCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: "thinstack.io"
-
   Certificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
       DomainName: "*.thinstack.io"
+      ValidationMethod: DNS
 
   DNS:
     Type: AWS::Route53::HostedZone
