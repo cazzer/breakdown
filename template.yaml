@@ -245,6 +245,8 @@ Resources:
             Value: !Ref WebBucket
           - Name: AWS_REGION
             Value: $AWS::Region
+          - Name: IDENTITY_POOL_ID
+            Value: !Red IdentityPool
           - Name: USER_POOL_ID
             Value: !Ref UserPool
           - Name: USER_POOL_WEB_CLIENT_ID
