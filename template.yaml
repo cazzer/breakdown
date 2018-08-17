@@ -554,7 +554,7 @@ Resources:
         DNSName: !GetAtt WebDistribution.DomainName
         HostedZoneId: Z2FDTNDATAQYW2
 
-  RootDomain:
+  WwwDomain:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !Ref DNS
@@ -564,7 +564,7 @@ Resources:
         DNSName: !GetAtt WebDistribution.DomainName
         HostedZoneId: Z2FDTNDATAQYW2
 
-  RootDomain:
+  AppDomain:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !Ref DNS
