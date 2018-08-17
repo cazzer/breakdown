@@ -555,7 +555,7 @@ Resources:
   RootDomain:
     Type: AWS::Route53::RecordSet
     Properties:
-      HoztedZoneId: !Ref DNS
+      HostedZoneId: !Ref DNS
       Name: thinstack.io.
       Type: A
       AliasTarget:
