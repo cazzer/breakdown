@@ -542,11 +542,13 @@ Resources:
   Certificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: "*.thinstack.io"
-      ValidationMethod: DNS
+      DomainName: thinstack.io
       DomainValidationOptions:
-      - DomainName: thinstack.io
-        ValidationDomain: thinstack.io
+        - DomainName: thinstack.io
+          ValidationDomain: thinstack.io
+      SubjectAlternativeNames:
+        - "*.thinstack.io"
+      ValidationMethod: DNS
 
   DNS:
     Type: AWS::Route53::HostedZone
