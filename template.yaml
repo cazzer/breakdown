@@ -546,8 +546,15 @@ Resources:
       DomainValidationOptions:
         - DomainName: thinstack.io
           ValidationDomain: thinstack.io
-      SubjectAlternativeNames:
-        - "*.thinstack.io"
+      ValidationMethod: DNS
+
+  WildCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: "*.thinstack.io"
+      DomainValidationOptions:
+        - DomainName: thinstack.io
+          ValidationDomain: thinstack.io
       ValidationMethod: DNS
 
   DNS:
