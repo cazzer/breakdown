@@ -243,7 +243,7 @@ Resources:
             Value: 'template.yaml'
           - Name: S3_BUCKET
             Value: !Ref WebBucket
-          - Name: AWS_REGION
+          - Name: !Ref AWS_REGION
             Value: $AWS::Region
           - Name: IDENTITY_POOL_ID
             Value: !Ref IdentityPool
@@ -538,20 +538,13 @@ Resources:
             Id: !Sub S3-thinstack.io
             S3OriginConfig:
               OriginAccessIdentity: ""
+        ViewerCertificate:
+          CloudFrontDefaultCerfificate: true
 
   Certificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
       DomainName: thinstack.io
-      DomainValidationOptions:
-        - DomainName: thinstack.io
-          ValidationDomain: thinstack.io
-      ValidationMethod: DNS
-
-  WildCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: "*.thinstack.io"
       DomainValidationOptions:
         - DomainName: thinstack.io
           ValidationDomain: thinstack.io
