@@ -544,6 +544,9 @@ Resources:
     Properties:
       DomainName: "*.thinstack.io"
       ValidationMethod: DNS
+      DomainValidationOptions:
+      - DomainName: thinstack.io
+        ValidationDomain: thinstack.io
 
   DNS:
     Type: AWS::Route53::HostedZone
