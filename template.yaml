@@ -541,10 +541,10 @@ Resources:
         ViewerCertificate:
           CloudFrontDefaultCerfificate: true
 
-  Certificate:
+  AppCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: thinstack.io
+      DomainName: app.thinstack.io
       DomainValidationOptions:
         - DomainName: thinstack.io
           ValidationDomain: thinstack.io
