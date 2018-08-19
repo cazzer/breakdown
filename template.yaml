@@ -541,15 +541,6 @@ Resources:
         ViewerCertificate:
           CloudFrontDefaultCerfificate: true
 
-  AppCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: app.thinstack.io
-      DomainValidationOptions:
-        - DomainName: thinstack.io
-          ValidationDomain: thinstack.io
-      ValidationMethod: DNS
-
   DNS:
     Type: AWS::Route53::HostedZone
     Properties:
