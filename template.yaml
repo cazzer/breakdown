@@ -85,6 +85,7 @@ Resources:
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
+          GRAPHQL_ENDPOINT: https://7wfylv0ax3.execute-api.us-west-2.amazonaws.com/Prod/graphql
       Events:
         Api:
           Type: Api

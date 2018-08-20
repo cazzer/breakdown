@@ -8,3 +8,5 @@ export const DB_USER = process.env.DB_USER || 'postgres'
 export const DB_ENDPOINT = encodeURI(
   `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`
 )
+
+export const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT

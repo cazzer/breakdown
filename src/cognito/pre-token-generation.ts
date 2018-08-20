@@ -9,7 +9,7 @@ export default async function preTokenGeneration(event) {
   console.log(`Getting group memberships for user ${userId}`)
   const roles = await db('user_group_membership')
     .select('group_id')
-    .where('user_id', userId)
+    .where('member_id', userId)
 
   console.log(roles)
 
