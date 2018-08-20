@@ -600,4 +600,13 @@ Resources:
   ApiGatewayDomain:
     Type: AWS::ApiGateway::DomainName
     Properties:
+      CertificateArn: !Ref RootCertificate
       DomainName: api.thinstack.io
+
+  RootCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: "*:thinstack.io"
+      DomainValidationOptions:
+      - DomainName: thinstack.io
+        ValidationDomain: thinstack.io
