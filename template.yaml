@@ -614,3 +614,4 @@ Resources:
       SubjectAlternativeNames:
         - thinstack.io
         - "*.thinstack.io"
+      ValidationMethod: DNS
