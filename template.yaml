@@ -601,7 +601,7 @@ Resources:
   ApiGatewayDomain:
     Type: AWS::ApiGateway::DomainName
     Properties:
-      CertificateArn: 	"arn:aws:acm:us-east-1:181782121001:certificate/25e46328-7571-4adb-841c-254cd60468ff"
+      CertificateArn: "arn:aws:acm:us-east-1:181782121001:certificate/25e46328-7571-4adb-841c-254cd60468ff"
       DomainName: api.thinstack.io
 
   RootCertificate:
