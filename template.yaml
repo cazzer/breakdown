@@ -606,7 +606,7 @@ Resources:
   RootCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: "*:thinstack.io"
+      DomainName: "*.thinstack.io"
       DomainValidationOptions:
       - DomainName: thinstack.io
         ValidationDomain: thinstack.io
