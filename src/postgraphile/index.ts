@@ -21,6 +21,7 @@ const pool = new Pool({
 })
 
 export default async function graphqlHandler(event) {
+  console.log(event)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
   const graphqlInput = JSON.parse(event.body)
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
