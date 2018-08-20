@@ -40,6 +40,14 @@ Resources:
         ApiHandler: !Ref PostgraphileFunction
         ApiRole: !Ref ApiRole
 
+  ApiMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: v1
+      Stage: prod
+      DomainName: !ImportValue volta-emw-domain
+      RestApiId: !Ref Api
+
   PostgraphileFunctionPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -578,3 +586,18 @@ Resources:
       AliasTarget:
         DNSName: !GetAtt WebDistribution.DomainName
         HostedZoneId: Z2FDTNDATAQYW2
+
+  ApiDomain:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref DNS
+      Name: api.thinstack.io.
+      Type: A
+      AliasTarget:
+        DNSName: ApiGatewayDomain.DistributionDomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  ApiGatewayDomain:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: api.thinstack.io
