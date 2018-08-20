@@ -39,7 +39,7 @@
     "webpack-merge": "^4.1.4"
   },
   "resolutions": {
-    "graphql": "0.13.2"
+    "graphql": "0.13.0"
   },
   "scripts": {
     "web:dev": "webpack-dev-server --open",
