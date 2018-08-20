@@ -594,7 +594,7 @@ Resources:
       Name: api.thinstack.io.
       Type: A
       AliasTarget:
-        DNSName: ApiGatewayDomain.DistributionDomainName
+        DNSName: !GetAtt ApiGatewayDomain.DistributionDomainName
         HostedZoneId: Z2FDTNDATAQYW2
 
   ApiGatewayDomain:
