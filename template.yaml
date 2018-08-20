@@ -46,7 +46,7 @@ Resources:
     Properties:
       BasePath: v1
       Stage: prod
-      DomainName: !GetAtt ApiGatewayDomain.DistributionDomainName
+      DomainName: api.thinstack.io
       RestApiId: !Ref Api
 
   PostgraphileFunctionPolicy:
