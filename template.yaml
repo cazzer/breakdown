@@ -39,6 +39,7 @@ Resources:
       Variables:
         ApiHandler: !Ref PostgraphileFunction
         ApiRole: !Ref ApiRole
+        UserPoolId: !Ref UserPool
 
   ApiMapping:
     Type: AWS::ApiGateway::BasePathMapping
