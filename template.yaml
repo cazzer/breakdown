@@ -45,7 +45,7 @@ Resources:
     Properties:
       BasePath: v1
       Stage: prod
-      DomainName: !ImportValue volta-emw-domain
+      DomainName: !GetAtt ApiGatewayDomain.DistributionDomainName
       RestApiId: !Ref Api
 
   PostgraphileFunctionPolicy:
