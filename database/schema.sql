@@ -5,6 +5,7 @@ create schema breakdown;
 create role application_user;
 alter role postgres SET search_path TO breakdown,public;
 alter role application_user SET search_path TO breakdown,public;
+grant application_user to postgres;
 
 create table if not exists breakdown.users_and_groups (
   id uuid default uuid_generate_v4() not null primary key,
