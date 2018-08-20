@@ -601,6 +601,7 @@ Resources:
   ApiGatewayDomain:
     Type: AWS::ApiGateway::DomainName
     Properties:
+      RegionalCertificateArn: !Ref RootCertificate
       DomainName: api.thinstack.io
 
   RootCertificate:
