@@ -608,5 +608,8 @@ Resources:
     Properties:
       DomainName: "*.thinstack.io"
       DomainValidationOptions:
-      - DomainName: thinstack.io
-        ValidationDomain: thinstack.io
+        - DomainName: thinstack.io
+          ValidationDomain: thinstack.io
+      SubjectAlternativeNames:
+        - thinstack.io
+        - "*.thinstack.io"
