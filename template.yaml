@@ -63,6 +63,7 @@ Resources:
               - "events:*"
               - "rds:*"
               - "ec2:*"
+              - "xray:*"
       Roles:
         - !Ref PostgraphileFunctionRole
 
@@ -386,6 +387,7 @@ Resources:
               - "logs:*"
               - "events:*"
               - "rds:*"
+              - "xray:*"
       Roles:
         - !Ref PostConfirmationFunctionRole
 
@@ -432,6 +434,7 @@ Resources:
               - "logs:*"
               - "events:*"
               - "rds:*"
+              - "xray:*"
       Roles:
         - !Ref PreTokenGenerationFunctionRole
 
