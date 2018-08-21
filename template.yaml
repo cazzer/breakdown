@@ -87,7 +87,6 @@ Resources:
       Role: !GetAtt PostgraphileFunctionRole.Arn
       Runtime: nodejs8.10
       Timeout: 30
-      Tracing: Active
       Environment:
         Variables:
           DEBUG: postgraphile*
@@ -411,7 +410,6 @@ Resources:
       Role: !GetAtt PostConfirmationFunctionRole.Arn
       Runtime: nodejs8.10
       Timeout: 30
-      Tracing: Active
       Environment:
         Variables:
           DB_HOST: !GetAtt Database.Endpoint.Address
@@ -458,7 +456,6 @@ Resources:
       Role: !GetAtt PreTokenGenerationFunctionRole.Arn
       Runtime: nodejs8.10
       Timeout: 30
-      Tracing: Active
       Environment:
         Variables:
           DB_HOST: !GetAtt Database.Endpoint.Address
