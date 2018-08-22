@@ -21,7 +21,7 @@ securityDefinitions:
     x-amazon-apigateway-authorizer:
       type: cognito_user_pools
       providerARNs:
-        - arn:aws:cognito-idp:us-west-2:857778067163:userpool/${stageVariables.UserPoolId}
+        - arn:aws:cognito-idp:us-west-2:857778067163:userpool/us-west-2_MoMCntxcd
 
 paths:
   /graphql:
