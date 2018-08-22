@@ -372,7 +372,7 @@ Resources:
             Condition:
               StringEquals:
                 'cognito-identity.amazonaws.com:aud':
-                  Ref: CognitoIdentityPool
+                  Ref: IdentityPool
               'ForAnyValue:StringLike':
                 'cognito-identity.amazonaws.com:amr': authenticated
       Policies:
