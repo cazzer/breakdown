@@ -14,14 +14,17 @@ export default async function preTokenGeneration(event) {
   console.log(roles)
 
   console.log('Building token roles')
-  return {
+  const response = {
     ...event,
     response: {
       claimsOverrideDetails: {
         claimsToAddOrOverride: {
-          roles: [userId, ...roles]
+          roles: [userId, ...roles].join(',')
         }
       }
     }
   }
+
+  console.log(response)
+  return response
 }
