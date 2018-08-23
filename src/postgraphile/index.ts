@@ -22,7 +22,7 @@ const pool = new Pool({
 
 export default async function graphqlHandler(event) {
   console.log(event)
-  console.log(event.requestContext.authorizer.claims)
+  console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
   const roles = get(event, 'requestContext.authorizer.claims.roles', [userId])
   const graphqlInput = JSON.parse(event.body)
