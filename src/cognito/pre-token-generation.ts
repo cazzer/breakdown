@@ -17,7 +17,7 @@ export default async function preTokenGeneration(event) {
   return {
     ...event,
     response: {
-      claimOverrideDetails: {
+      claimsOverrideDetails: {
         claimsToAddOrOverride: {
           roles: [userId, ...roles]
         }
