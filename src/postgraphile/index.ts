@@ -22,7 +22,9 @@ const pool = new Pool({
 
 export default async function graphqlHandler(event) {
   console.log(event)
+  console.log(event.requestContext.authorizer.claims)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
+  const roles = get(event, 'requestContext.authorizer.claims.roles', [userId])
   const graphqlInput = JSON.parse(event.body)
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
   console.time(`${userId}/${graphqlInput.operationName}`)
@@ -32,7 +34,10 @@ export default async function graphqlHandler(event) {
     const result = await withPostGraphileContext(
       {
         pgPool: pool,
-        pgDefaultRole: 'application_user'
+        pgDefaultRole: 'application_user',
+        pgSettings: {
+          'jwt.claims.roles': roles.join(',')
+        }
       },
       async context => {
         return await graphql(
