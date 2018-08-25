@@ -36,8 +36,8 @@ create type permission_role as enum (
 );
 
 create table if not exists breakdown.permissions (
-  item_id uuid references breakdown.items(id),
-  user_or_group_id uuid references breakdown.users_and_groups(id),
+  item_id uuid references breakdown.items(id) on delete cascade,
+  user_or_group_id uuid references breakdown.users_and_groups(id) on delete cascade,
   role permission_role default 'reader' not null,
   time_created timestamp without time zone default now() not null
 );
