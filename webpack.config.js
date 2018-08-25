@@ -4,10 +4,13 @@ const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
-  entry: './src/web',
+  entry: {
+    app: './src/web'
+  },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     historyApiFallback: true,
+    hot: true,
     stats: {
       colors: true,
     },
@@ -17,17 +20,18 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'babel-loader',
+        use: [
+          'babel-loader',
+        ]
       },
       {
-        test: /\.js$/,
-        use: ['source-map-loader'],
-        enforce: 'pre'
+        test: /\.jsx?$/,
+        use: ['babel-loader']
       },
     ]
   },
   resolve: {
-    extensions: ['*', '.ts', '.tsx', '.js']
+    extensions: ['*', '.ts', '.tsx', '.js', '.jsx']
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -38,7 +42,8 @@ module.exports = {
       'IDENTITY_POOL_ID',
       'AWS_REGION',
       'USER_POOL_ID',
-      'USER_POOL_WEB_CLIENT_ID'
+      'USER_POOL_WEB_CLIENT_ID',
+      'GRAPHQL_ENDPOINT'
     ]),
     new HtmlWebpackPlugin({
       template: './src/web/index.html'
@@ -46,6 +51,7 @@ module.exports = {
     new webpack.SourceMapDevToolPlugin({
       filename: '[file].map'
     }),
-    new CleanWebpackPlugin('dist')
+    new CleanWebpackPlugin('dist'),
+    new webpack.HotModuleReplacementPlugin()
   ]
 }

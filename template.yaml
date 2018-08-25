@@ -95,7 +95,6 @@ Resources:
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
-          GRAPHQL_ENDPOINT: https://7wfylv0ax3.execute-api.us-west-2.amazonaws.com/Prod/graphql
 
   ApiPolicy:
     Type: AWS::IAM::Policy
@@ -256,6 +255,8 @@ Resources:
             Value: !Ref UserPool
           - Name: USER_POOL_WEB_CLIENT_ID
             Value: !Ref UserPoolClient
+          - Name: GRAPHQL_ENDPOINT
+            Value: "https://api.thinstack.io/v1/graphql"
       ServiceRole: !Ref CodebuildRole
 
   Pipeline:
