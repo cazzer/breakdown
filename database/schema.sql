@@ -95,6 +95,20 @@ for insert
 to application_user
 with check (true);
 
+-- allows new items to be `returning`ed
+create policy new_item_returning
+on breakdown.items
+as permissive
+for select
+to application_user
+using (
+  not exists(
+    select item_id
+    from breakdown.permissions
+    where item_id = items.id
+  )
+);
+
 -- allows access to the permissions themselves
 create policy permission_owner
 on breakdown.permissions
