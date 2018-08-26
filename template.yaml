@@ -599,6 +599,7 @@ Resources:
               OriginAccessIdentity: ""
         ViewerCertificate:
           AcmCertificateArn: !Ref RootCertificate
+          SslSupportMethod: sni-only
 
   DNS:
     Type: AWS::Route53::HostedZone
