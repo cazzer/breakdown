@@ -598,7 +598,7 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: ""
         ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+          AcmCertificateArn: !Ref RootCertificate
 
   DNS:
     Type: AWS::Route53::HostedZone
