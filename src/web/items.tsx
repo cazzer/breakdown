@@ -29,7 +29,7 @@ const ItemsList = (props) => {
       <List component="nav">
         {items.data.allItems.nodes.map(item => {
           return props.match.params.itemId === item.id ? (
-            <ListItem>
+            <ListItem key={item.id}>
                 <EditItem oldItem={item} />
             </ListItem>
           ) : (
