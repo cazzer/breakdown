@@ -589,7 +589,7 @@ Resources:
           ForwardedValues:
             QueryString: true
           TargetOriginId: !Sub S3-thinstack.io
-          ViewerProtocolPolicy: allow-all
+          ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: true
         Origins:
