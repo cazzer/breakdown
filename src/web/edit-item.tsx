@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import gql from 'graphql-tag'
+import { get } from 'lodash'
 import React, { Component } from 'react'
 import { Mutation } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
@@ -36,10 +37,13 @@ const styles = theme => ({
   },
 })
 
-class EditItem extends Component {
-  state = {
-    label: '',
-    value: ''
+class EditItemForm extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      label: get(props, ['oldItem', 'label'], ''),
+      value: get(props, ['oldItem', 'value'], ''),
+    }
   }
 
   handleChange = name => event => {
@@ -49,9 +53,12 @@ class EditItem extends Component {
   }
 
   handleSave = () => {
-    this.props.createItem({
+    this.props.upsert({
       variables: {
-        itemInput: {
+        itemInput: get(this.props, ['oldItem', 'id']) ? {
+          id: this.props.oldItem.id,
+          itemPatch: this.state
+        }: {
           item: this.state
         }
       }
@@ -114,9 +121,9 @@ class EditItem extends Component {
   }
 }
 
-const StyledEditItem = withStyles(styles)(EditItem)
+const StyledEditItem = withStyles(styles)(EditItemForm)
 
-const mutation = gql`
+const createItem = gql`
 mutation($itemInput: CreateItemInput!) {
   createItem(input: $itemInput) {
     item {
@@ -127,10 +134,29 @@ mutation($itemInput: CreateItemInput!) {
 }
 `
 
-export default () => (
-  <Mutation mutation={mutation}>
+export const CreateItem = () => (
+  <Mutation mutation={createItem}>
     {(createItemMutation) => (
-      <StyledEditItem createItem={createItemMutation} />
+      <StyledEditItem upsert={createItemMutation} />
+    )}
+  </Mutation>
+)
+
+const updateItem = gql`
+mutation updateItem($itemInput: UpdateItemByIdInput!) {
+  updateItemById(input: $itemInput) {
+    item {
+      label,
+      value
+    }
+  }
+}
+`
+
+export const EditItem = (props) => (
+  <Mutation mutation={updateItem}>
+    {(editItemMutation) => (
+      <StyledEditItem upsert={editItemMutation} {...props} />
     )}
   </Mutation>
 )

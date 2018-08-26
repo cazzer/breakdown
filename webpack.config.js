@@ -14,27 +14,31 @@ module.exports = {
       colors: true,
     },
   },
+  devtool: 'eval-source-map',
   mode: 'development',
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.(j|t)sx?$/,
         use: [
           'babel-loader',
         ]
       },
       {
-        test: /\.jsx?$/,
-        use: ['babel-loader']
-      },
+        test: /\.css/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      }
     ]
   },
   resolve: {
     extensions: ['*', '.ts', '.tsx', '.js', '.jsx']
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: '[name].bundle.js',
+    publicPath: '/'
   },
   plugins: [
     new webpack.EnvironmentPlugin([
@@ -47,10 +51,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/web/index.html'
     }),
-    new webpack.SourceMapDevToolPlugin({
-      filename: '[file].map'
-    }),
-    new CleanWebpackPlugin('dist'),
-    new webpack.HotModuleReplacementPlugin()
+    new CleanWebpackPlugin('dist')
   ]
 }

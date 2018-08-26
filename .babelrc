@@ -1,17 +1,22 @@
 {
-    "presets": [
-      [
-        "@babel/env", {
-          "targets": {
-            "node": "8.10"
-          }
+  "env": {
+    "development" : {
+      "compact": false
+    }
+  },
+  "presets": [
+    [
+      "@babel/env", {
+        "targets": {
+          "node": "8.10"
         }
-      ],
-      "@babel/preset-typescript",
-      "@babel/react"
+      }
     ],
-    "plugins": [
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-proposal-object-rest-spread"
-    ]
+    "@babel/preset-typescript",
+    "@babel/react"
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread"
+  ]
 }

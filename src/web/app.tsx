@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
-import { BrowserRouter, Route } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Redirect,
+  Route
+} from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
 
@@ -21,22 +25,28 @@ Amplify.configure({
 })
 
 const App = (props) => {
+  const sessionToken = get(props, 'authData.signInUserSession.idToken.jwtToken')
+
   const client = new ApolloClient({
     uri: process.env.GRAPHQL_ENDPOINT,
     headers: {
-      Authorization: get(props, 'authData.signInUserSession.idToken.jwtToken')
+      Authorization: sessionToken
     }
   })
+
   return (
-    <ApolloProvider client={client}>
-      <BrowserRouter>
-        <div>
-          <Route path="/login" component={Authenticator} />
-          <Route path="/register" component={Login} />
-          <Route path="/home" component={SplitView} />
-        </div>
-      </BrowserRouter>
-    </ApolloProvider>
+    <BrowserRouter>
+      <div>
+        {!sessionToken
+          && <Redirect to="/login" />
+        }
+        <Route path="/login" component={Authenticator} />
+        <Route path="/register" component={Login} />
+        <ApolloProvider client={client}>
+          <Route path="/home/:itemId?" component={SplitView} />
+        </ApolloProvider>
+      </div>
+    </BrowserRouter>
   )
 }
 

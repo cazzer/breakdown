@@ -3,11 +3,15 @@ import { get } from 'lodash'
 import { withStyles } from '@material-ui/core/styles'
 import React from 'react'
 import { Query } from 'react-apollo'
+import { Link, withRouter } from 'react-router-dom'
+import { compose } from 'recompose'
 import {
   List,
   ListItem,
   ListItemText,
 } from '@material-ui/core'
+
+import { EditItem } from './edit-item'
 
 const styles = theme => ({
   root: {
@@ -23,20 +27,31 @@ const ItemsList = (props) => {
   return (
     <div className={classes.root}>
       <List component="nav">
-        {items.data.allItems.nodes.map(item => (
-          <ListItem key={item.id} >
-            <ListItemText
-              primary={item.label}
-              secondary={item.value}
-            />
-          </ListItem>
-        ))}
+        {items.data.allItems.nodes.map(item => {
+          return props.match.params.itemId === item.id ? (
+            <ListItem>
+                <EditItem oldItem={item} />
+            </ListItem>
+          ) : (
+            <Link to={`/home/${item.id}`} key={item.id}>
+              <ListItem button>
+                <ListItemText
+                  primary={item.label}
+                  secondary={item.value}
+                />
+              </ListItem>
+            </Link>
+          )
+        })}
       </List>
     </div>
   )
 }
 
-const StyledItemsList = withStyles(styles)(ItemsList)
+const StyledItemsList = compose(
+  withRouter,
+  withStyles(styles)
+)(ItemsList)
 
 const query = gql`
 query AllItems {
