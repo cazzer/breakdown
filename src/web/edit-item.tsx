@@ -1,20 +1,18 @@
 import classNames from 'classnames'
 import gql from 'graphql-tag'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import React, { Component } from 'react'
 import { Mutation } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
-import {
-  Button,
-  FormControl,
-  Grid,
-  Input,
-  TextField,
-  InputAdornment,
-  IconButton,
-  InputLabel,
-  Paper
-} from '@material-ui/core'
+import Button from '@material-ui/core/Button'
+import FormControl from '@material-ui/core/FormControl'
+import Grid from '@material-ui/core/Grid'
+import Input from '@material-ui/core/Input'
+import TextField from '@material-ui/core/TextField'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import IconButton from '@material-ui/core/IconButton'
+import InputLabel from '@material-ui/core/InputLabel'
+import Paper from '@material-ui/core/Paper'
 
 import { allItemsQuery } from './items'
 

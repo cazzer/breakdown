@@ -1,3 +1,4 @@
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
@@ -36,6 +37,11 @@ module.exports = {
   resolve: {
     extensions: ['*', '.ts', '.tsx', '.js', '.jsx']
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
+  },
   output: {
     filename: '[name].bundle.js',
     publicPath: '/'
@@ -51,6 +57,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/web/index.html'
     }),
+    new BundleAnalyzerPlugin(),
     new CleanWebpackPlugin('dist')
   ]
 }

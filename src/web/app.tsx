@@ -8,9 +8,8 @@ import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
 
 import Amplify from '@aws-amplify/core'
-import Auth from '@aws-amplify/auth'
 import { Authenticator, withAuthenticator } from 'aws-amplify-react'
-import { get } from 'lodash'
+import get from 'lodash/get'
 
 import Login from './login/login'
 import SplitView from './split-view'

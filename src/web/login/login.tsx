@@ -3,20 +3,15 @@ import classNames from 'classnames'
 import React, { Component } from 'react'
 import { compose } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
-import {
-  Button,
-  FormControl,
-  Grid,
-  Input,
-  InputAdornment,
-  IconButton,
-  InputLabel,
-  Paper
-} from '@material-ui/core'
-import {
-  Visibility,
-  VisibilityOff
-} from '@material-ui/icons'
+import Button from '@material-ui/core/Button'
+import FormControl from '@material-ui/core/FormControl'
+import Grid from '@material-ui/core/Grid'
+import Input from '@material-ui/core/Input'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import IconButton from '@material-ui/core/IconButton'
+import InputLabel from '@material-ui/core/InputLabel'
+import Visibility from '@material-ui/icons/Visibility'
+import VisibilityOff from '@material-ui/icons/VisibilityOff'
 
 const styles = theme => ({
   root: {

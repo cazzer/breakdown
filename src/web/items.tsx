@@ -1,17 +1,15 @@
 import gql from 'graphql-tag'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { withStyles } from '@material-ui/core/styles'
 import React from 'react'
 import { Query } from 'react-apollo'
 import { Link, withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
-import {
-  IconButton,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-} from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import DeleteItem from './delete-item'

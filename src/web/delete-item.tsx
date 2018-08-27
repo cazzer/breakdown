@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import React from 'react'
 import { Mutation } from 'react-apollo'
-import { IconButton } from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import { allItemsQuery } from './items'
