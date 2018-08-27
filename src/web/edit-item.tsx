@@ -31,7 +31,6 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
   },
   textField: {
-    flexBasis: 200,
   },
   button: {
     margin: theme.spacing.unit,
@@ -64,20 +63,27 @@ class EditItemForm extends Component {
         }
       }
     })
+
+    if (!get(this.props, ['oldItem', 'id'])) {
+      this.setState({
+        label: '',
+        value: ''
+      })
+    }
   }
 
   render() {
     const { classes } = this.props
     return (
       <Grid container>
-        <Grid item xs={10} md={6}>
+        <Grid item xs={12}>
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <FormControl
                 className={classNames(classes.margin, classes.textField)}
                 fullWidth
               >
-                <InputLabel htmlFor="username">label</InputLabel>
+                <InputLabel htmlFor="label">label</InputLabel>
                 <Input
                   id="label"
                   onChange={this.handleChange('label')}
@@ -91,19 +97,20 @@ class EditItemForm extends Component {
                 className={classNames(classes.margin, classes.textField)}
                 fullWidth
               >
-                <InputLabel htmlFor="username">value</InputLabel>
-                <Input
-                  id="label"
+                <TextField
+                  id="value"
+                  label="value"
                   onChange={this.handleChange('value')}
-                  type="text"
+                  multiline
+                  rowsMax={6}
                   value={this.state.value}
                 />
               </FormControl>
             </Grid>
           </Grid>
           <Grid container spacing={8}>
-            <Grid item xs={6} />
-            <Grid item xs={6}>
+            <Grid item xs={6} sm={8} md={9} lg={10} xl={11} />
+            <Grid item xs={6} sm={4} md={3} lg={2} xl={1}>
               <Button
                 className={classes.button}
                 color="primary"
