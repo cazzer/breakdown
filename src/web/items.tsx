@@ -6,11 +6,15 @@ import { Query } from 'react-apollo'
 import { Link, withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
 import {
+  IconButton,
   List,
   ListItem,
+  ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
 
+import DeleteItem from './delete-item'
 import { EditItem } from './edit-item'
 
 const styles = theme => ({
@@ -39,6 +43,9 @@ const ItemsList = (props) => {
                   primary={item.label}
                   secondary={item.value}
                 />
+                <ListItemSecondaryAction>
+                  <DeleteItem id={item.id} />
+                </ListItemSecondaryAction>
               </ListItem>
             </Link>
           )
@@ -53,7 +60,7 @@ const StyledItemsList = compose(
   withStyles(styles)
 )(ItemsList)
 
-const query = gql`
+export const allItemsQuery = gql`
 query AllItems {
   allItems {
     nodes {
@@ -66,7 +73,7 @@ query AllItems {
 `
 
 export default () => (
-  <Query query={query}>
+  <Query query={allItemsQuery}>
     {(itemsQuery) => (
       <StyledItemsList items={itemsQuery} />
     )}

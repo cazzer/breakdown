@@ -16,6 +16,7 @@ import {
   Paper
 } from '@material-ui/core'
 
+import { allItemsQuery } from './items'
 
 const styles = theme => ({
   root: {
@@ -127,6 +128,7 @@ const createItem = gql`
 mutation($itemInput: CreateItemInput!) {
   createItem(input: $itemInput) {
     item {
+      id,
       label,
       value
     }
@@ -135,7 +137,26 @@ mutation($itemInput: CreateItemInput!) {
 `
 
 export const CreateItem = () => (
-  <Mutation mutation={createItem}>
+  <Mutation
+    mutation={createItem}
+    update={(cache, result) => {
+      const data = cache.readQuery({
+        query: allItemsQuery
+      })
+      cache.writeQuery({
+        query: allItemsQuery,
+        data: {
+          allItems: {
+            ...data.allItems,
+            nodes: [
+              result.data.createItem.item,
+              ...data.allItems.nodes
+            ]
+          }
+        }
+      })
+    }}
+  >
     {(createItemMutation) => (
       <StyledEditItem upsert={createItemMutation} />
     )}
@@ -154,7 +175,30 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
 `
 
 export const EditItem = (props) => (
-  <Mutation mutation={updateItem}>
+  <Mutation
+    mutation={updateItem}
+    update={(cache, result) => {
+      const data = cache.readQuery({
+        query: allItemsQuery
+      })
+      cache.writeQuery({
+        query: allItemsQuery,
+        data: {
+          allItems: {
+            ...data.allItems,
+            nodes: data.allItems.nodes.map(item => (
+              item.id === props.oldItem.id
+                ? {
+                   ...item,
+                   ...result.data.updateItemById.item
+                }
+                : item
+            ))
+          }
+        }
+      })
+    }}
+  >
     {(editItemMutation) => (
       <StyledEditItem upsert={editItemMutation} {...props} />
     )}
