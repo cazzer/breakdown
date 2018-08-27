@@ -57,7 +57,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/web/index.html'
     }),
-    new BundleAnalyzerPlugin(),
     new CleanWebpackPlugin('dist')
   ]
 }
