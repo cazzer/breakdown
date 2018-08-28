@@ -5,12 +5,10 @@ import React from 'react'
 import { Query } from 'react-apollo'
 import { Link, withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
-import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
-import DeleteIcon from '@material-ui/icons/Delete'
 
 import DeleteItem from './delete-item'
 import { EditItem } from './edit-item'
@@ -27,7 +25,7 @@ const ItemsList = (props) => {
   if (!get(items, ['data', 'allItems', 'nodes'])) return null
   return (
     <div className={classes.root}>
-      <List component="nav">
+      <List>
         {items.data.allItems.nodes.map(item => {
           return props.match.params.itemId === item.id ? (
             <ListItem key={item.id}>
@@ -58,19 +56,27 @@ const StyledItemsList = compose(
 )(ItemsList)
 
 export const allItemsQuery = gql`
-query AllItems {
-  allItems {
+query AllItems($condition: ItemCondition!) {
+  allItems(condition: $condition) {
     nodes {
       id,
       label,
-      value
+      value,
+      parentId
     }
   }
 }
 `
 
-export default () => (
-  <Query query={allItemsQuery}>
+export default (props: Object) => (
+  <Query
+    variables={{
+      condition: {
+        parentId: props.parentId || null
+      }
+    }}
+    query={allItemsQuery}
+  >
     {(itemsQuery) => (
       <StyledItemsList items={itemsQuery} />
     )}

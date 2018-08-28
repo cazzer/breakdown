@@ -25,6 +25,7 @@ create table if not exists breakdown.items (
   id uuid default uuid_generate_v4() not null primary key,
   label text,
   location_created geography(pointz),
+  parent_id uuid references breakdown.items(id) on delete set null,
   public boolean default false,
   time_created timestamp without time zone default now() not null,
   value text

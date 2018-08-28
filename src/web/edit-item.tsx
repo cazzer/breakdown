@@ -57,7 +57,10 @@ class EditItemForm extends Component {
           id: this.props.oldItem.id,
           itemPatch: this.state
         }: {
-          item: this.state
+          item: {
+            ...this.props.oldItem,
+            ...this.state
+          }
         }
       }
     })
@@ -130,26 +133,37 @@ class EditItemForm extends Component {
 const StyledEditItem = withStyles(styles)(EditItemForm)
 
 const createItem = gql`
-mutation($itemInput: CreateItemInput!) {
+mutation createItem($itemInput: CreateItemInput!) {
   createItem(input: $itemInput) {
     item {
       id,
       label,
+      parentId,
       value
     }
   }
 }
 `
 
-export const CreateItem = () => (
+export const CreateItem = (props) => (
   <Mutation
     mutation={createItem}
     update={(cache, result) => {
       const data = cache.readQuery({
-        query: allItemsQuery
+        query: allItemsQuery,
+        variables: {
+          condition: {
+            parentId: get(props, ['oldItem', 'parentId'])
+          }
+        }
       })
       cache.writeQuery({
         query: allItemsQuery,
+        variables: {
+          condition: {
+            parentId: get(props, ['oldItem', 'parentId'])
+          }
+        },
         data: {
           allItems: {
             ...data.allItems,
@@ -163,7 +177,7 @@ export const CreateItem = () => (
     }}
   >
     {(createItemMutation) => (
-      <StyledEditItem upsert={createItemMutation} />
+      <StyledEditItem upsert={createItemMutation} {...props} />
     )}
   </Mutation>
 )
