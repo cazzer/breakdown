@@ -19,25 +19,25 @@ const styles = theme => ({
 function SplitView(props: ReactPropTypes) {
   const { classes, match } = props
 
-  const itemId = match.params.itemId
+  const { childId, parentId } = match.params
 
   return (
     <div className={classes.root}>
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <CreateItem oldItem={{ parentId: itemId }} />
+            <CreateItem oldItem={{ parentId: childId }} />
           </Paper>
         </Grid>
-        <Grid item xs={itemId ? 6 : 12}>
+        <Grid item xs={childId ? 6 : 12}>
           <Paper className={classes.paper}>
-            <ItemList />
+            <ItemList parentId={parentId} />
           </Paper>
         </Grid>
-        {itemId && (
-          <Grid item xs={itemId ? 6 : 12}>
+        {childId && (
+          <Grid item xs={childId ? 6 : 12}>
             <Paper className={classes.paper}>
-              <ItemList parentId={itemId} />
+              <ItemList parentId={childId} />
             </Paper>
           </Grid>
         )}

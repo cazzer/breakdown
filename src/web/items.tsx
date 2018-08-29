@@ -45,12 +45,15 @@ const ItemsList = (props) => {
     <div className={classes.root}>
       <List>
         {itemNodes.map(item => {
-          return props.match.params.itemId === item.id ? (
+          return props.match.params.childId === item.id ? (
             <ListItem key={item.id}>
                 <EditItem oldItem={item} />
             </ListItem>
           ) : (
-            <Link to={`/home/${item.id}`} key={item.id}>
+            <Link
+              to={`/home/${item.parentId ? item.parentId : 'root'}/${item.id}`}
+              key={item.id}
+            >
               <ListItem button>
                 <ListItemText
                   primary={item.label}
@@ -90,7 +93,7 @@ export default (props: Object) => (
   <Query
     variables={{
       condition: {
-        parentId: props.parentId || null
+        parentId: (props.parentId !== 'root') ? props.parentId : null
       }
     }}
     query={allItemsQuery}
