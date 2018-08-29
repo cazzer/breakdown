@@ -22,11 +22,29 @@ const styles = theme => ({
 
 const ItemsList = (props) => {
   const { classes, items } = props
-  if (!get(items, ['data', 'allItems', 'nodes'])) return null
+  const itemNodes = get(items, ['data', 'allItems', 'nodes'])
+
+  if (items.loading) {
+    return (
+      <div className={classes.root}>
+        <p>Loading...</p>
+      </div>
+    )
+  }
+
+  if (!itemNodes) return null
+  if (!itemNodes.length) {
+    return (
+    <div className={classes.root}>
+      <p>Nothing here</p>
+    </div>
+    )
+  }
+
   return (
     <div className={classes.root}>
       <List>
-        {items.data.allItems.nodes.map(item => {
+        {itemNodes.map(item => {
           return props.match.params.itemId === item.id ? (
             <ListItem key={item.id}>
                 <EditItem oldItem={item} />
