@@ -22,6 +22,8 @@ Amplify.configure({
 })
 
 const App = (props: Object) => {
+  console.log('Application Rendered')
+  console.log(props)
   const sessionToken = get(props, 'authData.signInUserSession.idToken.jwtToken')
 
   const client = new ApolloClient({
@@ -36,7 +38,7 @@ const App = (props: Object) => {
       <div>
         <Route path="/login" component={Authenticator} />
         <ApolloProvider client={client}>
-          <Route path="/home/:itemId?" component={SplitView} />
+          <Route path="/home/:parentId/:childId?" component={SplitView} />
         </ApolloProvider>
       </div>
     </BrowserRouter>
