@@ -14,6 +14,7 @@
     "pg-pool": "^2.0.3",
     "postgraphile": "^4.0.0-rc.2",
     "prop-types": "^15.6.2",
+    "query-string": "^6.1.0",
     "querystring": "^0.2.0",
     "react": "^16.4.2",
     "react-apollo": "^2.1.11",

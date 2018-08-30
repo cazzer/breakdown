@@ -160,3 +160,12 @@ after insert
 on breakdown.users_and_groups
 for each row
 execute procedure create_role();
+
+create or replace function search(term text)
+returns setof breakdown.items
+as $search$
+	select *
+	from items
+	where label ~* term
+	or value ~* term;
+$search$ language sql immutable;

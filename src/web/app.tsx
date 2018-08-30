@@ -10,6 +10,7 @@ import Amplify from '@aws-amplify/core'
 import { Authenticator, withAuthenticator } from 'aws-amplify-react'
 import get from 'lodash/get'
 
+import Search from './search'
 import SplitView from './split-view'
 
 Amplify.configure({
@@ -39,6 +40,7 @@ const App = (props: Object) => {
         <Route path="/login" component={Authenticator} />
         <ApolloProvider client={client}>
           <Route path="/home/:parentId/:childId?" component={SplitView} />
+          <Route path="/search" component={Search} />
         </ApolloProvider>
       </div>
     </BrowserRouter>
