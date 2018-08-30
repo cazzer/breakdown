@@ -9,10 +9,7 @@ import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
 import Input from '@material-ui/core/Input'
 import TextField from '@material-ui/core/TextField'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
 import InputLabel from '@material-ui/core/InputLabel'
-import Paper from '@material-ui/core/Paper'
 
 import { allItemsQuery } from './items'
 
