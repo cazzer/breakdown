@@ -8,6 +8,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
 import { withStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
 import { Query } from 'react-apollo'
 import React from 'react'
@@ -68,12 +69,12 @@ const ConnectedItemList = ({ term }) => {
     >
       {(searchResults) => {
         if (searchResults.loading) {
-          return <div>Loading...</div>
+          return <Typography>Loading...</Typography>
         }
 
         const results = searchResults.data.search.nodes
         if (!results.length) {
-          return <div>Nothing to see here.</div>
+          return <Typography>Nothing to see here.</Typography>
         }
 
         return <ItemList items={results} />
@@ -111,8 +112,10 @@ class Search extends React.Component {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            {query.length < 3 ? (
-              <div>Search term must be three characters long</div>
+            {query.length < 2 ? (
+              <Typography>
+                Start typing to start searching...
+              </Typography>
             ) : (
               <ConnectedItemList term={query} />
             )}

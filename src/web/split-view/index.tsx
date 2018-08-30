@@ -20,13 +20,16 @@ function SplitView(props: ReactPropTypes) {
   const { classes, match } = props
 
   const { childId, parentId } = match.params
+  const createItemParentId = childId || (
+    parentId !== 'root' ? parentId : null
+  )
 
   return (
     <div className={classes.root}>
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <CreateItem oldItem={{ parentId: childId }} />
+            <CreateItem oldItem={{ parentId: createItemParentId }} />
           </Paper>
         </Grid>
         <Grid item xs={childId ? 6 : 12}>

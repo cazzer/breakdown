@@ -8,7 +8,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import { allItemsQuery } from './items'
 
 class DeleteItem extends React.Component {
-  handleDeleteClick = () => {
+  handleDeleteClick = event => {
     this.props.deleteItem({
       variables: {
         itemId: {

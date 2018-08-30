@@ -9,6 +9,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
+import Typography from '@material-ui/core/Typography'
 
 import DeleteItem from './delete-item'
 import { EditItem } from './edit-item'
@@ -27,7 +28,7 @@ const ItemsList = (props) => {
   if (items.loading) {
     return (
       <div className={classes.root}>
-        <p>Loading...</p>
+        <Typography>Loading...</Typography>
       </div>
     )
   }
@@ -36,7 +37,7 @@ const ItemsList = (props) => {
   if (!itemNodes.length) {
     return (
     <div className={classes.root}>
-      <p>Nothing here</p>
+      <Typography>Nothing here</Typography>
     </div>
     )
   }
@@ -50,20 +51,19 @@ const ItemsList = (props) => {
                 <EditItem oldItem={item} />
             </ListItem>
           ) : (
-            <Link
-              to={`/home/${item.parentId ? item.parentId : 'root'}/${item.id}`}
-              key={item.id}
-            >
-              <ListItem button>
+            <ListItem button key={item.id}>
+              <Link
+                to={`/home/${item.parentId ? item.parentId : 'root'}/${item.id}`}
+              >
                 <ListItemText
                   primary={item.label}
                   secondary={item.value}
                 />
-                <ListItemSecondaryAction>
-                  <DeleteItem id={item.id} />
-                </ListItemSecondaryAction>
-              </ListItem>
-            </Link>
+              </Link>
+              <ListItemSecondaryAction>
+                <DeleteItem id={item.id} />
+              </ListItemSecondaryAction>
+            </ListItem>
           )
         })}
       </List>
