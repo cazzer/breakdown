@@ -45,6 +45,43 @@ const ItemList = ({ items }) => (
   </List>
 )
 
+const searchItems = gql`
+query Search($input: String!) {
+  search(term: $input) {
+    nodes {
+      id,
+      label,
+      parentId,
+      value
+    }
+  }
+}
+`
+
+const ConnectedItemList = ({ term }) => {
+  return (
+    <Query
+      query={searchItems}
+      variables={{
+        input: term
+      }}
+    >
+      {(searchResults) => {
+        if (searchResults.loading) {
+          return <div>Loading...</div>
+        }
+
+        const results = searchResults.data.search.nodes
+        if (!results.length) {
+          return <div>Nothing to see here.</div>
+        }
+
+        return <ItemList items={results} />
+      }}
+    </Query>
+  )
+}
+
 class Search extends React.Component {
   handleSearch = event => {
     this.props.history.replace({
@@ -54,7 +91,7 @@ class Search extends React.Component {
   }
 
   render() {
-    const { classes, results } = this.props
+    const { classes } = this.props
     const query = queryString.parse(this.props.location.search).q || ''
     return (
       <div className={classes.root}>
@@ -74,10 +111,10 @@ class Search extends React.Component {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            {!results.loading ? (
-              <ItemList items={results.data.search.nodes} />
+            {query.length < 3 ? (
+              <div>Search term must be three characters long</div>
             ) : (
-              <div>Nothing here yet.</div>
+              <ConnectedItemList term={query} />
             )}
           </Grid>
         </Grid>
@@ -86,37 +123,5 @@ class Search extends React.Component {
   }
 }
 
-const StyledSearch = withStyles(styles)(Search)
+export default withStyles(styles)(Search)
 
-const searchItems = gql`
-query Search($input: String!) {
-  search(term: $input) {
-    nodes {
-      id,
-      label,
-      parentId,
-      value
-    }
-  }
-}
-`
-
-export default (props) => {
-  const term = queryString.parse(props.location.search).q
-  return (
-    <Query
-      query={searchItems}
-      variables={{
-        input: term
-      }}
-    >
-      {(searchResults) => (
-        <StyledSearch
-          results={searchResults}
-          term={term}
-          {...props}
-        />
-      )}
-    </Query>
-  )
-}
