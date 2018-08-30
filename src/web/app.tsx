@@ -5,7 +5,6 @@ import {
 } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
-
 import Amplify from '@aws-amplify/core'
 import { Authenticator, withAuthenticator } from 'aws-amplify-react'
 import get from 'lodash/get'
