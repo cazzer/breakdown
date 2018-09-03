@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { CreateItem } from '../edit-item'
 import ItemList from '../items'
-import SearchLink from '../search-link'
+import SearchLink from '../search/link'
 
 const styles = theme => ({
   root: {

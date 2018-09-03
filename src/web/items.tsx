@@ -83,7 +83,11 @@ query AllItems($condition: ItemCondition!) {
       id,
       label,
       value,
-      parentId
+      parentId,
+      itemByParentId {
+        id,
+        label
+      }
     }
   }
 }

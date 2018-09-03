@@ -9,7 +9,7 @@ import Amplify from '@aws-amplify/core'
 import { Authenticator, withAuthenticator } from 'aws-amplify-react'
 import get from 'lodash/get'
 
-import Search from './search'
+import Search from './search/view'
 import SplitView from './split-view'
 
 Amplify.configure({

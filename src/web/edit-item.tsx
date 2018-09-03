@@ -12,6 +12,7 @@ import TextField from '@material-ui/core/TextField'
 import InputLabel from '@material-ui/core/InputLabel'
 
 import { allItemsQuery } from './items'
+import SearchDropDown from './search/dropdown'
 
 const styles = theme => ({
   root: {
@@ -47,6 +48,12 @@ class EditItemForm extends Component {
     })
   }
 
+  handleParentUpdate = (parentId) => {
+    this.setState({
+      parentId
+    })
+  }
+
   handleSave = () => {
     this.props.upsert({
       variables: {
@@ -78,7 +85,7 @@ class EditItemForm extends Component {
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <FormControl
-                className={classNames(classes.margin, classes.textField)}
+                className={classNames(classes.textField)}
                 fullWidth
               >
                 <InputLabel htmlFor="label">label</InputLabel>
@@ -92,7 +99,7 @@ class EditItemForm extends Component {
             </Grid>
             <Grid item xs={12}>
               <FormControl
-                className={classNames(classes.margin, classes.textField)}
+                className={classNames(classes.textField)}
                 fullWidth
               >
                 <TextField
@@ -107,7 +114,12 @@ class EditItemForm extends Component {
             </Grid>
           </Grid>
           <Grid container spacing={8}>
-            <Grid item xs={6} sm={8} md={9} lg={10} xl={11} />
+            <Grid item xs={6} sm={8} md={9} lg={10} xl={11}>
+              <SearchDropDown
+                onUpdate={this.handleParentUpdate}
+                selectedItem={get(this.props.oldItem, 'itemByParentId')}
+              />
+            </Grid>
             <Grid item xs={6} sm={4} md={3} lg={2} xl={1}>
               <Button
                 className={classes.button}
@@ -184,6 +196,7 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
   updateItemById(input: $itemInput) {
     item {
       label,
+      parentId,
       value
     }
   }
@@ -195,10 +208,20 @@ export const EditItem = (props) => (
     mutation={updateItem}
     update={(cache, result) => {
       const data = cache.readQuery({
-        query: allItemsQuery
+        query: allItemsQuery,
+        variables: {
+          condition: {
+            parentId: get(props, ['oldItem', 'parentId'])
+          }
+        }
       })
       cache.writeQuery({
         query: allItemsQuery,
+        variables: {
+          condition: {
+            parentId: get(props, ['oldItem', 'parentId'])
+          }
+        },
         data: {
           allItems: {
             ...data.allItems,
