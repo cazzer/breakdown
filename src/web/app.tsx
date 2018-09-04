@@ -4,11 +4,11 @@ import {
   Route
 } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
-import ApolloClient from 'apollo-boost'
 import Amplify from '@aws-amplify/core'
 import { Authenticator, withAuthenticator } from 'aws-amplify-react'
 import get from 'lodash/get'
 
+import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './split-view'
 
@@ -26,7 +26,7 @@ const App = (props: Object) => {
   console.log(props)
   const sessionToken = get(props, 'authData.signInUserSession.idToken.jwtToken')
 
-  const client = new ApolloClient({
+  const client = createClient({
     uri: process.env.GRAPHQL_ENDPOINT,
     headers: {
       Authorization: sessionToken
