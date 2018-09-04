@@ -207,35 +207,84 @@ export const EditItem = (props) => (
   <Mutation
     mutation={updateItem}
     update={(cache, result) => {
-      const data = cache.readQuery({
+      const oldParentId = get(props.oldItem, 'parentId')
+      const newParentId = result.data.updateItemById.item.parentId
+      const oldParentItems = cache.readQuery({
         query: allItemsQuery,
         variables: {
           condition: {
-            parentId: get(props, ['oldItem', 'parentId'])
+            parentId: oldParentId
           }
         }
       })
-      cache.writeQuery({
-        query: allItemsQuery,
-        variables: {
-          condition: {
-            parentId: get(props, ['oldItem', 'parentId'])
+
+      if (newParentId === oldParentId) {
+        cache.writeQuery({
+          query: allItemsQuery,
+          variables: {
+            condition: {
+              parentId: oldParentId
+            }
+          },
+          data: {
+            allItems: {
+              ...oldParentItems.allItems,
+              nodes: oldParentItems.allItems.nodes.map(item => (
+                item.id === props.oldItem.id
+                  ? {
+                    ...item,
+                    ...result.data.updateItemById.item
+                  }
+                  : item
+              ))
+            }
           }
-        },
-        data: {
-          allItems: {
-            ...data.allItems,
-            nodes: data.allItems.nodes.map(item => (
-              item.id === props.oldItem.id
-                ? {
-                   ...item,
-                   ...result.data.updateItemById.item
-                }
-                : item
-            ))
+        })
+      } else {
+        cache.writeQuery({
+          query: allItemsQuery,
+          variables: {
+            condition: {
+              parentId: oldParentId
+            }
+          },
+          data: {
+            allItems: {
+              ...oldParentItems.allItems,
+              nodes: oldParentItems.allItems.nodes.filter(item => (
+                item.id !== props.oldItem.id
+              ))
+            }
           }
-        }
-      })
+        })
+
+        const newParentItems = cache.readQuery({
+          query: allItemsQuery,
+          variables: {
+            condition: {
+              parentId: newParentId
+            }
+          }
+        })
+
+        cache.writeQuery({
+          query: allItemsQuery,
+          variables: {
+            condition: {
+              parentId: newParentId
+            }
+          },
+          data: {
+            allItems: {
+              ...newParentItems.allItems,
+              nodes: [
+                result.data.updateItemById.item,
+                ...newParentItems.allItems.nodes
+              ]
+            }
+          }
+        })
+      }
     }}
   >
     {(editItemMutation) => (
