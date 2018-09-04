@@ -2,19 +2,19 @@ import AWSXRay from 'aws-xray-sdk-core'
 import capturePostgres from 'aws-xray-sdk-postgres'
 import get from 'lodash/get'
 import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile'
-import Pool from 'pg-pool'
+import Pg from 'pg'
 import { graphql } from 'graphql'
 
 import * as config from '../config'
 
-const CapturedPool = capturePostgres(Pool)
+const pg = capturePostgres(Pg)
 
 const postgraphileSchemaPromise = createPostGraphileSchema(
   config.DB_ENDPOINT,
   config.DB_SCHEMA
 )
 
-const pool = new CapturedPool({
+const pool = new pg.pool({
   user: config.DB_USER,
   password: config.DB_PASSWORD,
   host: config.DB_HOST,

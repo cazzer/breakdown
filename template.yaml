@@ -96,6 +96,8 @@ Resources:
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
+          POSTGRES_DATABASE_VERSION: 10.4
+          POSTGRES_DRIVER_VERSION: PostgreSql
 
   ApiPolicy:
     Type: AWS::IAM::Policy

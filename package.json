@@ -18,7 +18,7 @@
     "graphql-tag": "^2.9.2",
     "knex": "^0.15.2",
     "lodash": "^4.17.10",
-    "pg-pool": "^2.0.3",
+    "pg": "^7.4.3",
     "postgraphile": "^4.0.0-rc.2",
     "prop-types": "^15.6.2",
     "query-string": "^6.1.0",
