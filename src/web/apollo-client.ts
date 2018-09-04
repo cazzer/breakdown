@@ -17,8 +17,8 @@ export default function createClient(httpOptions) {
           )
         if (networkError) console.log(`[Network error]: ${networkError}`)
       }),
+      new RetryLink(),
       new HttpLink(httpOptions),
-      new RetryLink()
     ]),
     cache: new InMemoryCache()
   })
