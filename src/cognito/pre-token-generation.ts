@@ -1,7 +1,8 @@
 import get from 'lodash/get'
 import db from '../database'
+import epsagon from '../epsagon'
 
-export default async function preTokenGeneration(event) {
+export default epsagon.lambdaWrapper(async (event) => {
   console.log(event)
 
   const userId = event.request.userAttributes.sub
@@ -27,4 +28,4 @@ export default async function preTokenGeneration(event) {
 
   console.log(response)
   return response
-}
+})

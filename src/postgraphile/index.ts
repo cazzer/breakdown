@@ -4,6 +4,7 @@ import Pool from 'pg-pool'
 import { graphql } from 'graphql'
 
 import * as config from '../config'
+import epsagon from '../epsagon'
 
 
 const postgraphileSchemaPromise = createPostGraphileSchema(
@@ -21,7 +22,7 @@ const pool = new Pool({
   max: 1
 })
 
-export default async function graphqlHandler(event) {
+export default epsagon.lambdaWrapper(async (event) => {
   console.log(event)
   console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
@@ -73,4 +74,4 @@ export default async function graphqlHandler(event) {
   }
 
   console.timeEnd(`${userId}/${graphqlInput.operationName}`)
-}
+})

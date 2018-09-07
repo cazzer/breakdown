@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Breakdown
 Parameters:
+  EpsagonToken:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: EpsagonToken
+
   GitHubBranch:
     Type: String
     Default: master
@@ -96,6 +100,7 @@ Resources:
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
+          EPSAGON_TOKEN: !Ref EpsagonToken
           POSTGRES_DATABASE_VERSION: 10.4
           POSTGRES_DRIVER_VERSION: PostgreSql
 
@@ -468,6 +473,7 @@ Resources:
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
           DEBUG: post-confirmation*
+          EPSAGON_TOKEN: !Ref EpsagonToken
 
   PreTokenGenerationFunctionPolicy:
     Type: AWS::IAM::Policy
@@ -515,6 +521,7 @@ Resources:
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
           DEBUG: pre-token*
+          EPSAGON_TOKEN: !Ref EpsagonToken
 
   RdsMonitoringRole:
     Type: AWS::IAM::Role

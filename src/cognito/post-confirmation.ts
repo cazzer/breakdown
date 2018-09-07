@@ -1,7 +1,8 @@
 import get from 'lodash/get'
 import db from '../database'
+import epsagon from '../epsagon'
 
-export default async function postUserConfirmation(event, context) {
+export default epsagon.lambdaWrapper(async (event, context) => {
   console.log(event)
 
   const userId = get(event, 'request.userAttributes.sub', null)
@@ -22,4 +23,4 @@ export default async function postUserConfirmation(event, context) {
 
   console.log(`role and grants successful for ${userId}`)
   return context.succeed(event)
-}
+})
