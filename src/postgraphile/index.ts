@@ -1,11 +1,17 @@
+import epsagon from '@epsagon/epsagon'
 import get from 'lodash/get'
 import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile'
 import Pool from 'pg-pool'
 import { graphql } from 'graphql'
 
 import * as config from '../config'
-import epsagon from '../epsagon'
 
+
+epsagon.init({
+  token: process.env.EPSAGON_TOKEN,
+  appName: 'breakdown',
+  metadataOnly: false,
+})
 
 const postgraphileSchemaPromise = createPostGraphileSchema(
   config.DB_ENDPOINT,
