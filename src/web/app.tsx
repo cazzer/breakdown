@@ -5,6 +5,7 @@ import {
 } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
+import { Auth } from 'aws-amplify'
 import { Authenticator, withAuthenticator } from 'aws-amplify-react'
 import get from 'lodash/get'
 
@@ -21,29 +22,48 @@ Amplify.configure({
   }
 })
 
-const App = (props: Object) => {
-  console.log('Application Rendered')
-  console.log(props)
-  const sessionToken = get(props, 'authData.signInUserSession.idToken.jwtToken')
-
+const ConnectedApp = (props) => {
   const client = createClient({
     uri: process.env.GRAPHQL_ENDPOINT,
     headers: {
-      Authorization: sessionToken
+      Authorization: props.sessionToken
     }
   })
 
   return (
-    <BrowserRouter>
-      <div>
-        <Route path="/login" component={Authenticator} />
-        <ApolloProvider client={client}>
-          <Route path="/home/:parentId/:childId?" component={SplitView} />
-          <Route path="/search" component={Search} />
-        </ApolloProvider>
-      </div>
-    </BrowserRouter>
+    <ApolloProvider client={client}>
+      <Route path="/home/:parentId/:childId?" component={SplitView} />
+      <Route path="/search" component={Search} />
+    </ApolloProvider>
   )
+}
+
+class App extends React.Component {
+  state = {
+    sessionToken: null
+  }
+
+  componentDidMount() {
+    Auth
+      .currentSession()
+      .then(session => {
+        console.log('Session')
+        console.log(session)
+        this.setState({
+          sessionToken: session.idToken.jwtToken
+        })
+      })
+  }
+
+  render() {
+    return (
+      <BrowserRouter>
+        {this.state.sessionToken &&
+          <ConnectedApp sessionToken={this.state.sessionToken} />
+        }
+      </BrowserRouter>
+    )
+  }
 }
 
 export default withAuthenticator(App)
