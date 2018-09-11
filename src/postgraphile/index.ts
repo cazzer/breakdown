@@ -8,7 +8,7 @@ import * as config from '../config'
 
 
 epsagon.init({
-  token: process.env.EPSAGON_TOKEN,
+  token: config.EPSAGON_TOKEN,
   appName: 'breakdown',
   metadataOnly: false,
 })

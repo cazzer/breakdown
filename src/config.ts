@@ -9,4 +9,5 @@ export const DB_ENDPOINT = encodeURI(
   `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`
 )
 
+export const EPSAGON_TOKEN = process.env.EPSAGON_TOKEN
 export const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT
