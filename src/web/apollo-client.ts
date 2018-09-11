@@ -2,7 +2,6 @@ import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { onError } from 'apollo-link-error'
-import { RetryLink } from 'apollo-link-retry'
 import { ApolloLink } from 'apollo-link'
 
 export default function createClient(httpOptions) {
@@ -16,14 +15,6 @@ export default function createClient(httpOptions) {
             ),
           )
         if (networkError) console.log(`[Network error]: ${networkError}`)
-      }),
-      new RetryLink({
-        attempts: {
-          retryIf: response => {
-            console.log(response)
-            return true
-          }
-        }
       }),
       new HttpLink(httpOptions),
     ]),
