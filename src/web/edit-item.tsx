@@ -148,7 +148,11 @@ mutation createItem($itemInput: CreateItemInput!) {
       id,
       label,
       parentId,
-      value
+      value,
+      itemByParentId {
+        id,
+        label
+      }
     }
   }
 }

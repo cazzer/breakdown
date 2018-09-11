@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom'
 const styles = theme => ({
   root: {
     flexGrow: 1,
+    padding: theme.spacing.unit
   },
   paper: {
     padding: theme.spacing.unit * 2,
@@ -96,7 +97,7 @@ class Search extends React.Component {
     const query = queryString.parse(this.props.location.search).q || ''
     return (
       <div className={classes.root}>
-        <Grid container spacing={24}>
+        <Grid container>
           <Grid item xs={12}>
             <FormControl
               className={classes.margin}

@@ -12,6 +12,7 @@ import get from 'lodash/get'
 import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './split-view'
+import Navigation from './navigation'
 
 Amplify.configure({
   Auth: {
@@ -32,6 +33,7 @@ const ConnectedApp = (props) => {
 
   return (
     <ApolloProvider client={client}>
+      <Navigation />
       <Route path="/home/:parentId/:childId?" component={SplitView} />
       <Route path="/search" component={Search} />
     </ApolloProvider>
