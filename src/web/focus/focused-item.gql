@@ -1,0 +1,9 @@
+fragment item {
+  id
+  label
+  value
+  itemByParentId {
+    id
+    label
+  }
+}
