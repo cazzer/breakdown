@@ -10,6 +10,8 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import EyeIcon from '@material-ui/icons/RemoveRedEye'
 
 import DeleteItem from './delete-item'
 import { EditItem } from './edit-item'
@@ -61,6 +63,11 @@ const ItemsList = (props) => {
                 />
               </Link>
               <ListItemSecondaryAction>
+                <Link to={`/view/focus/${item.id}`}>
+                  <IconButton aria-label="Focus">
+                    <EyeIcon />
+                  </IconButton>
+                </Link>
                 <DeleteItem id={item.id} />
               </ListItemSecondaryAction>
             </ListItem>
