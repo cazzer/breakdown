@@ -1,3 +1,5 @@
+import { withAuthenticator } from 'aws-amplify-react'
+import { Auth } from 'aws-amplify'
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -8,6 +10,9 @@ import AccountCircle from '@material-ui/icons/AccountCircle'
 import { Link } from 'react-router-dom'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
+import { compose } from 'recompose'
+import { withRouter } from 'react-router'
+
 
 const styles = {
   root: {
@@ -25,6 +30,17 @@ const styles = {
 class Navigation extends React.Component {
   state = {
     anchorEl: null,
+  }
+
+  handleLogout = async () => {
+    try {
+      await Auth.signOut()
+      this.props.history.push('/')
+    } catch (error) {
+      console.error(error)
+    }
+
+    this.handleClose()
   }
 
   handleMenu = event => {
@@ -69,8 +85,7 @@ class Navigation extends React.Component {
               open={open}
               onClose={this.handleClose}
             >
-              <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-              <MenuItem onClick={this.handleClose}>My account</MenuItem>
+              <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
         </Toolbar>
@@ -79,4 +94,7 @@ class Navigation extends React.Component {
   }
 }
 
-export default withStyles(styles)(Navigation)
+export default compose(
+  withStyles(styles),
+  withRouter
+)(Navigation)
