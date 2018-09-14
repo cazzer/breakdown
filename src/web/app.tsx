@@ -12,7 +12,8 @@ import get from 'lodash/get'
 import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
-import FocusView from './focus/edit'
+import FocusView from './focus/view'
+import FocusEdit from './focus/edit'
 import Navigation from './navigation'
 
 Amplify.configure({
@@ -36,7 +37,8 @@ const ConnectedApp = (props) => {
     <ApolloProvider client={client}>
       <Navigation />
       <Route path="/home/:parentId/:childId?" component={SplitView} />
-      <Route path="/view/focus/:itemId?" component={FocusView} />
+      <Route exact path="/view/focus/:itemId?" component={FocusView} />
+      <Route path="/view/focus/:itemId/edit" component={FocusEdit} />
       <Route path="/search" component={Search} />
     </ApolloProvider>
   )
