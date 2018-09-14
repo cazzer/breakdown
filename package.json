@@ -67,7 +67,7 @@
     "web:dev": "webpack-dev-server --open",
     "web:prod": "webpack --env=prod --progress --profile --colors --config webpack.prod.js",
     "dev": "babel src --out-dir lib --extensions \".ts,.tsx\" -w",
-    "build": "babel src --out-dir lib --extensions \".ts,.tsx\"",
+    "build": "babel src --out-dir lib --extensions \".ts\" --ignore src/web",
     "type-check": "tsc --noEmit"
   },
   "sideEffects": false
