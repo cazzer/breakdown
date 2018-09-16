@@ -10,7 +10,7 @@ import * as config from '../config'
 epsagon.init({
   token: config.EPSAGON_TOKEN,
   appName: 'breakdown',
-  metadataOnly: false,
+  metadataOnly: true,
 })
 
 const postgraphileSchemaPromise = createPostGraphileSchema(
