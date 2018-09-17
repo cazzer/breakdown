@@ -10,6 +10,8 @@ import { Link } from 'react-router-dom'
 import { IconButton } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 
+import ItemList from '../items'
+
 import ValueView from './value-view'
 
 const styles = theme => ({
@@ -34,22 +36,25 @@ class FocusView extends Component {
   render() {
     const { classes, item } = this.props
     return (
-      <Paper className={classes.root}>
-        <Grid
-          container
-          className={classes.content}
-          onClick={this.onClickHandler}
-        >
-          <Grid className={classes.title} item xs={12} xl={4}>
-            <Typography variant="title">
-              {item.label}
-            </Typography>
+      <div>
+        <Paper className={classes.root}>
+          <Grid
+            container
+            className={classes.content}
+            onClick={this.onClickHandler}
+          >
+            <Grid className={classes.title} item xs={12} xl={4}>
+              <Typography variant="title">
+                {item.label}
+              </Typography>
+            </Grid>
+            <Grid className={classes.title} item xs={12} xl={8}>
+              <ValueView value={item.value} />
+            </Grid>
           </Grid>
-          <Grid className={classes.title} item xs={12} xl={8}>
-            <ValueView value={item.value} />
-          </Grid>
-        </Grid>
-      </Paper>
+        </Paper>
+        <ItemList parentId={item.id} />
+      </div>
     )
   }
 }
