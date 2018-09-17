@@ -9,6 +9,8 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import FormControl from '@material-ui/core/FormControl'
 
+import TypeGuesser from './type-guesser'
+
 const styles = theme => ({
   content: {
     padding: theme.spacing.unit * 4
@@ -17,6 +19,9 @@ const styles = theme => ({
     margin: theme.spacing.unit
   },
   title: {
+  },
+  save: {
+    padding: theme.spacing.unit
   }
 })
 
@@ -53,7 +58,7 @@ class FocusEditView extends Component {
   }
 
   render() {
-    const { classes, editItem } = this.props
+    const { classes } = this.props
 
     return (
       <Paper className={classes.root}>
@@ -69,17 +74,12 @@ class FocusEditView extends Component {
               />
             </Grid>
             <Grid className={classes.title} item xs={12} xl={8}>
-              <TextField
-                id="value"
-                label="value"
-                fullWidth
-                multiline
-                onChange={this.handleChange('value')}
-                rowsMax={12}
+              <TypeGuesser
+                changeValue={this.handleChange('value')}
                 value={this.state.value}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid className={classes.save} item xs={12}>
               <Button
                 className={classes.button}
                 color="primary"
