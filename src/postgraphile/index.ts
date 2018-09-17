@@ -1,17 +1,9 @@
-import epsagon from '@epsagon/epsagon'
 import get from 'lodash/get'
 import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile'
 import Pool from 'pg-pool'
 import { graphql } from 'graphql'
 
 import * as config from '../config'
-
-
-epsagon.init({
-  token: config.EPSAGON_TOKEN,
-  appName: 'breakdown',
-  metadataOnly: true,
-})
 
 const postgraphileSchemaPromise = createPostGraphileSchema(
   config.DB_ENDPOINT,
@@ -28,7 +20,7 @@ const pool = new Pool({
   max: 1
 })
 
-export default epsagon.lambdaWrapper(async (event) => {
+export default async function postgraphile(event) {
   console.log(event)
   console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
@@ -80,4 +72,4 @@ export default epsagon.lambdaWrapper(async (event) => {
   }
 
   console.timeEnd(`${userId}/${graphqlInput.operationName}`)
-})
+}
