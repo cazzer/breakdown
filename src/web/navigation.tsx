@@ -14,7 +14,7 @@ import { compose } from 'recompose'
 import { withRouter } from 'react-router'
 
 
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1,
   },
@@ -25,7 +25,10 @@ const styles = {
     marginLeft: -12,
     marginRight: 20,
   },
-}
+  belowNavigation: {
+    paddingTop: 64
+  }
+})
 
 class Navigation extends React.Component {
   state = {
@@ -55,7 +58,7 @@ class Navigation extends React.Component {
     const { classes } = this.props
     const open = !!this.state.anchorEl
     return (
-      <AppBar position="static">
+      <AppBar position="fixed">
         <Toolbar>
           <Link to="/home/root" className={classes.flex}>
             <Typography variant="title" color="inherit">
@@ -98,3 +101,11 @@ export default compose(
   withStyles(styles),
   withRouter
 )(Navigation)
+
+const belowNavigation = ({ classes, children }) => (
+  <div className={classes.belowNavigation}>
+    {children}
+  </div>
+)
+
+export const BelowNavigation = withStyles(styles)(belowNavigation)

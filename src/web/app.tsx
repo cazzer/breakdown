@@ -14,7 +14,7 @@ import Search from './search/view'
 import SplitView from './views/split'
 import FocusView from './focus/view'
 import FocusEdit from './focus/edit'
-import Navigation from './navigation'
+import Navigation, { BelowNavigation } from './navigation'
 
 Amplify.configure({
   Auth: {
@@ -44,10 +44,12 @@ const ConnectedApp = (props) => {
   return (
     <ApolloProvider client={client}>
       <Navigation />
-      <Route path="/home/:parentId/:childId?" component={SplitView} />
-      <Route exact path="/view/focus/:itemId?" component={FocusView} />
-      <Route path="/view/focus/:itemId/edit" component={FocusEdit} />
-      <Route path="/search" component={Search} />
+      <BelowNavigation>
+        <Route path="/home/:parentId/:childId?" component={SplitView} />
+        <Route exact path="/view/focus/:itemId?" component={FocusView} />
+        <Route path="/view/focus/:itemId/edit" component={FocusEdit} />
+        <Route path="/search" component={Search} />
+      </BelowNavigation>
     </ApolloProvider>
   )
 }

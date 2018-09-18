@@ -75,7 +75,7 @@ export default (props) => (
   <Query
     query={itemQuery}
     variables={{
-      id: get(props.match.params, 'itemId')
+      id: get(props.match.params, 'itemId', null)
     }}
   >
     {(itemQuery => (
