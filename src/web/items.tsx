@@ -21,6 +21,14 @@ const styles = theme => ({
     width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
+  listItem: {
+    display: 'flex',
+    flexGrow: 1
+  },
+  listItemActions: {
+    display: 'flex',
+    flexDirection: 'column'
+  }
 })
 
 const ItemsList = (props) => {
@@ -53,23 +61,19 @@ const ItemsList = (props) => {
                 <EditItem oldItem={item} />
             </ListItem>
           ) : (
-            <ListItem button key={item.id}>
-              <Link
-                to={`/home/${item.parentId ? item.parentId : 'root'}/${item.id}`}
-              >
-                <ListItemText
-                  primary={item.label}
-                  secondary={item.value}
-                />
-              </Link>
-              <ListItemSecondaryAction>
+            <ListItem button className={classes.listItem} divider key={item.id}>
+              <ListItemText
+                primary={item.label}
+                secondary={item.value}
+              />
+              <div className={classes.listItemActions}>
                 <Link to={`/view/focus/${item.id}`}>
                   <IconButton aria-label="Focus">
                     <EyeIcon />
                   </IconButton>
                 </Link>
                 <DeleteItem id={item.id} />
-              </ListItemSecondaryAction>
+              </div>
             </ListItem>
           )
         })}

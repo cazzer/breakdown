@@ -7,8 +7,8 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { Link } from 'react-router-dom'
-import { IconButton } from '@material-ui/core'
-import EditIcon from '@material-ui/icons/Edit'
+import Button from '@material-ui/core/Button'
+import ArrowUpward from '@material-ui/icons/ArrowUpward'
 
 import ItemList from '../items'
 
@@ -21,13 +21,15 @@ const styles = theme => ({
   root: {
     margin: theme.spacing.unit
   },
-  title: {
+  parentLink: {
+    position: 'absolute',
+    top: '64px',
+    left: '6px'
   }
 })
 
 class FocusView extends Component {
   onClickHandler = () => {
-    console.log(this.props)
     this.props.history.push(
       `${this.props.location.pathname}/edit`
     )
@@ -37,6 +39,13 @@ class FocusView extends Component {
     const { classes, item } = this.props
     return (
       <div>
+        {item.itemByParentId && (
+          <Link to={`/view/focus/${item.itemByParentId.id}`} className={classes.parentLink}>
+            <Button mini variant="fab" color="default" aria-label="Parent">
+              <ArrowUpward />
+            </Button>
+          </Link>
+        )}
         <Paper className={classes.root}>
           <Grid
             container
@@ -66,7 +75,11 @@ query Item($id: UUID!) {
   itemById(id: $id) {
     id
     label
-    value
+    value,
+    itemByParentId {
+      id,
+      label
+    }
   }
 }
 `
