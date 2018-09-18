@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
-import { Auth } from 'aws-amplify'
+import { Auth, Hub, Logger } from 'aws-amplify'
 import { Authenticator, withAuthenticator } from 'aws-amplify-react'
 import get from 'lodash/get'
 
@@ -24,6 +24,14 @@ Amplify.configure({
     userPoolWebClientId: process.env.USER_POOL_WEB_CLIENT_ID,
   }
 })
+
+const authLogger = new Logger('auth')
+
+authLogger.onHubCapsule = capsule => {
+  console.log(capsule)
+}
+
+Hub.listen('auth', authLogger)
 
 const ConnectedApp = (props) => {
   const client = createClient({
