@@ -35,7 +35,7 @@ const ItemsList = (props) => {
   const { classes, items } = props
   const itemNodes = get(items, ['data', 'allItems', 'nodes'])
 
-  if (items.loading) {
+  if (items.loading && !itemNodes) {
     return (
       <div className={classes.root}>
         <Typography>Loading...</Typography>

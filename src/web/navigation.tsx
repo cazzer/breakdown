@@ -1,4 +1,3 @@
-import { withAuthenticator } from 'aws-amplify-react'
 import { Auth } from 'aws-amplify'
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
@@ -12,6 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import { compose } from 'recompose'
 import { withRouter } from 'react-router'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 
 const styles = theme => ({
@@ -27,7 +27,25 @@ const styles = theme => ({
   },
   belowNavigation: {
     paddingTop: 64
-  }
+  },
+  slideEnter: {
+    position: 'relative',
+    left: '100%'
+  },
+  slideEnterActive: {
+    position: 'relative',
+    transition: 'left 300ms cubic-bezier(0.230, 1.000, 0.320, 1.000)',
+    left: 0
+  },
+  slideExit: {
+    position: 'relative',
+    left: 0
+  },
+  slideExitActive: {
+    position: 'relative',
+    transition: 'left 300ms cubic-bezier(0.230, 1.000, 0.320, 1.000)',
+    left: '-100%'
+  },
 })
 
 class Navigation extends React.Component {
@@ -102,9 +120,22 @@ export default compose(
   withRouter
 )(Navigation)
 
-const belowNavigation = ({ classes, children }) => (
+const belowNavigation = ({ classes, children, location }) => (
   <div className={classes.belowNavigation}>
-    {children}
+    <TransitionGroup>
+      <CSSTransition
+        key={location.key}
+        classNames={{
+          enter: classes.slideEnter,
+          enterActive: classes.slideEnterActive,
+          exit: classes.slideExit,
+          exitActive: classes.slideExitActive
+        }}
+        timeout={300}
+      >
+        {children}
+      </CSSTransition>
+    </TransitionGroup>
   </div>
 )
 

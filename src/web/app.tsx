@@ -1,13 +1,14 @@
 import React from 'react'
 import {
   BrowserRouter,
-  Route
+  Route,
+  Switch
 } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
 import { Auth, Hub, Logger } from 'aws-amplify'
-import { Authenticator, withAuthenticator } from 'aws-amplify-react'
-import get from 'lodash/get'
+import { withAuthenticator } from 'aws-amplify-react'
+
 
 import createClient from './apollo-client'
 import Search from './search/view'
@@ -44,12 +45,16 @@ const ConnectedApp = (props) => {
   return (
     <ApolloProvider client={client}>
       <Navigation />
-      <BelowNavigation>
-        <Route path="/home/:parentId/:childId?" component={SplitView} />
-        <Route exact path="/view/focus/:itemId?" component={FocusView} />
-        <Route path="/view/focus/:itemId/edit" component={FocusEdit} />
-        <Route path="/search" component={Search} />
-      </BelowNavigation>
+      <Route render={({ location }) => (
+        <BelowNavigation location={location}>
+          <Switch location={location}>
+            <Route path="/home/:parentId/:childId?" component={SplitView} />
+            <Route exact path="/view/focus/:itemId?" component={FocusView} />
+            <Route path="/view/focus/:itemId/edit" component={FocusEdit} />
+            <Route path="/search" component={Search} />
+          </Switch>
+        </BelowNavigation>
+      )} />
     </ApolloProvider>
   )
 }

@@ -92,7 +92,7 @@ export default (props) => (
     }}
   >
     {(itemQuery => (
-      itemQuery.loading
+      itemQuery.loading && !itemQuery.data.itemById
         ? null
         : <StyledFocusView item={itemQuery.data.itemById} {...props} />
     ))}
