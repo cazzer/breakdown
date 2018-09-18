@@ -11,7 +11,7 @@ export function guessType(value) {
 }
 
 export default (props) => {
-  if ((props.value || '').match(/^(#+\s)/)) {
+  if ((props.value || '').match(/^([#-\*]+\s)/)) {
     return <Markdown {...props} />
   }
   return <Text {...props} />
