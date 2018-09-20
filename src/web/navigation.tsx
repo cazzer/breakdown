@@ -12,6 +12,7 @@ import Menu from '@material-ui/core/Menu'
 import { compose } from 'recompose'
 import { withRouter } from 'react-router'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import SearchLink from './search/link'
 
 
 const styles = theme => ({
@@ -124,7 +125,7 @@ const belowNavigation = ({ classes, children, location }) => (
   <div className={classes.belowNavigation}>
     <TransitionGroup>
       <CSSTransition
-        key={location.key}
+        key={location.pathname}
         classNames={{
           enter: classes.slideEnter,
           enterActive: classes.slideEnterActive,
@@ -136,6 +137,7 @@ const belowNavigation = ({ classes, children, location }) => (
         {children}
       </CSSTransition>
     </TransitionGroup>
+    <SearchLink />
   </div>
 )
 

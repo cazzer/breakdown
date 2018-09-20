@@ -7,7 +7,6 @@ import { Link, withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
@@ -24,6 +23,9 @@ const styles = theme => ({
   listItem: {
     display: 'flex',
     flexGrow: 1
+  },
+  listItemLink: {
+    width: '100%'
   },
   listItemActions: {
     display: 'flex',
@@ -62,10 +64,12 @@ const ItemsList = (props) => {
             </ListItem>
           ) : (
             <ListItem button className={classes.listItem} divider key={item.id}>
-              <ListItemText
-                primary={item.label}
-                secondary={item.value}
-              />
+              <Link className={classes.listItemLink} to={`/view/focus/${item.id}/edit`}>
+                <ListItemText
+                  primary={item.label}
+                  secondary={item.value}
+                />
+              </Link>
               <div className={classes.listItemActions}>
                 <Link to={`/view/focus/${item.id}`}>
                   <IconButton aria-label="Focus">

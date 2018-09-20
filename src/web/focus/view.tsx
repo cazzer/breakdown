@@ -18,8 +18,11 @@ const styles = theme => ({
   content: {
     padding: theme.spacing.unit * 4
   },
-  root: {
+  item: {
     margin: theme.spacing.unit
+  },
+  root: {
+    flowGrow: 1
   },
   parentLink: {
     position: 'absolute',
@@ -38,7 +41,7 @@ class FocusView extends Component {
   render() {
     const { classes, item } = this.props
     return (
-      <div>
+      <div className={classes.root}>
         {item.itemByParentId && (
           <Link to={`/view/focus/${item.itemByParentId.id}`} className={classes.parentLink}>
             <Button mini variant="fab" color="default" aria-label="Parent">
@@ -46,7 +49,7 @@ class FocusView extends Component {
             </Button>
           </Link>
         )}
-        <Paper className={classes.root}>
+        <Paper className={classes.item}>
           <Grid
             container
             className={classes.content}
