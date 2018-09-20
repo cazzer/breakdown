@@ -1,8 +1,10 @@
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const path = require('path')
+
+const gitRevisionPlugin = new GitRevisionPlugin()
 
 module.exports = {
   entry: {
@@ -48,10 +50,17 @@ module.exports = {
     }
   },
   output: {
-    filename: '[name].[hash].bundle.js',
+    filename: '[name].[has].bundle.js',
     publicPath: '/'
   },
   plugins: [
+    gitRevisionPlugin,
+    new webpack.DefinePlugin({
+      'process.env': {
+        BUILD_DATE: new Date.toString(),
+        VERSION: JSON.stringify(gitRevisionPlugin.version())
+      }
+    }),
     new webpack.EnvironmentPlugin([
       'IDENTITY_POOL_ID',
       'AWS_REGION',

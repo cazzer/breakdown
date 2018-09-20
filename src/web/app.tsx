@@ -17,6 +17,8 @@ import FocusView from './focus/view'
 import FocusEdit from './focus/edit'
 import Navigation, { BelowNavigation } from './navigation'
 
+console.log(`v${process.env.VERSION}, built on ${process.env.BUILD_DATE}`)
+
 Amplify.configure({
   Auth: {
     identityPoolId: process.env.IDENTITY_POOL_ID,
