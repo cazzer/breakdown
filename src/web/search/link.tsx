@@ -7,8 +7,8 @@ import SearchIcon from '@material-ui/icons/Search'
 const styles = theme => ({
   root: {
     position: 'fixed',
-    bottom: theme.spacing.unit * 2,
-    right: theme.spacing.unit * 2
+    bottom: theme.spacing.unit,
+    right: theme.spacing.unit
   }
 })
 
