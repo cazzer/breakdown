@@ -48,7 +48,7 @@ module.exports = {
     }
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].[has].bundle.js',
     publicPath: '/'
   },
   plugins: [
