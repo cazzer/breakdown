@@ -50,7 +50,7 @@ module.exports = {
     }
   },
   output: {
-    filename: '[name].[has].bundle.js',
+    filename: '[name].[hash].bundle.js',
     publicPath: '/'
   },
   plugins: [
