@@ -57,7 +57,7 @@ module.exports = {
     gitRevisionPlugin,
     new webpack.DefinePlugin({
       'process.env': {
-        BUILD_DATE: new Date.toString(),
+        BUILD_DATE: new Date().toString(),
         VERSION: JSON.stringify(gitRevisionPlugin.version())
       }
     }),
