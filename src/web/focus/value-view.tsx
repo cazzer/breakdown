@@ -8,7 +8,9 @@ export default ({ value }) => {
   const type = guessType(value)
   switch (type) {
     case 'markdown':
-      return <Markdown source={value} />
+      return (
+        <Markdown source={value} />
+      )
     default:
       return <Typography>{value}</Typography>
   }

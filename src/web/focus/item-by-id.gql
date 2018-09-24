@@ -1,0 +1,11 @@
+query Item($id: UUID!) {
+  itemById(id: $id) {
+    id
+    label
+    value,
+    itemByParentId {
+      id,
+      label
+    }
+  }
+}

@@ -3,8 +3,16 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { onError } from 'apollo-link-error'
 import { ApolloLink } from 'apollo-link'
+import { persistCache } from 'apollo-cache-persist'
 
 export default function createClient(httpOptions) {
+  const cache = new InMemoryCache()
+
+  persistCache({
+    cache,
+    storage: window.localStorage,
+  })
+
   return new ApolloClient({
     link: ApolloLink.from([
       onError(({ graphQLErrors, networkError }) => {
@@ -18,6 +26,6 @@ export default function createClient(httpOptions) {
       }),
       new HttpLink(httpOptions),
     ]),
-    cache: new InMemoryCache()
+    cache
   })
 }

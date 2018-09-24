@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import gql from 'graphql-tag'
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Query } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
@@ -13,6 +13,7 @@ import ArrowUpward from '@material-ui/icons/ArrowUpward'
 import ItemList from '../items'
 
 import ValueView from './value-view'
+import itemByIdQuery from './item-by-id.gql'
 
 const styles = theme => ({
   content: {
@@ -31,7 +32,7 @@ const styles = theme => ({
   }
 })
 
-class FocusView extends Component {
+class FocusView extends PureComponent {
   onClickHandler = () => {
     this.props.history.push(
       `${this.props.location.pathname}/edit`
@@ -73,23 +74,9 @@ class FocusView extends Component {
 
 const StyledFocusView = withStyles(styles)(FocusView)
 
-const itemQuery = gql`
-query Item($id: UUID!) {
-  itemById(id: $id) {
-    id
-    label
-    value,
-    itemByParentId {
-      id,
-      label
-    }
-  }
-}
-`
-
 export default (props) => (
   <Query
-    query={itemQuery}
+    query={itemByIdQuery}
     variables={{
       id: get(props.match.params, 'itemId', null)
     }}

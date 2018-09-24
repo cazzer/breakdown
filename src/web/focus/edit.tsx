@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField'
 import FormControl from '@material-ui/core/FormControl'
 
 import TypeGuesser from './type-guesser'
+import itemByIdQuery from './item-by-id.gql'
 
 const styles = theme => ({
   content: {
@@ -100,16 +101,6 @@ class FocusEditView extends Component {
 
 const StyledFocusView = withStyles(styles)(FocusEditView)
 
-const itemQuery = gql`
-query Item($id: UUID!) {
-  itemById(id: $id) {
-    id
-    label
-    value
-  }
-}
-`
-
 const editItemMutation = gql`
 mutation updateItem($itemInput: UpdateItemByIdInput!) {
   updateItemById(input: $itemInput) {
@@ -137,15 +128,15 @@ const MutatedItem = (props) => (
 
 export default (props) => (
   <Query
-    query={itemQuery}
+    query={itemByIdQuery}
     variables={{
       id: get(props.match.params, 'itemId')
     }}
   >
-    {(itemQuery => (
-      itemQuery.loading
+    {(itemQuery => {
+     return itemQuery.loading
         ? null
         : <MutatedItem item={itemQuery.data.itemById} {...props} />
-    ))}
+    })}
   </Query>
 )

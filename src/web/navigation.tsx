@@ -27,7 +27,8 @@ const styles = theme => ({
     marginRight: 20,
   },
   belowNavigation: {
-    paddingTop: 64
+    paddingTop: 64,
+    paddingBottom: 64
   },
   slideEnter: {
     position: 'relative',
