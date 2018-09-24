@@ -1,5 +1,4 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const path = require('path')
