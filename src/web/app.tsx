@@ -9,7 +9,6 @@ import Amplify from '@aws-amplify/core'
 import { Auth, Hub, Logger } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react'
 
-
 import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
@@ -17,7 +16,9 @@ import FocusView from './focus/view'
 import FocusEdit from './focus/edit'
 import Navigation, { BelowNavigation } from './navigation'
 
-console.log(`v${process.env.VERSION}, built on ${process.env.BUILD_DATE}`)
+const VERSION = process.env.VERSION
+const BUILD_DATE = process.env.BUILD_DATE
+console.log(`v${VERSION}, built on ${BUILD_DATE}`)
 
 Amplify.configure({
   Auth: {
@@ -51,8 +52,8 @@ const ConnectedApp = (props) => {
         <BelowNavigation location={location}>
           <Switch location={location}>
             <Route path="/home/:parentId/:childId?" component={SplitView} />
-            <Route exact path="/view/focus/:itemId?" component={FocusView} />
             <Route path="/view/focus/:itemId/edit" component={FocusEdit} />
+            <Route path="/view/focus/:itemId?" component={FocusView} />
             <Route path="/search" component={Search} />
           </Switch>
         </BelowNavigation>
@@ -66,16 +67,26 @@ class App extends React.Component {
     sessionToken: null
   }
 
-  componentDidMount() {
+  refreshToken() {
+    console.log('Refreshing session')
     Auth
       .currentSession()
       .then(session => {
-        console.log('Session')
+        console.log('Got Cognito session')
         console.log(session)
         this.setState({
           sessionToken: session.idToken.jwtToken
         })
       })
+  }
+
+  componentDidMount() {
+    this.refreshToken()
+
+    this.sessionRefresher = setInterval(
+      this.refreshToken,
+      30 * 60 * 1000
+    )
   }
 
   render() {
