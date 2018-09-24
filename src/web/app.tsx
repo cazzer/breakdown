@@ -83,7 +83,7 @@ class App extends React.Component {
     this.refreshToken()
 
     this.sessionRefresher = setInterval(
-      this.refreshToken,
+      this.refreshToken.bind(this),
       30 * 60 * 1000
     )
   }
