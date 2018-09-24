@@ -4,8 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const path = require('path')
 
-const gitRevisionPlugin = new GitRevisionPlugin()
-
 module.exports = {
   entry: {
     app: './src/web'
@@ -54,11 +52,9 @@ module.exports = {
     publicPath: '/'
   },
   plugins: [
-    gitRevisionPlugin,
     new webpack.DefinePlugin({
       'process.env': {
-        BUILD_DATE: JSON.stringify(new Date().toString()),
-        VERSION: JSON.stringify(gitRevisionPlugin.version())
+        BUILD_DATE: JSON.stringify(new Date().toString())
       }
     }),
     new webpack.EnvironmentPlugin([

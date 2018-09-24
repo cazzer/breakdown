@@ -16,9 +16,8 @@ import FocusView from './focus/view'
 import FocusEdit from './focus/edit'
 import Navigation, { BelowNavigation } from './navigation'
 
-const VERSION = process.env.VERSION
 const BUILD_DATE = process.env.BUILD_DATE
-console.log(`v${VERSION}, built on ${BUILD_DATE}`)
+console.log(`Built on ${BUILD_DATE}`)
 
 Amplify.configure({
   Auth: {
