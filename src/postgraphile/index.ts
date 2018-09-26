@@ -52,6 +52,7 @@ export default epsagon.lambdaWrapper(async (event) => {
       }
     )
     console.log(`Finished ${graphqlInput.operationName} for ${userId}`)
+    console.timeEnd(`${userId}/${graphqlInput.operationName}`)
     return {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -62,6 +63,7 @@ export default epsagon.lambdaWrapper(async (event) => {
     }
   } catch (error) {
     console.error(error)
+    console.timeEnd(`${userId}/${graphqlInput.operationName}`)
     return {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -71,6 +73,4 @@ export default epsagon.lambdaWrapper(async (event) => {
       statusCode: 500
     }
   }
-
-  console.timeEnd(`${userId}/${graphqlInput.operationName}`)
 })
