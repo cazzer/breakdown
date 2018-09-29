@@ -101,7 +101,6 @@ Resources:
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
           EPSAGON_TOKEN: !Ref EpsagonToken
-          DISABLE_EPSAGON: TRUE
           POSTGRES_DATABASE_VERSION: 10.4
           POSTGRES_DRIVER_VERSION: PostgreSql
 
@@ -523,7 +522,6 @@ Resources:
           DB_USER: !Ref DatabaseUser
           DEBUG: pre-token*
           EPSAGON_TOKEN: !Ref EpsagonToken
-          DISABLE_EPSAGON: TRUE
 
   RdsMonitoringRole:
     Type: AWS::IAM::Role

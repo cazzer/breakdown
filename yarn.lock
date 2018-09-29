@@ -773,8 +773,8 @@
     to-fast-properties "^2.0.0"
 
 "@epsagon/epsagon@^0.1.17":
-  version "0.1.18"
-  resolved "https://registry.yarnpkg.com/@epsagon/epsagon/-/epsagon-0.1.18.tgz#7d16267f740049e143af5ff4d4acb073d51b9db5"
+  version "0.1.19"
+  resolved "https://registry.yarnpkg.com/@epsagon/epsagon/-/epsagon-0.1.19.tgz#74eb1aecd990f78669e0524b157a67f686773ee9"
   dependencies:
     deasync "^0.1.13"
     google-protobuf "^3.5.0"
