@@ -9,6 +9,7 @@ export default function createClient(httpOptions) {
   const cache = new InMemoryCache()
 
   persistCache({
+    debug: process.env.NODE_ENV !== 'production',
     cache,
     storage: window.localStorage,
   })
@@ -26,6 +27,11 @@ export default function createClient(httpOptions) {
       }),
       new HttpLink(httpOptions),
     ]),
-    cache
+    cache,
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'cache-and-network'
+      }
+    }
   })
 }
