@@ -33,12 +33,6 @@ const styles = theme => ({
 })
 
 class FocusView extends PureComponent {
-  onClickHandler = () => {
-    this.props.history.push(
-      `${this.props.location.pathname}/edit`
-    )
-  }
-
   render() {
     const { classes, item } = this.props
     return (
@@ -51,20 +45,21 @@ class FocusView extends PureComponent {
           </Link>
         )}
         <Paper className={classes.item}>
-          <Grid
-            container
-            className={classes.content}
-            onClick={this.onClickHandler}
-          >
-            <Grid className={classes.title} item xs={12} xl={4}>
-              <Typography variant="title">
-                {item.label}
-              </Typography>
+          <Link to={`/view/focus/${item.id}/edit`}>
+            <Grid
+              container
+              className={classes.content}
+            >
+              <Grid className={classes.title} item xs={12} xl={4}>
+                <Typography variant="title">
+                  {item.label}
+                </Typography>
+              </Grid>
+              <Grid className={classes.title} item xs={12} xl={8}>
+                <ValueView value={item.value} />
+              </Grid>
             </Grid>
-            <Grid className={classes.title} item xs={12} xl={8}>
-              <ValueView value={item.value} />
-            </Grid>
-          </Grid>
+          </Link>
         </Paper>
       </div>
     )
