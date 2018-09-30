@@ -12,10 +12,10 @@ import InputLabel from '@material-ui/core/InputLabel'
 import Paper from '@material-ui/core/Paper'
 import queryString from 'query-string'
 
-import { allItemsQuery } from './items'
-import itemByIdQuery from './focus/item-by-id.gql'
-import SearchDropDown from './search/dropdown'
-import ValueView from './focus/value-view'
+import { allItemsQuery } from '../items'
+import itemByIdQuery from '../focus/item-by-id.gql'
+import SearchDropDown from '../search/dropdown'
+import ValueView from '../focus/value-view'
 
 const styles = theme => ({
   content: {
@@ -46,8 +46,10 @@ class EditItemForm extends Component {
       }
     } else {
       this.state = {
-        label: get(props, ['oldItem', 'label'], ''),
-        value: get(props, ['oldItem', 'value'], ''),
+        label: '',
+        value: '',
+        ...props.item,
+        __typename: undefined
       }
     }
   }
@@ -64,13 +66,16 @@ class EditItemForm extends Component {
     })
   }
 
-  handleSave = () => {
-    this.props.upsert({
+  handleSave = async () => {
+    await this.props.upsert({
       variables: {
         itemInput: !this.props.new
           ? {
-            id: this.props.oldItem.id,
-            itemPatch: this.state
+            id: this.props.item.id,
+            itemPatch: {
+              ...this.state,
+              itemByParentId: undefined
+            }
           }
           : {
             item: {
@@ -79,6 +84,8 @@ class EditItemForm extends Component {
           }
       }
     })
+
+    this.props.history.goBack()
   }
 
   render() {
@@ -105,7 +112,7 @@ class EditItemForm extends Component {
                 fullWidth
                 multiline
                 rowsMax={12}
-                value={this.state.value}
+                value={this.state.value || ''}
               />
               <ValueView value={this.state.value} />
             </Grid>
@@ -114,7 +121,7 @@ class EditItemForm extends Component {
                 onUpdate={this.handleParentUpdate}
                 selectedItem={
                   this.props.parentItem
-                  || get(this.props.oldItem, 'itemByParentId')
+                  || get(this.props.item, 'itemByParentId')
                 }
               />
             </Grid>
@@ -236,7 +243,7 @@ export const EditItem = (props) => (
   <Mutation
     mutation={updateItem}
     update={(cache, result) => {
-      const oldParentId = get(props.oldItem, 'parentId')
+      const oldParentId = get(props.item, ['itemByParentId', 'id'], null)
       const newParentId = result.data.updateItemById.item.parentId
       const oldParentItems = cache.readQuery({
         query: allItemsQuery,
@@ -259,7 +266,7 @@ export const EditItem = (props) => (
             allItems: {
               ...oldParentItems.allItems,
               nodes: oldParentItems.allItems.nodes.map(item => (
-                item.id === props.oldItem.id
+                item.id === props.item.id
                   ? {
                     ...item,
                     ...result.data.updateItemById.item
@@ -281,7 +288,7 @@ export const EditItem = (props) => (
             allItems: {
               ...oldParentItems.allItems,
               nodes: oldParentItems.allItems.nodes.filter(item => (
-                item.id !== props.oldItem.id
+                item.id !== props.item.id
               ))
             }
           }
@@ -320,4 +327,19 @@ export const EditItem = (props) => (
       <StyledEditItem upsert={editItemMutation} {...props} />
     )}
   </Mutation>
+)
+
+export const EditItemView = (props) => (
+  <Query
+    query={itemByIdQuery}
+    variables={{
+      id: get(props.match.params, 'itemId')
+    }}
+  >
+    {({ data, loading}) => {
+     return loading
+        ? null
+        : <EditItem item={data.itemById} {...props} />
+    }}
+  </Query>
 )

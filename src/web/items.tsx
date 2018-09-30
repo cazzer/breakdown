@@ -13,7 +13,7 @@ import IconButton from '@material-ui/core/IconButton'
 import EyeIcon from '@material-ui/icons/RemoveRedEye'
 
 import DeleteItem from './delete-item'
-import { EditItem } from './edit-item'
+import { EditItem } from './edit/view'
 
 const styles = theme => ({
   root: {

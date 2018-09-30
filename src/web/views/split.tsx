@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 
-import { CreateItem } from '../edit-item'
+import { CreateItem } from '../edit/view'
 import ItemList from '../items'
 
 const styles = theme => ({
