@@ -22,11 +22,7 @@ const styles = theme => ({
   paper: {
     padding: theme.spacing.unit * 2,
     color: theme.palette.text.secondary,
-  },
-  margin: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-  },
+  }
 })
 
 const ItemList = ({ items }) => (
@@ -88,23 +84,25 @@ class Search extends React.Component {
   handleSearch = event => {
     this.props.history.replace({
       pathname: this.props.location.pathname,
-      search: `?q=${event.target.value}`
+      search: `?q=${encodeURIComponent(event.target.value)}`
     })
   }
 
   render() {
     const { classes } = this.props
-    const query = queryString.parse(this.props.location.search).q || ''
+    const query = decodeURIComponent(
+      queryString.parse(this.props.location.search).q || ''
+    )
     return (
       <div className={classes.root}>
         <Grid container>
           <Grid item xs={12}>
             <FormControl
-              className={classes.margin}
               fullWidth
             >
               <InputLabel htmlFor="search">Search</InputLabel>
               <Input
+                autoFocus
                 id="search"
                 onChange={this.handleSearch}
                 type="text"
