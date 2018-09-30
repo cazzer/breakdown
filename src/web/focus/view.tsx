@@ -66,7 +66,6 @@ class FocusView extends PureComponent {
             </Grid>
           </Grid>
         </Paper>
-        <ItemList parentId={item.id} />
       </div>
     )
   }
@@ -74,11 +73,11 @@ class FocusView extends PureComponent {
 
 const StyledFocusView = withStyles(styles)(FocusView)
 
-export default (props) => (
+const ConnectedFocusView = (props) => (
   <Query
     query={itemByIdQuery}
     variables={{
-      id: get(props.match.params, 'itemId', null)
+      id: props.itemId
     }}
   >
     {(itemQuery => (
@@ -88,3 +87,13 @@ export default (props) => (
     ))}
   </Query>
 )
+
+export const FocusWrapperView = (props) => (
+  <div>
+    {get(props.match.params, 'itemId') &&
+      <ConnectedFocusView itemId={props.match.params.itemId} />
+    }
+    <ItemList parentId={get(props.match.params, 'itemId', null)} { ...props } />
+  </div>
+)
+

@@ -12,7 +12,7 @@ import { withAuthenticator } from 'aws-amplify-react'
 import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
-import FocusView from './focus/view'
+import { FocusWrapperView } from './focus/view'
 import { CreateItemView, EditItemView } from './edit/view'
 import Navigation, { BelowNavigation } from './navigation'
 
@@ -52,7 +52,7 @@ const ConnectedApp = (props) => {
           <Switch location={location}>
             <Route path="/home/:parentId/:childId?" component={SplitView} />
             <Route path="/view/focus/:itemId/edit" component={EditItemView} />
-            <Route path="/view/focus/:itemId?" component={FocusView} />
+            <Route path="/view/focus/:itemId?" component={FocusWrapperView} />
             <Route path="/add" component={CreateItemView} />
             <Route path="/search" component={Search} />
           </Switch>

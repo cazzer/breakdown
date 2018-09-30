@@ -80,7 +80,7 @@ class Navigation extends React.Component {
     return (
       <AppBar position="fixed">
         <Toolbar>
-          <Link to="/home/root" className={classes.flex}>
+          <Link to="/view/focus" className={classes.flex}>
             <Typography variant="title" color="inherit">
               Breakdown
             </Typography>
