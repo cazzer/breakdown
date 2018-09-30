@@ -101,7 +101,7 @@ const Dropdown = ({
   </Popper>
 )
 
-class Search extends React.Component {
+class Search extends React.PureComponent {
   constructor(props) {
     super(props)
 

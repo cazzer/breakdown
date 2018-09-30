@@ -13,7 +13,8 @@ import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
 import FocusView from './focus/view'
-import FocusEdit from './focus/edit'
+import FocusEdit, { AddItemView } from './focus/edit'
+import { CreateItemView } from './edit-item'
 import Navigation, { BelowNavigation } from './navigation'
 
 const BUILD_DATE = process.env.BUILD_DATE
@@ -53,6 +54,7 @@ const ConnectedApp = (props) => {
             <Route path="/home/:parentId/:childId?" component={SplitView} />
             <Route path="/view/focus/:itemId/edit" component={FocusEdit} />
             <Route path="/view/focus/:itemId?" component={FocusView} />
+            <Route path="/add" component={CreateItemView} />
             <Route path="/search" component={Search} />
           </Switch>
         </BelowNavigation>

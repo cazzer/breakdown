@@ -34,7 +34,7 @@ const ItemList = ({ items }) => (
     {items.map(item => (
       <Link
         key={item.id}
-        to={`/home/${item.parentId || 'root'}/${item.id}`}
+        to={`/view/focus/${item.id}`}
       >
         <ListItem button>
           <ListItemText

@@ -1,8 +1,7 @@
-import classNames from 'classnames'
 import gql from 'graphql-tag'
 import get from 'lodash/get'
 import React, { Component } from 'react'
-import { Mutation } from 'react-apollo'
+import { Mutation, Query } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
@@ -10,14 +9,20 @@ import Grid from '@material-ui/core/Grid'
 import Input from '@material-ui/core/Input'
 import TextField from '@material-ui/core/TextField'
 import InputLabel from '@material-ui/core/InputLabel'
+import Paper from '@material-ui/core/Paper'
+import queryString from 'query-string'
 
 import { allItemsQuery } from './items'
+import itemByIdQuery from './focus/item-by-id.gql'
 import SearchDropDown from './search/dropdown'
+import ValueView from './focus/value-view'
 
 const styles = theme => ({
+  content: {
+    padding: theme.spacing.unit * 4
+  },
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    margin: theme.spacing.unit
   },
   margin: {
     marginLeft: theme.spacing.unit,
@@ -26,19 +31,24 @@ const styles = theme => ({
   withoutLabel: {
     marginTop: theme.spacing.unit * 3,
   },
-  textField: {
-  },
-  button: {
-    margin: theme.spacing.unit,
+  save: {
+    padding: theme.spacing.unit,
   },
 })
 
 class EditItemForm extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      label: get(props, ['oldItem', 'label'], ''),
-      value: get(props, ['oldItem', 'value'], ''),
+
+    if (props.new) {
+      this.state = {
+        parentId: get(this.props.parentItem, 'id', null),
+      }
+    } else {
+      this.state = {
+        label: get(props, ['oldItem', 'label'], ''),
+        value: get(props, ['oldItem', 'value'], ''),
+      }
     }
   }
 
@@ -57,72 +67,59 @@ class EditItemForm extends Component {
   handleSave = () => {
     this.props.upsert({
       variables: {
-        itemInput: get(this.props, ['oldItem', 'id']) ? {
-          id: this.props.oldItem.id,
-          itemPatch: this.state
-        }: {
-          item: {
-            ...this.props.oldItem,
-            ...this.state
+        itemInput: !this.props.new
+          ? {
+            id: this.props.oldItem.id,
+            itemPatch: this.state
           }
-        }
+          : {
+            item: {
+              ...this.state
+            }
+          }
       }
     })
-
-    if (!get(this.props, ['oldItem', 'id'])) {
-      this.setState({
-        label: '',
-        value: ''
-      })
-    }
   }
 
   render() {
     const { classes } = this.props
     return (
-      <Grid container>
-        <Grid item xs={12}>
-          <Grid container spacing={8}>
+      <Paper className={classes.root}>
+        <Grid container className={classes.content}>
+          <FormControl fullWidth>
             <Grid item xs={12}>
-              <FormControl
-                className={classNames(classes.textField)}
+              <InputLabel htmlFor="label">label</InputLabel>
+              <Input
+                id="label"
                 fullWidth
-              >
-                <InputLabel htmlFor="label">label</InputLabel>
-                <Input
-                  id="label"
-                  onChange={this.handleChange('label')}
-                  type="text"
-                  value={this.state.label}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl
-                className={classNames(classes.textField)}
-                fullWidth
-              >
-                <TextField
-                  id="value"
-                  label="value"
-                  onChange={this.handleChange('value')}
-                  multiline
-                  rowsMax={6}
-                  value={this.state.value}
-                />
-              </FormControl>
-            </Grid>
-          </Grid>
-          <Grid container spacing={8}>
-            <Grid item xs={6} sm={8} md={9} lg={10} xl={11}>
-              <SearchDropDown
-                onUpdate={this.handleParentUpdate}
-                selectedItem={get(this.props.oldItem, 'itemByParentId')}
+                onChange={this.handleChange('label')}
+                type="text"
+                value={this.state.label}
               />
             </Grid>
-            <Grid item xs={6} sm={4} md={3} lg={2} xl={1}>
+            <Grid item xs={12}>
+              <TextField
+                id="value"
+                label="value"
+                onChange={this.handleChange('value')}
+                fullWidth
+                multiline
+                rowsMax={12}
+                value={this.state.value}
+              />
+              <ValueView value={this.state.value} />
+            </Grid>
+            <Grid item xs={12}>
+              <SearchDropDown
+                onUpdate={this.handleParentUpdate}
+                selectedItem={
+                  this.props.parentItem
+                  || get(this.props.oldItem, 'itemByParentId')
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Button
-                className={classes.button}
                 color="primary"
                 fullWidth
                 onClick={this.handleSave}
@@ -132,9 +129,9 @@ class EditItemForm extends Component {
                 Save
               </Button>
             </Grid>
-          </Grid>
+          </FormControl>
         </Grid>
-      </Grid>
+      </Paper>
     )
   }
 }
@@ -166,7 +163,7 @@ export const CreateItem = (props) => (
         query: allItemsQuery,
         variables: {
           condition: {
-            parentId: get(props, ['oldItem', 'parentId'])
+            parentId: get(props, ['parentItem', 'id'])
           }
         }
       })
@@ -174,7 +171,7 @@ export const CreateItem = (props) => (
         query: allItemsQuery,
         variables: {
           condition: {
-            parentId: get(props, ['oldItem', 'parentId'])
+            parentId: get(props, ['parentItem', 'id'])
           }
         },
         data: {
@@ -194,6 +191,34 @@ export const CreateItem = (props) => (
     )}
   </Mutation>
 )
+
+export const CreateItemView = (props) => {
+  const query = queryString.parse(props.location.search)
+  if (query.parentId) {
+    return (
+      <Query
+        query={itemByIdQuery}
+        variables={{
+          id: query.parentId
+        }}
+      >
+        {({ data, loading }) => {
+          return loading
+            ? null
+            : (
+              <CreateItem
+                new={query.new}
+                parentItem={data.itemById}
+                { ...props }
+              />
+            )
+        }}
+      </Query>
+    )
+  }
+
+  return <CreateItem { ...props } />
+}
 
 const updateItem = gql`
 mutation updateItem($itemInput: UpdateItemByIdInput!) {

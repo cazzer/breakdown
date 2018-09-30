@@ -12,7 +12,7 @@ import Menu from '@material-ui/core/Menu'
 import { compose } from 'recompose'
 import { withRouter } from 'react-router'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import SearchLink from './search/link'
+import FloatingActionButtons from './floating-action-buttons'
 
 
 const styles = theme => ({
@@ -124,21 +124,8 @@ export default compose(
 
 const belowNavigation = ({ classes, children, location }) => (
   <div className={classes.belowNavigation}>
-    <TransitionGroup>
-      <CSSTransition
-        key={location.pathname}
-        classNames={{
-          enter: classes.slideEnter,
-          enterActive: classes.slideEnterActive,
-          exit: classes.slideExit,
-          exitActive: classes.slideExitActive
-        }}
-        timeout={300}
-      >
-        {children}
-      </CSSTransition>
-    </TransitionGroup>
-    <SearchLink />
+    {children}
+    <FloatingActionButtons />
   </div>
 )
 

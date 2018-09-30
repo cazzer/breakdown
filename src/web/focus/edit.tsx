@@ -8,9 +8,11 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import FormControl from '@material-ui/core/FormControl'
+import queryString from 'query-string'
 
 import TypeGuesser from './type-guesser'
 import itemByIdQuery from './item-by-id.gql'
+import SearchDropDown from '../search/dropdown'
 
 const styles = theme => ({
   content: {
@@ -31,14 +33,23 @@ class FocusEditView extends Component {
     super(props)
 
     this.state = {
-      label: props.item.label,
-      value: props.item.value
+      autoFocusOnValue: false,
+      label: get(props, ['item', 'label'], ''),
+      value: get(props, ['item', 'value'], '')
+    }
+
+    if (props.new && props.parentItem) {
+      this.state = {
+        parentId: props.parentItem.id,
+        ...this.state
+      }
     }
   }
 
   handleChange = name => event => {
     this.setState({
-      [name]: event.target.value
+      [name]: event.target.value,
+      autoFocusOnValue: true
     })
   }
 
@@ -58,6 +69,12 @@ class FocusEditView extends Component {
     this.props.history.goBack()
   }
 
+  handleParentUpdate = (parentId) => {
+    this.setState({
+      parentId
+    })
+  }
+
   render() {
     const { classes } = this.props
 
@@ -69,6 +86,7 @@ class FocusEditView extends Component {
               <TextField
                 id="label"
                 label="label"
+                autoFocus={!this.state.autoFocusOnValue}
                 fullWidth
                 onChange={this.handleChange('label')}
                 value={this.state.label}
@@ -76,8 +94,18 @@ class FocusEditView extends Component {
             </Grid>
             <Grid className={classes.title} item xs={12} xl={8}>
               <TypeGuesser
+                autoFocus={this.state.autoFocusOnValue}
                 changeValue={this.handleChange('value')}
                 value={this.state.value}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <SearchDropDown
+                onUpdate={this.handleParentUpdate}
+                selectedItem={
+                  this.props.parentItem
+                  || get(this.props, ['item', 'itemByParentId'])
+                }
               />
             </Grid>
             <Grid className={classes.save} item xs={12}>
@@ -100,6 +128,30 @@ class FocusEditView extends Component {
 }
 
 const StyledFocusView = withStyles(styles)(FocusEditView)
+
+const AddItemView = (props) => {
+  const query = queryString.parse(props.location.search)
+  if (query.parentId) {
+    return (
+      <Query
+        query={itemByIdQuery}
+        variables={{
+          id: query.parentId
+        }}
+      >
+        {({ data, loading }) => {
+          return loading
+            ? null
+            : <StyledFocusView new={query.new} parentItem={data.itemById} />
+        }}
+      </Query>
+    )
+  }
+
+  return <StyledFocusView { ...props} />
+}
+
+export { AddItemView }
 
 const editItemMutation = gql`
 mutation updateItem($itemInput: UpdateItemByIdInput!) {
