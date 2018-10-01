@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { Query } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
@@ -31,7 +31,7 @@ const styles = theme => ({
   }
 })
 
-class FocusView extends PureComponent {
+class FocusView extends Component {
   render() {
     const { classes, item } = this.props
     return (
@@ -90,4 +90,3 @@ export const FocusWrapperView = (props) => (
     <ItemList parentId={get(props.match.params, 'itemId', null)} { ...props } />
   </div>
 )
-

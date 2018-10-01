@@ -40,17 +40,12 @@ class EditItemForm extends Component {
   constructor(props) {
     super(props)
 
-    if (props.new) {
-      this.state = {
-        parentId: get(this.props.parentItem, 'id', null),
-      }
-    } else {
-      this.state = {
-        label: '',
-        value: '',
-        ...props.item,
-        __typename: undefined
-      }
+    this.state = {
+      label: '',
+      value: '',
+      parentId: get(props.parentItem, 'id', null),
+      ...props.item,
+      __typename: undefined
     }
   }
 
@@ -69,11 +64,12 @@ class EditItemForm extends Component {
   handleSave = async () => {
     await this.props.upsert({
       variables: {
-        itemInput: !this.props.new
+        itemInput: get(this.props.item, ['id'])
           ? {
             id: this.props.item.id,
             itemPatch: {
               ...this.state,
+              // this is part of state but shouldn't be part of the request
               itemByParentId: undefined
             }
           }
@@ -170,7 +166,7 @@ export const CreateItem = (props) => (
         query: allItemsQuery,
         variables: {
           condition: {
-            parentId: get(props, ['parentItem', 'id'])
+            parentId: get(props, ['parentItem', 'id'], null)
           }
         }
       })
@@ -178,7 +174,7 @@ export const CreateItem = (props) => (
         query: allItemsQuery,
         variables: {
           condition: {
-            parentId: get(props, ['parentItem', 'id'])
+            parentId: get(props, ['parentItem', 'id'], null)
           }
         },
         data: {

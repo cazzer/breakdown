@@ -43,12 +43,22 @@ mutation DeleteItem($itemId: DeleteItemByIdInput!) {
 export default (props) => (
   <Mutation
     mutation={deleteItemMutation}
-    update={(cache, result) => {
+    update={(cache) => {
       const data = cache.readQuery({
-        query: allItemsQuery
+        query: allItemsQuery,
+        variables: {
+          condition: {
+            parentId: props.parentId || null
+          }
+        }
       })
       cache.writeQuery({
         query: allItemsQuery,
+        variables: {
+          condition: {
+            parentId: props.parentId || null
+          }
+        },
         data: {
           allItems: {
             ...data.allItems,

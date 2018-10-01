@@ -14,11 +14,13 @@ import EyeIcon from '@material-ui/icons/RemoveRedEye'
 
 import DeleteItem from './delete-item'
 import { EditItem } from './edit/view'
+import Loading from './loading'
 
 const styles = theme => ({
+  empty: {
+    marginTop: theme.spacing.unit
+  },
   root: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
   },
   listItem: {
     display: 'flex',
@@ -35,21 +37,13 @@ const styles = theme => ({
 
 const ItemsList = (props) => {
   const { classes, items } = props
-  const itemNodes = get(items, ['data', 'allItems', 'nodes'])
 
-  if (items.loading && !itemNodes) {
+  if (!items.length) {
     return (
-      <div className={classes.root}>
-        <Typography>Loading...</Typography>
-      </div>
-    )
-  }
-
-  if (!itemNodes) return null
-  if (!itemNodes.length) {
-    return (
-    <div className={classes.root}>
-      <Typography>Nothing here</Typography>
+    <div className={classes.empty}>
+      <Typography align="center" variant="caption">
+        Nothing here
+      </Typography>
     </div>
     )
   }
@@ -57,7 +51,7 @@ const ItemsList = (props) => {
   return (
     <div className={classes.root}>
       <List>
-        {itemNodes.map(item => {
+        {items.map(item => {
           return props.match.params.childId === item.id ? (
             <ListItem key={item.id}>
                 <EditItem oldItem={item} />
@@ -117,8 +111,10 @@ export default (props: Object) => (
     }}
     query={allItemsQuery}
   >
-    {(itemsQuery) => (
-      <StyledItemsList items={itemsQuery} />
+    {({ loading, data }) => (
+      loading
+        ? <Loading />
+        : <StyledItemsList items={get(data, ['allItems', 'nodes'], [])} />
     )}
   </Query>
 )

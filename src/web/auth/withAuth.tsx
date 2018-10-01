@@ -50,8 +50,7 @@ export class AuthProvider extends React.Component {
 
   register = async ({ username, password}) => {
     try {
-      const result = await Auth.signUp(username, password)
-      console.log(result)
+      await Auth.signUp(username, password)
       this.login({ username, password })
     }
     catch(error) {

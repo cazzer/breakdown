@@ -16,7 +16,7 @@ const SearchLink = (props) => (
     to={{
       pathname: "/add",
       search: get(props.match.params, 'itemId')
-        ? `?parentId=${props.match.params.itemId}&new=true`
+        ? `?parentId=${props.match.params.itemId}`
         : null
     }}
     className={props.classes.root}
