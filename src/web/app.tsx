@@ -9,6 +9,7 @@ import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
 
 import Login from './auth/login'
+import Register from './auth/register'
 import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
@@ -75,6 +76,14 @@ const ConnectedLogin = (props) => (
   </AuthContext.Consumer>
 )
 
+const ConnectedRegister = (props) => (
+  <AuthContext.Consumer>
+    {({ register }) => (
+      <Register { ...props } register={register} />
+    )}
+  </AuthContext.Consumer>
+)
+
 const RedirectLogin = () => (
   <Redirect to="/login" />
 )
@@ -83,7 +92,7 @@ const AuthApp = () => (
   <BrowserRouter>
     <Switch>
       <Route path="/login" component={ConnectedLogin} />
-      <Route path="/register" />
+      <Route path="/register" component={ConnectedRegister} />
       <Route component={RedirectLogin} />
     </Switch>
   </BrowserRouter>

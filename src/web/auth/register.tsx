@@ -42,8 +42,8 @@ class Login extends Component {
     username: ''
   }
 
-  handleLogin = () => {
-    this.props.login(this.state)
+  handleRegister = () => {
+    this.props.register(this.state)
   }
 
   handleUpdateName = event => {
@@ -119,22 +119,22 @@ class Login extends Component {
                 className={classes.button}
                 color="primary"
                 fullWidth
-                onClick={this.handleLogin}
+                onClick={this.handleRegister}
                 size="large"
                 variant="contained"
               >
-                Login
+                Register
               </Button>
             </Grid>
             <Grid item xs={6}>
-              <Link to="/register">
+              <Link to="/login">
                 <Button
                   className={classes.button}
                   fullWidth
                   size="large"
                   variant="contained"
                 >
-                  Register
+                  Login
                 </Button>
               </Link>
             </Grid>

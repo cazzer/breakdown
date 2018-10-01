@@ -475,6 +475,47 @@ Resources:
           DEBUG: post-confirmation*
           EPSAGON_TOKEN: !Ref EpsagonToken
 
+  PreSignUpFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-pre-sign-up-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - "logs:*"
+              - "events:*"
+              - "xray:*"
+      Roles:
+        - !Ref PostConfirmationFunctionRole
+
+  PreSignUpFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  PreSignUpFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/cognito/pre-sign-up.default
+      Role: !GetAtt PreSignUpFunctionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Tracing: Active
+      Environment:
+        Variables:
+          EPSAGON_TOKEN: !Ref EpsagonToken
+
   PreTokenGenerationFunctionPolicy:
     Type: AWS::IAM::Policy
     Properties:

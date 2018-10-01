@@ -48,6 +48,17 @@ export class AuthProvider extends React.Component {
     })
   }
 
+  register = async ({ username, password}) => {
+    try {
+      const result = await Auth.signUp(username, password)
+      console.log(result)
+      this.login({ username, password })
+    }
+    catch(error) {
+      return error
+    }
+  }
+
   refreshTimeout = null
 
   async refreshToken() {
@@ -71,7 +82,8 @@ export class AuthProvider extends React.Component {
       <AuthContext.Provider value={{
         ...this.state,
         login: this.login,
-        logout: this.logout
+        logout: this.logout,
+        register: this.register
       }}>
         {this.props.children}
       </AuthContext.Provider>
