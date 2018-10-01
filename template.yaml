@@ -489,7 +489,7 @@ Resources:
               - "events:*"
               - "xray:*"
       Roles:
-        - !Ref PostConfirmationFunctionRole
+        - !Ref PreSignUpFunctionRole
 
   PreSignUpFunctionRole:
     Type: AWS::IAM::Role
