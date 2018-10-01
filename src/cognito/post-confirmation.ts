@@ -14,7 +14,8 @@ export default epsagon.lambdaWrapper(async (event, context) => {
   try {
     await db('users_and_groups')
       .insert({
-        id: userId
+        id: userId,
+        name: event.userName
       })
   } catch (error) {
     console.error(`role and grants not successful for user ${userId}`, error)
