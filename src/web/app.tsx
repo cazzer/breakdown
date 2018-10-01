@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 import Login from './auth/login'
 import Register from './auth/register'
@@ -27,6 +28,12 @@ Amplify.configure({
     region: process.env.AWS_REGION,
     userPoolId: process.env.USER_POOL_ID,
     userPoolWebClientId: process.env.USER_POOL_WEB_CLIENT_ID,
+  }
+})
+
+const theme = createMuiTheme({
+  palette: {
+    type: 'dark'
   }
 })
 
@@ -101,18 +108,20 @@ const AuthApp = () => (
 class App extends React.Component {
   render() {
     return (
-      <AuthProvider>
-        <AuthContext.Consumer>
-          {({ loading, sessionToken }) => {
-            if (loading) {
-              return null
-            }
-            return sessionToken
-              ? <ConnectedApp sessionToken={sessionToken} />
-              : <AuthApp />
-          }}
-        </AuthContext.Consumer>
-      </AuthProvider>
+      <MuiThemeProvider theme={theme}>
+        <AuthProvider>
+          <AuthContext.Consumer>
+            {({ loading, sessionToken }) => {
+              if (loading) {
+                return null
+              }
+              return sessionToken
+                ? <ConnectedApp sessionToken={sessionToken} />
+                : <AuthApp />
+            }}
+          </AuthContext.Consumer>
+        </AuthProvider>
+      </MuiThemeProvider>
     )
   }
 }

@@ -2,10 +2,18 @@ query Item($id: UUID!) {
   itemById(id: $id) {
     id
     label
-    value,
+    value
     itemByParentId {
       id,
       label
+    }
+    permissionsByItemId {
+      nodes {
+        usersAndGroupByUserOrGroupId {
+          id
+          name
+        }
+      }
     }
   }
 }
