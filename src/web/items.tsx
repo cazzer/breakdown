@@ -10,7 +10,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import EyeIcon from '@material-ui/icons/RemoveRedEye'
+import EditIcon from '@material-ui/icons/Edit'
 
 import DeleteItem from './delete-item'
 import { EditItem } from './edit/view'
@@ -58,16 +58,16 @@ const ItemsList = (props) => {
             </ListItem>
           ) : (
             <ListItem button className={classes.listItem} divider key={item.id}>
-              <Link className={classes.listItemLink} to={`/view/focus/${item.id}/edit`}>
+              <Link className={classes.listItemLink} to={`/view/focus/${item.id}`}>
                 <ListItemText
                   primary={item.label}
                   secondary={item.value}
                 />
               </Link>
               <div className={classes.listItemActions}>
-                <Link to={`/view/focus/${item.id}`}>
+                <Link to={`/view/focus/${item.id}/edit`}>
                   <IconButton aria-label="Focus">
-                    <EyeIcon />
+                    <EditIcon />
                   </IconButton>
                 </Link>
                 <DeleteItem id={item.id} />
