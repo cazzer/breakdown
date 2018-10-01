@@ -1,20 +1,21 @@
 import React from 'react'
 import {
   BrowserRouter,
+  Redirect,
   Route,
   Switch
 } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
-import { Auth, Hub, Logger } from 'aws-amplify'
-import { withAuthenticator } from 'aws-amplify-react'
 
+import Login from './auth/login'
 import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
 import { FocusWrapperView } from './focus/view'
 import { CreateItemView, EditItemView } from './edit/view'
 import Navigation, { BelowNavigation } from './navigation'
+import { AuthContext, AuthProvider } from './auth/withAuth'
 
 const BUILD_DATE = process.env.BUILD_DATE
 console.log(`Built on ${BUILD_DATE}`)
@@ -28,76 +29,83 @@ Amplify.configure({
   }
 })
 
-const authLogger = new Logger('auth')
+const RedirectFocus = () => (
+  <Redirect to="/view/focus" />
+)
 
-authLogger.onHubCapsule = capsule => {
-  console.log(capsule)
-}
-
-Hub.listen('auth', authLogger)
-
-const ConnectedApp = (props) => {
-  const client = createClient({
-    uri: process.env.GRAPHQL_ENDPOINT,
-    headers: {
-      Authorization: props.sessionToken
-    }
-  })
-
-  return (
-    <ApolloProvider client={client}>
-      <Navigation />
-      <Route render={({ location }) => (
-        <BelowNavigation location={location}>
-          <Switch location={location}>
-            <Route path="/home/:parentId/:childId?" component={SplitView} />
-            <Route path="/view/focus/:itemId/edit" component={EditItemView} />
-            <Route path="/view/focus/:itemId?" component={FocusWrapperView} />
-            <Route path="/add" component={CreateItemView} />
-            <Route path="/search" component={Search} />
-          </Switch>
-        </BelowNavigation>
-      )} />
-    </ApolloProvider>
-  )
-}
-
-class App extends React.Component {
-  state = {
-    sessionToken: null
-  }
-
-  refreshToken() {
-    console.log('Refreshing session')
-    Auth
-      .currentSession()
-      .then(session => {
-        console.log('Got Cognito session')
-        console.log(session)
-        this.setState({
-          sessionToken: session.idToken.jwtToken
-        })
-      })
-  }
-
-  componentDidMount() {
-    this.refreshToken()
-
-    this.sessionRefresher = setInterval(
-      this.refreshToken.bind(this),
-      30 * 60 * 1000
-    )
+class ConnectedApp extends React.Component {
+  shouldComponentUpdate() {
+    console.log('hi')
+    return true
   }
 
   render() {
+    const client = createClient({
+      uri: process.env.GRAPHQL_ENDPOINT,
+      headers: {
+        Authorization: this.props.sessionToken
+      }
+    })
+
     return (
       <BrowserRouter>
-        {this.state.sessionToken &&
-          <ConnectedApp sessionToken={this.state.sessionToken} />
-        }
+        <ApolloProvider client={client}>
+          <Navigation />
+          <BelowNavigation>
+            <Switch>
+              <Route path="/home/:parentId/:childId?" component={SplitView} />
+              <Route path="/view/focus/:itemId/edit" component={EditItemView} />
+              <Route path="/view/focus/:itemId?" component={FocusWrapperView} />
+              <Route path="/add" component={CreateItemView} />
+              <Route path="/search" component={Search} />
+              <Route component={RedirectFocus} />
+            </Switch>
+          </BelowNavigation>
+        </ApolloProvider>
       </BrowserRouter>
     )
   }
 }
 
-export default withAuthenticator(App)
+const ConnectedLogin = (props) => (
+  <AuthContext.Consumer>
+    {({ login }) => (
+      <Login { ...props } login={login} />
+    )}
+  </AuthContext.Consumer>
+)
+
+const RedirectLogin = () => (
+  <Redirect to="/login" />
+)
+
+const AuthApp = () => (
+  <BrowserRouter>
+    <Switch>
+      <Route path="/login" component={ConnectedLogin} />
+      <Route path="/register" />
+      <Route component={RedirectLogin} />
+    </Switch>
+  </BrowserRouter>
+)
+
+class App extends React.Component {
+  render() {
+    return (
+      <AuthProvider>
+        <AuthContext.Consumer>
+          {({ loading, sessionToken }) => {
+            if (loading) {
+              return null
+            }
+            return sessionToken
+              ? <ConnectedApp sessionToken={sessionToken} />
+              : <AuthApp />
+          }}
+        </AuthContext.Consumer>
+      </AuthProvider>
+    )
+  }
+}
+
+export default App

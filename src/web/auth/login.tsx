@@ -1,7 +1,5 @@
-import Auth from '@aws-amplify/auth'
 import classNames from 'classnames'
 import React, { Component } from 'react'
-import { compose } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
@@ -43,6 +41,10 @@ class Login extends Component {
     username: ''
   }
 
+  handleLogin = () => {
+    this.props.login(this.state)
+  }
+
   handleUpdateName = event => {
     this.setState({
       username: event.target.value
@@ -63,13 +65,6 @@ class Login extends Component {
 
   handleMouseDownPassword = event => {
     event.preventDefault()
-  }
-
-  handleLogin = () => {
-    this.props.signIn(
-      this.state.username,
-      this.state.password
-    )
   }
 
   render() {
@@ -148,27 +143,5 @@ class Login extends Component {
   }
 }
 
-function withLogin(WrappedComponent) {
-  class WithLogin extends Component {
-    render(props) {
-      return <WrappedComponent
-        {...props}
-        {...this.state}
-        signIn={Auth.signIn.bind(Auth)}
-      />
-    }
-  }
 
-  WithLogin.displayName = `withEvent(${
-    WrappedComponent.displayName
-      || WrappedComponent.name
-      || 'Component'
-  })`
-
-  return WithLogin
-}
-
-export default compose(
-  withLogin,
-  withStyles(styles)
-)(Login)
+export default withStyles(styles)(Login)

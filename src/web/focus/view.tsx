@@ -1,5 +1,4 @@
 import get from 'lodash/get'
-import gql from 'graphql-tag'
 import React, { PureComponent } from 'react'
 import { Query } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'

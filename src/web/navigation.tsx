@@ -1,4 +1,3 @@
-import { Auth } from 'aws-amplify'
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -11,8 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import { compose } from 'recompose'
 import { withRouter } from 'react-router'
-import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import FloatingActionButtons from './floating-action-buttons'
+import { AuthContext } from './auth/withAuth'
 
 
 const styles = theme => ({
@@ -55,17 +54,6 @@ class Navigation extends React.Component {
     anchorEl: null,
   }
 
-  handleLogout = async () => {
-    try {
-      await Auth.signOut()
-      this.props.history.push('/')
-    } catch (error) {
-      console.error(error)
-    }
-
-    this.handleClose()
-  }
-
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   }
@@ -94,22 +82,26 @@ class Navigation extends React.Component {
             >
               <AccountCircle />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={this.state.anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={open}
-              onClose={this.handleClose}
-            >
-              <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-            </Menu>
+            <AuthContext.Consumer>
+              {({ logout }) => (
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={this.state.anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={open}
+                  onClose={this.handleClose}
+                >
+                  <MenuItem onClick={logout}>Logout</MenuItem>
+                </Menu>
+              )}
+            </AuthContext.Consumer>
           </div>
         </Toolbar>
       </AppBar>
@@ -122,7 +114,7 @@ export default compose(
   withRouter
 )(Navigation)
 
-const belowNavigation = ({ classes, children, location }) => (
+const belowNavigation = ({ classes, children }) => (
   <div className={classes.belowNavigation}>
     {children}
     <FloatingActionButtons />
