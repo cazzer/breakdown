@@ -68,9 +68,9 @@ class EditItemForm extends Component {
           ? {
             id: this.props.item.id,
             itemPatch: {
-              ...this.state,
-              // this is part of state but shouldn't be part of the request
-              itemByParentId: undefined
+              label: this.state.label,
+              parentId: this.state.parentId,
+              value: this.state.value,
             }
           }
           : {
