@@ -70,7 +70,7 @@ const ItemsList = (props) => {
                     <EditIcon />
                   </IconButton>
                 </Link>
-                <DeleteItem id={item.id} />
+                <DeleteItem id={item.id} parentId={item.parentId} />
               </div>
             </ListItem>
           )

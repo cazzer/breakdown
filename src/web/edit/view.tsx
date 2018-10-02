@@ -43,7 +43,7 @@ class EditItemForm extends Component {
     this.state = {
       label: '',
       value: '',
-      parentId: get(props.parentItem, 'id', null),
+      parentId: get(props.item, ['itemByParentId', 'id'], null),
       ...props.item,
       __typename: undefined
     }
