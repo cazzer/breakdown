@@ -34,6 +34,10 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: DatabasePassword
 
+  SentryDsn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: SentryDsn
+
 Resources:
   Api:
     Type: AWS::Serverless::Api
@@ -265,6 +269,8 @@ Resources:
             Value: !Ref UserPoolClient
           - Name: GRAPHQL_ENDPOINT
             Value: "https://api.thinstack.io/v1/graphql"
+          - Name: SENTRY_DSN
+            Value: !Ref SentryDsn
       ServiceRole: !Ref CodebuildRole
 
   Pipeline:

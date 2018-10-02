@@ -8,6 +8,7 @@ import {
 import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { init } from '@sentry/browser'
 
 import Login from './auth/login'
 import Register from './auth/register'
@@ -21,6 +22,12 @@ import { AuthContext, AuthProvider } from './auth/withAuth'
 
 const BUILD_DATE = process.env.BUILD_DATE
 console.log(`Built on ${BUILD_DATE}`)
+
+if (process.env.NODE_END === 'production') {
+  init({
+    dsn: process.env.SENTRY_DSN
+  })
+}
 
 Amplify.configure({
   Auth: {
@@ -42,11 +49,6 @@ const RedirectFocus = () => (
 )
 
 class ConnectedApp extends React.Component {
-  shouldComponentUpdate() {
-    console.log('hi')
-    return true
-  }
-
   render() {
     const client = createClient({
       uri: process.env.GRAPHQL_ENDPOINT,

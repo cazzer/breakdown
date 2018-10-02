@@ -61,7 +61,8 @@ module.exports = {
       'AWS_REGION',
       'USER_POOL_ID',
       'USER_POOL_WEB_CLIENT_ID',
-      'GRAPHQL_ENDPOINT'
+      'GRAPHQL_ENDPOINT',
+      'SENTRY_DSN'
     ]),
     new HtmlWebpackPlugin({
       template: './src/web/index.html'
