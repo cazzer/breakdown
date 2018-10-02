@@ -15,6 +15,9 @@ import ValueView from './value-view'
 import itemByIdQuery from './item-by-id.gql'
 
 const styles = theme => ({
+  backButton: {
+    margin: theme.spacing.unit
+  },
   content: {
     padding: theme.spacing.unit * 4
   },
@@ -36,14 +39,15 @@ class FocusView extends Component {
     const { classes, item } = this.props
     return (
       <div className={classes.root}>
-        {item.itemByParentId && (
-          <Link to={`/view/focus/${item.itemByParentId.id}`} className={classes.parentLink}>
-            <Button mini variant="fab" color="default" aria-label="Parent">
-              <ArrowUpward />
-            </Button>
-          </Link>
-        )}
         <Paper className={classes.item}>
+          {item.itemByParentId && (
+            <Link to={`/view/focus/${item.itemByParentId.id}`}>
+              <Button variant="outlined" className={classes.backButton}>
+                <ArrowUpward />
+                {item.itemByParentId.label}
+              </Button>
+            </Link>
+          )}
           <Link to={`/view/focus/${item.id}/edit`}>
             <Grid
               container
