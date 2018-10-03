@@ -12,10 +12,14 @@ import InputLabel from '@material-ui/core/InputLabel'
 import Paper from '@material-ui/core/Paper'
 import queryString from 'query-string'
 
-import { allItemsQuery } from '../items'
 import itemByIdQuery from '../focus/item-by-id.gql'
 import SearchDropDown from '../search/dropdown'
 import ValueView from '../focus/value-view'
+import {
+  addItemToAllItems,
+  removeItemFromAllItems,
+  updateItemInAllItems
+} from '../cache-handlers'
 
 const styles = theme => ({
   content: {
@@ -43,7 +47,7 @@ class EditItemForm extends Component {
     this.state = {
       label: '',
       value: '',
-      parentId: get(props.item, ['itemByParentId', 'id'], null),
+      parentId: get(props.item.itemByParentId, ['id'], null),
       ...props.item,
       __typename: undefined
     }
@@ -62,26 +66,26 @@ class EditItemForm extends Component {
   }
 
   handleSave = async () => {
+    const item = {
+      label: this.state.label,
+      parentId: this.state.parentId,
+      value: this.state.value,
+    }
+
     await this.props.upsert({
       variables: {
-        itemInput: get(this.props.item, ['id'])
+        itemInput: !this.props.new
           ? {
             id: this.props.item.id,
-            itemPatch: {
-              label: this.state.label,
-              parentId: this.state.parentId,
-              value: this.state.value,
-            }
+            itemPatch: item
           }
           : {
-            item: {
-              ...this.state
-            }
+            item
           }
       }
     })
 
-    this.props.history.goBack()
+    this.props.onSave()
   }
 
   render() {
@@ -162,53 +166,25 @@ export const CreateItem = (props) => (
   <Mutation
     mutation={createItem}
     update={(cache, result) => {
-      const parentId = result.data.createItem.item.parentId
-      let data
-      try {
-        data = cache.readQuery({
-          query: allItemsQuery,
-          variables: {
-            condition: {
-              parentId
-            }
-          }
-        })
-      }
-      catch (error) {
-        console.error(error)
-        data = {
-          allItems: {
-            nodes: []
-          }
-        }
-      }
-      cache.writeQuery({
-        query: allItemsQuery,
-        variables: {
-          condition: {
-            parentId
-          }
-        },
-        data: {
-          allItems: {
-            ...data.allItems,
-            nodes: [
-              result.data.createItem.item,
-              ...data.allItems.nodes
-            ]
-          }
-        }
-      })
+      const { item } = result.data.createItem
+      addItemToAllItems(cache, item, item.parentId)
     }}
   >
     {(createItemMutation) => (
-      <StyledEditItem upsert={createItemMutation} {...props} />
+      <StyledEditItem
+        item={props.item}
+        upsert={createItemMutation}
+        new
+        onSave={props.onSave}
+        {...props}
+      />
     )}
   </Mutation>
 )
 
 export const CreateItemView = (props) => {
   const query = queryString.parse(props.location.search)
+
   if (query.parentId) {
     return (
       <Query
@@ -222,9 +198,8 @@ export const CreateItemView = (props) => {
             ? null
             : (
               <CreateItem
-                new={query.new}
-                parentItem={data.itemById}
-                { ...props }
+                item={{ itemByParentId: data.itemById }}
+                onSave={props.history.goBack}
               />
             )
         }}
@@ -239,9 +214,14 @@ const updateItem = gql`
 mutation updateItem($itemInput: UpdateItemByIdInput!) {
   updateItemById(input: $itemInput) {
     item {
+      id,
       label,
       parentId,
-      value
+      value,
+      itemByParentId {
+        id,
+        label
+      }
     }
   }
 }
@@ -252,87 +232,22 @@ export const EditItem = (props) => (
     mutation={updateItem}
     update={(cache, result) => {
       const oldParentId = get(props.item, ['itemByParentId', 'id'], null)
-      const newParentId = result.data.updateItemById.item.parentId
-      const oldParentItems = cache.readQuery({
-        query: allItemsQuery,
-        variables: {
-          condition: {
-            parentId: oldParentId
-          }
-        }
-      })
+      const { item } = result.data.updateItemById
 
-      if (newParentId === oldParentId) {
-        cache.writeQuery({
-          query: allItemsQuery,
-          variables: {
-            condition: {
-              parentId: oldParentId
-            }
-          },
-          data: {
-            allItems: {
-              ...oldParentItems.allItems,
-              nodes: oldParentItems.allItems.nodes.map(item => (
-                item.id === props.item.id
-                  ? {
-                    ...item,
-                    ...result.data.updateItemById.item
-                  }
-                  : item
-              ))
-            }
-          }
-        })
+      if (oldParentId === item.parentId) {
+        updateItemInAllItems(cache, item, item.parentId)
       } else {
-        cache.writeQuery({
-          query: allItemsQuery,
-          variables: {
-            condition: {
-              parentId: oldParentId
-            }
-          },
-          data: {
-            allItems: {
-              ...oldParentItems.allItems,
-              nodes: oldParentItems.allItems.nodes.filter(item => (
-                item.id !== props.item.id
-              ))
-            }
-          }
-        })
-
-        const newParentItems = cache.readQuery({
-          query: allItemsQuery,
-          variables: {
-            condition: {
-              parentId: newParentId
-            }
-          }
-        })
-
-        cache.writeQuery({
-          query: allItemsQuery,
-          variables: {
-            condition: {
-              parentId: newParentId
-            }
-          },
-          data: {
-            allItems: {
-              ...newParentItems.allItems,
-              nodes: [
-                result.data.updateItemById.item,
-                ...newParentItems.allItems.nodes
-              ]
-            }
-          }
-        })
+        removeItemFromAllItems(cache, item, oldParentId)
+        addItemToAllItems(cache, item, item.parentId)
       }
     }}
   >
     {(editItemMutation) => (
-      <StyledEditItem upsert={editItemMutation} {...props} />
+      <StyledEditItem
+        item={props.item}
+        onSave={props.onSave}
+        upsert={editItemMutation}
+      />
     )}
   </Mutation>
 )
@@ -347,7 +262,7 @@ export const EditItemView = (props) => (
     {({ data, loading}) => {
      return loading
         ? null
-        : <EditItem item={data.itemById} {...props} />
+        : <EditItem item={data.itemById} onSave={props.history.goBack} />
     }}
   </Query>
 )
