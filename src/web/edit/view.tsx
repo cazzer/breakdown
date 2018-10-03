@@ -162,13 +162,14 @@ export const CreateItem = (props) => (
   <Mutation
     mutation={createItem}
     update={(cache, result) => {
+      const parentId = result.data.createItem.item.parentId
       let data
       try {
         data = cache.readQuery({
           query: allItemsQuery,
           variables: {
             condition: {
-              parentId: get(props, ['parentItem', 'id'], null)
+              parentId
             }
           }
         })
@@ -185,7 +186,7 @@ export const CreateItem = (props) => (
         query: allItemsQuery,
         variables: {
           condition: {
-            parentId: get(props, ['parentItem', 'id'], null)
+            parentId
           }
         },
         data: {
