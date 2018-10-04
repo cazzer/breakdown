@@ -47,7 +47,7 @@ class EditItemForm extends Component {
     this.state = {
       label: '',
       value: '',
-      parentId: get(props.item.itemByParentId, ['id'], null),
+      parentId: get(props, ['item', 'itemByParentId', 'id'], null),
       ...props.item,
       __typename: undefined
     }
@@ -97,6 +97,7 @@ class EditItemForm extends Component {
             <Grid item xs={12}>
               <InputLabel htmlFor="label">label</InputLabel>
               <Input
+                autoFocus
                 id="label"
                 fullWidth
                 onChange={this.handleChange('label')}
@@ -231,7 +232,7 @@ export const EditItem = (props) => (
   <Mutation
     mutation={updateItem}
     update={(cache, result) => {
-      const oldParentId = get(props.item, ['itemByParentId', 'id'], null)
+      const oldParentId = get(props, ['item', 'itemByParentId', 'id'], null)
       const { item } = result.data.updateItemById
 
       if (oldParentId === item.parentId) {
