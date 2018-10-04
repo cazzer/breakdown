@@ -2,7 +2,6 @@
   "dependencies": {
     "@aws-amplify/auth": "^1.0.5",
     "@aws-amplify/core": "^1.0.4",
-    "@epsagon/epsagon": "^0.1.17",
     "@material-ui/core": "^1.4.3",
     "@material-ui/icons": "^2.0.1",
     "@sentry/browser": "^4.0.6",

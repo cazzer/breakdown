@@ -1,7 +1,6 @@
 import db from '../database'
-import epsagon from '../epsagon'
 
-export default epsagon.lambdaWrapper(async (event) => {
+export default async function preToken(event) {
   console.log(event)
 
   const userId = event.request.userAttributes.sub
@@ -27,4 +26,4 @@ export default epsagon.lambdaWrapper(async (event) => {
 
   console.log(response)
   return response
-})
+}
