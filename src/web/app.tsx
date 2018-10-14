@@ -12,7 +12,7 @@ import { init } from '@sentry/browser'
 
 import Login from './auth/login'
 import Register from './auth/register'
-import createClient from './apollo-client'
+import client from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
 import { FocusWrapperView } from './focus/view'
@@ -50,13 +50,6 @@ const RedirectFocus = () => (
 
 class ConnectedApp extends React.Component {
   render() {
-    const client = createClient({
-      uri: process.env.GRAPHQL_ENDPOINT,
-      headers: {
-        Authorization: this.props.sessionToken
-      }
-    })
-
     return (
       <BrowserRouter>
         <ApolloProvider client={client}>
@@ -113,12 +106,12 @@ class App extends React.Component {
       <MuiThemeProvider theme={theme}>
         <AuthProvider>
           <AuthContext.Consumer>
-            {({ loading, sessionToken }) => {
+            {({ loading, loggedIn }) => {
               if (loading) {
                 return null
               }
-              return sessionToken
-                ? <ConnectedApp sessionToken={sessionToken} />
+              return loggedIn
+                ? <ConnectedApp />
                 : <AuthApp />
             }}
           </AuthContext.Consumer>

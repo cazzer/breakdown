@@ -4,7 +4,6 @@ import React from 'react'
 
 export const AuthContext = React.createContext(null)
 
-
 Amplify.configure({
   Auth: {
     identityPoolId: process.env.IDENTITY_POOL_ID,
@@ -17,24 +16,39 @@ Amplify.configure({
 export class AuthProvider extends React.Component {
   state = {
     loading: true,
-    sessionToken: null
+    loggedIn: null
   }
 
-  componentDidMount() {
-    this.refreshToken()
+  async componentDidMount() {
+    try {
+      await Auth.currentSession()
 
-    this.refreshTimeout = setInterval(
-      this.refreshToken.bind(this),
-      45 * 60 * 1000
-    )
+      this.setState({
+        loading: false,
+        loggedIn: true
+      })
+    } catch (error) {
+      return this.setState({
+        loading: false,
+        loggedIn: false
+      })
+    }
   }
 
-  login = async ({ username, password }) => {
+ login = async ({ username, password }) => {
     try {
       const result = await Auth.signIn(username, password)
-      this.setState({
-        sessionToken: result.signInUserSession.idToken.jwtToken
-      })
+      if (result.signInUserSession.idToken) {
+        this.setState({
+          loading: false,
+          loggedIn: true
+        })
+      } else {
+        this.setState({
+          loading: false,
+          loggedIn: true
+        })
+      }
     }
     catch (error) {
       return error
@@ -55,24 +69,6 @@ export class AuthProvider extends React.Component {
     }
     catch(error) {
       return error
-    }
-  }
-
-  refreshTimeout = null
-
-  async refreshToken() {
-    try {
-      const session = await Auth.currentSession()
-      console.log('Got Cognito session')
-      this.setState({
-        loading: false,
-        sessionToken: session.idToken.jwtToken
-      })
-    }
-    catch (error) {
-      this.setState({
-        loading: false
-      })
     }
   }
 
