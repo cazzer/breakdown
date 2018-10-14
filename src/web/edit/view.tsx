@@ -208,7 +208,7 @@ export const CreateItemView = (props) => {
     )
   }
 
-  return <CreateItem { ...props } />
+  return <CreateItem onSave={props.history.goBack} />
 }
 
 const updateItem = gql`
