@@ -8,8 +8,6 @@ import AccountCircle from '@material-ui/icons/AccountCircle'
 import { Link } from 'react-router-dom'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
-import { compose } from 'recompose'
-import { withRouter } from 'react-router'
 import FloatingActionButtons from './floating-action-buttons'
 import { AuthContext } from './auth/withAuth'
 
@@ -69,7 +67,7 @@ class Navigation extends React.Component {
       <AppBar position="fixed">
         <Toolbar>
           <Link to="/view/focus" className={classes.flex}>
-            <Typography variant="title" color="inherit">
+            <Typography variant="title">
               Breakdown
             </Typography>
           </Link>
@@ -109,10 +107,7 @@ class Navigation extends React.Component {
   }
 }
 
-export default compose(
-  withStyles(styles),
-  withRouter
-)(Navigation)
+export default withStyles(styles)(Navigation)
 
 const belowNavigation = ({ classes, children }) => (
   <div className={classes.belowNavigation}>
