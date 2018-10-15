@@ -271,6 +271,8 @@ Resources:
             Value: "https://api.thinstack.io/v1/graphql"
           - Name: SENTRY_DSN
             Value: !Ref SentryDsn
+          - Name: CDN_DISTRIBUTION_ID
+            Value: !Ref WebDistribution
       ServiceRole: !Ref CodebuildRole
 
   Pipeline:
