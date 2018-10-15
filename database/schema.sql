@@ -167,5 +167,8 @@ as $search$
 	select *
 	from items
 	where label ~* term
-	or value ~* term;
+	union
+	select *
+	from items
+	where value ~* term;
 $search$ language sql immutable;
