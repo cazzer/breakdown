@@ -20,8 +20,8 @@ import { CreateItemView, EditItemView } from './edit/view'
 import Navigation, { BelowNavigation } from './navigation'
 import { AuthContext, AuthProvider } from './auth/withAuth'
 
-const BUILD_DATE = process.env.BUILD_DATE
-console.log(`Built on ${BUILD_DATE}`)
+const buildDate = new Date(process.env.BUILD_TIMESTAMP)
+console.log(`Built on ${buildDate.toString()}`)
 
 if (process.env.NODE_END === 'production') {
   init({

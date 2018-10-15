@@ -53,7 +53,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        BUILD_DATE: JSON.stringify(new Date().toString())
+        BUILD_TIMESTAMP: Date.now()
       }
     }),
     new webpack.EnvironmentPlugin([
