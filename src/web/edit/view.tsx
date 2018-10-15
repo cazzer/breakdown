@@ -10,6 +10,7 @@ import Input from '@material-ui/core/Input'
 import TextField from '@material-ui/core/TextField'
 import InputLabel from '@material-ui/core/InputLabel'
 import Paper from '@material-ui/core/Paper'
+import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
 
 import itemByIdQuery from '../focus/item-by-id.gql'
@@ -23,17 +24,24 @@ import {
 
 const styles = theme => ({
   content: {
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 2
   },
   root: {
     margin: theme.spacing.unit
+  },
+  labelContainer: {
+    position: 'relative'
   },
   margin: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   },
-  withoutLabel: {
-    marginTop: theme.spacing.unit * 3,
+  previewHeading: {
+    margin: `${theme.spacing.unit}px 0`
+  },
+  preview: {
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing.unit
   },
   save: {
     padding: theme.spacing.unit,
@@ -92,9 +100,9 @@ class EditItemForm extends Component {
     const { classes } = this.props
     return (
       <Paper className={classes.root}>
-        <Grid container className={classes.content}>
-          <FormControl fullWidth>
-            <Grid item xs={12}>
+        <FormControl className={classes.content}>
+          <Grid container spacing={8}>
+            <Grid className={classes.labelContainer} item xs={12} md={6}>
               <InputLabel htmlFor="label">label</InputLabel>
               <Input
                 autoFocus
@@ -104,8 +112,6 @@ class EditItemForm extends Component {
                 type="text"
                 value={this.state.label}
               />
-            </Grid>
-            <Grid item xs={12}>
               <TextField
                 id="value"
                 label="value"
@@ -115,7 +121,14 @@ class EditItemForm extends Component {
                 rowsMax={12}
                 value={this.state.value || ''}
               />
-              <ValueView value={this.state.value} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography className={classes.previewHeading} variant="h5">
+                Preview
+              </Typography>
+              <Paper className={classes.preview} elevation={1}>
+                <ValueView value={this.state.value} />
+              </Paper>
             </Grid>
             <Grid item xs={12}>
               <SearchDropDown
@@ -137,8 +150,8 @@ class EditItemForm extends Component {
                 Save
               </Button>
             </Grid>
-          </FormControl>
-        </Grid>
+          </Grid>
+        </FormControl>
       </Paper>
     )
   }

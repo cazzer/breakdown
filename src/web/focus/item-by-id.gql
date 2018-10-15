@@ -2,9 +2,10 @@ query Item($id: UUID!) {
   itemById(id: $id) {
     id
     label
+    public
     value
     itemByParentId {
-      id,
+      id
       label
     }
     permissionsByItemId {
