@@ -1,4 +1,6 @@
-export default async function preSignUp(event) {
+import epsagon from '../epsagon'
+
+export default epsagon.lambdaWrapper(async (event) => {
   return {
     ...event,
     response: {
@@ -6,4 +8,4 @@ export default async function preSignUp(event) {
       autoConfirmUser: true
     }
   }
-}
+})
