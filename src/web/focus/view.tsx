@@ -1,6 +1,7 @@
 import get from 'lodash/get'
 import React, { Component } from 'react'
 import { Query } from 'react-apollo'
+import { Route } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
@@ -26,11 +27,6 @@ const styles = theme => ({
   },
   root: {
     flowGrow: 1
-  },
-  parentLink: {
-    position: 'absolute',
-    top: '64px',
-    left: '6px'
   }
 })
 
@@ -71,26 +67,24 @@ class FocusView extends Component {
 
 const StyledFocusView = withStyles(styles)(FocusView)
 
-const ConnectedFocusView = (props) => (
+const ConnectedFocusView = ({ match }) => (
   <Query
     query={itemByIdQuery}
     variables={{
-      id: props.itemId
+      id: match.params.itemId
     }}
   >
     {(itemQuery => (
-      itemQuery.loading && !itemQuery.data.itemById
+      itemQuery.loading
         ? null
-        : <StyledFocusView item={itemQuery.data.itemById} {...props} />
+        : <StyledFocusView item={itemQuery.data.itemById} />
     ))}
   </Query>
 )
 
 export const FocusWrapperView = (props) => (
   <div>
-    {get(props.match.params, 'itemId') &&
-      <ConnectedFocusView itemId={props.match.params.itemId} />
-    }
-    <ItemList parentId={get(props.match.params, 'itemId', null)} { ...props } />
+    <Route path="/view/focus/:itemId" component={ConnectedFocusView} />
+    <ItemList parentId={get(props.match.params, 'itemId', null)} />
   </div>
 )

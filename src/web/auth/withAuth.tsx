@@ -2,6 +2,8 @@ import Amplify from '@aws-amplify/core'
 import Auth from '@aws-amplify/auth'
 import React from 'react'
 
+import client from '../apollo-client'
+
 export const AuthContext = React.createContext(null)
 
 Amplify.configure({
@@ -39,6 +41,7 @@ export class AuthProvider extends React.Component {
     try {
       const result = await Auth.signIn(username, password)
       if (result.signInUserSession.idToken) {
+        client.resetStore()
         this.setState({
           loading: false,
           loggedIn: true
@@ -57,8 +60,9 @@ export class AuthProvider extends React.Component {
 
   logout = async () => {
     await Auth.signOut()
+    client.resetStore()
     this.setState({
-      sessionToken: null
+      loggedIn: false
     })
   }
 
