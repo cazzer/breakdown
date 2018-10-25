@@ -24,6 +24,7 @@ import {
 
 const styles = theme => ({
   content: {
+    display: 'flex',
     padding: theme.spacing.unit * 2
   },
   root: {
@@ -103,7 +104,7 @@ class EditItemForm extends Component {
         <FormControl className={classes.content}>
           <Grid container spacing={8}>
             <Grid className={classes.labelContainer} item xs={12} md={6}>
-              <InputLabel htmlFor="label">label</InputLabel>
+              <InputLabel htmlFor="label">title</InputLabel>
               <Input
                 autoFocus
                 id="label"
@@ -114,7 +115,7 @@ class EditItemForm extends Component {
               />
               <TextField
                 id="value"
-                label="value"
+                label="body"
                 onChange={this.handleChange('value')}
                 fullWidth
                 multiline
