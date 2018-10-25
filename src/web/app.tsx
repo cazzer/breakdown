@@ -19,6 +19,7 @@ import { FocusWrapperView } from './focus/view'
 import { CreateItemView, EditItemView } from './edit/view'
 import Navigation, { BelowNavigation } from './navigation'
 import { AuthContext, AuthProvider } from './auth/withAuth'
+import { CubeLoader } from './loading'
 
 const buildDate = new Date(process.env.BUILD_TIMESTAMP)
 console.log(`Built on ${buildDate.toString()}`)
@@ -111,7 +112,7 @@ class App extends React.Component {
           <AuthContext.Consumer>
             {({ loading, loggedIn }) => {
               if (loading) {
-                return null
+                return <CubeLoader />
               }
               return loggedIn
                 ? <ConnectedApp />

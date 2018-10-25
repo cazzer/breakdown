@@ -13,6 +13,7 @@ import queryString from 'query-string'
 import { Query } from 'react-apollo'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { CubeLoader } from '../loading';
 
 const styles = theme => ({
   root: {
@@ -35,7 +36,6 @@ const ItemList = ({ items }) => (
         <ListItem button>
           <ListItemText
             primary={item.label}
-            secondary={item.value}
           />
         </ListItem>
       </Link>
@@ -66,7 +66,7 @@ const ConnectedItemList = ({ term }) => {
     >
       {(searchResults) => {
         if (searchResults.loading) {
-          return <Typography>Loading...</Typography>
+          return <CubeLoader />
         }
 
         const results = searchResults.data.search.nodes

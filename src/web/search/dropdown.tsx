@@ -11,6 +11,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { Query } from 'react-apollo'
 import React from 'react'
+import { CubeLoader } from '../loading';
 
 const styles = theme => ({
   container: {
@@ -62,7 +63,7 @@ const ConnectedItemList = (props) => {
     >
       {(searchResults) => {
         if (searchResults.loading) {
-          return <Typography>Loading...</Typography>
+          return <CubeLoader />
         }
 
         const results = searchResults.data.search.nodes

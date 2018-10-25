@@ -12,7 +12,7 @@ import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
 
 import DeleteItem from './delete-item'
-import Loading from './loading'
+import { CubeLoader } from './loading'
 import { guessType } from './focus/type-guesser'
 import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
@@ -140,7 +140,7 @@ export default (
   >
     {({ loading, data }) => (
       loading
-        ? <Loading />
+        ? <CubeLoader />
         : <StyledItemsList items={get(data, ['allItems', 'nodes'], [])} />
     )}
   </Query>
