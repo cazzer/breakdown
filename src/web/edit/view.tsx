@@ -5,6 +5,8 @@ import { Mutation, Query } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
+import Checkbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
 import Input from '@material-ui/core/Input'
 import TextField from '@material-ui/core/TextField'
@@ -21,6 +23,7 @@ import {
   removeItemFromAllItems,
   updateItemInAllItems
 } from '../cache-handlers'
+import { null } from 'pg-sql2';
 
 const styles = theme => ({
   content: {
@@ -78,6 +81,9 @@ class EditItemForm extends Component {
     const item = {
       label: this.state.label,
       parentId: this.state.parentId,
+      public: this.state.public !== null
+        ? this.state.public
+        : this.props.item.public,
       value: this.state.value,
     }
 
@@ -95,6 +101,12 @@ class EditItemForm extends Component {
     })
 
     this.props.onSave()
+  }
+
+  handleCheckPublic = event => {
+    this.setState({
+      public: event.target.checked
+    })
   }
 
   render() {
@@ -138,6 +150,20 @@ class EditItemForm extends Component {
                   this.props.parentItem
                   || get(this.props.item, 'itemByParentId')
                 }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h5">
+                Permissions
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.public !== null ? this.state.public : this.props.item.public}
+                    onChange={this.handleCheckPublic}
+                  />
+                }
+                label="Public"
               />
             </Grid>
             <Grid item xs={12}>
@@ -232,6 +258,7 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
       id,
       label,
       parentId,
+      public,
       value,
       itemByParentId {
         id,
