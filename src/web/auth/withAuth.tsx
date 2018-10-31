@@ -40,7 +40,11 @@ export class AuthProvider extends React.Component {
     }
   }
 
- login = async ({ username, password }) => {
+  login = async ({ username, password }) => {
+    this.setState({
+      loading: true
+    })
+
     try {
       const result = await Auth.signIn(username, password)
       if (result.signInUserSession.idToken) {
@@ -73,6 +77,10 @@ export class AuthProvider extends React.Component {
   }
 
   register = async ({ username, password}) => {
+    this.setState({
+      loading: true
+    })
+
     try {
       await Auth.signUp(username, password)
       this.login({ username, password })

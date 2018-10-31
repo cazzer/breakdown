@@ -8,7 +8,15 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import { allItemsQuery } from './items'
 
 class DeleteItem extends React.Component {
+  state = {
+    disabled: false
+  }
+
   handleDeleteClick = () => {
+    this.setState({
+      disabled: true
+    })
+
     this.props.deleteItem({
       variables: {
         itemId: {
@@ -22,6 +30,7 @@ class DeleteItem extends React.Component {
     return (
       <IconButton
         aria-label="Delete"
+        disabled={this.state.disabled}
         onClick={this.handleDeleteClick}
       >
         <DeleteIcon />

@@ -69,7 +69,7 @@ class Login extends Component {
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, loading } = this.props
     return (
       <Grid container>
         <Grid item xs={1} md={3} />
@@ -118,6 +118,7 @@ class Login extends Component {
               <Button
                 className={classes.button}
                 color="primary"
+                disabled={loading}
                 fullWidth
                 onClick={this.handleLogin}
                 size="large"

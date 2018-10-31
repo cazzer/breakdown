@@ -87,6 +87,10 @@ class EditItemForm extends Component {
       value: this.state.value,
     }
 
+    this.setState({
+      disabled: true
+    })
+
     await this.props.upsert({
       variables: {
         itemInput: !this.props.new
@@ -169,6 +173,7 @@ class EditItemForm extends Component {
             <Grid item xs={12}>
               <Button
                 color="primary"
+                disabled={this.state.disabled}
                 fullWidth
                 onClick={this.handleSave}
                 size="large"

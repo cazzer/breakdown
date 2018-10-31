@@ -76,8 +76,8 @@ class ConnectedApp extends React.Component {
 
 const ConnectedLogin = (props) => (
   <AuthContext.Consumer>
-    {({ login }) => (
-      <Login { ...props } login={login} />
+    {({ loading, login }) => (
+      <Login { ...props } loading={loading} login={login} />
     )}
   </AuthContext.Consumer>
 )
