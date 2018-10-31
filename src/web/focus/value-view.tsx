@@ -36,8 +36,20 @@ const StyledPlayer = withStyles(theme => ({
   />
 ))
 
+const StyledLink = withStyles(theme => ({
+  root: {
+    color: theme.palette.primary.contrastText,
+    textDecoration: 'underline'
+  }
+}))(({ classes, url }) => (
+  <a className={classes.root} href={url} target="_blank">
+    {url}
+  </a>
+))
+
 export default (props: {
   className: String,
+  label: String,
   value: String
 }) => {
   const type = guessType(props.value)
@@ -48,6 +60,8 @@ export default (props: {
       return <StyledMarkdown source={props.value} {...props} />
     case 'video':
       return <StyledPlayer url={props.value} />
+    case 'link':
+      return <StyledLink url={props.value} />
     default:
       return <Typography>{props.value}</Typography>
   }

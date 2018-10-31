@@ -24,15 +24,18 @@ export class AuthProvider extends React.Component {
   async componentDidMount() {
     try {
       await Auth.currentSession()
+      const user = await Auth.currentUserInfo()
 
       this.setState({
         loading: false,
-        loggedIn: true
+        loggedIn: true,
+        user
       })
     } catch (error) {
       return this.setState({
         loading: false,
-        loggedIn: false
+        loggedIn: false,
+        user: false
       })
     }
   }
@@ -42,9 +45,11 @@ export class AuthProvider extends React.Component {
       const result = await Auth.signIn(username, password)
       if (result.signInUserSession.idToken) {
         client.resetStore()
+        const user = await Auth.currentUserInfo()
         this.setState({
           loading: false,
-          loggedIn: true
+          loggedIn: true,
+          user
         })
       } else {
         this.setState({
@@ -62,7 +67,8 @@ export class AuthProvider extends React.Component {
     await Auth.signOut()
     client.resetStore()
     this.setState({
-      loggedIn: false
+      loggedIn: false,
+      user: null
     })
   }
 

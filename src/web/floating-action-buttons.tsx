@@ -20,7 +20,10 @@ const FloatingActionButtons = ({ classes }) => (
       <Route path="/add" component={null} />
       <Route component={AddLink} />
     </Switch>
-    <SearchLink />
+    <Switch>
+      <Route path="/search" component={null} />
+      <Route component={SearchLink} />
+    </Switch>
   </div>
 )
 

@@ -8,8 +8,11 @@ import AccountCircle from '@material-ui/icons/AccountCircle'
 import { Link } from 'react-router-dom'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
+import moment from 'moment'
 import FloatingActionButtons from './floating-action-buttons'
 import { AuthContext } from './auth/withAuth'
+import ListSubheader from '@material-ui/core/ListSubheader'
+import Divider from '@material-ui/core/Divider'
 
 
 const styles = theme => ({
@@ -22,6 +25,9 @@ const styles = theme => ({
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
+  },
+  noOutline: {
+    outline: 'none'
   },
   belowNavigation: {
     paddingTop: 64,
@@ -81,7 +87,7 @@ class Navigation extends React.Component {
               <AccountCircle />
             </IconButton>
             <AuthContext.Consumer>
-              {({ logout }) => (
+              {({ logout, user }) => (
                 <Menu
                   id="menu-appbar"
                   anchorEl={this.state.anchorEl}
@@ -96,7 +102,15 @@ class Navigation extends React.Component {
                   open={open}
                   onClose={this.handleClose}
                 >
+                  <ListSubheader className={classes.noOutline}>
+                    logged in as {user.username}
+                  </ListSubheader>
+                  <Divider />
                   <MenuItem onClick={logout}>Logout</MenuItem>
+                  <Divider />
+                  <ListSubheader className={classes.noOutline}>
+                    built {moment(process.env.BUILD_TIMESTAMP).calendar().toLowerCase()}
+                  </ListSubheader>
                 </Menu>
               )}
             </AuthContext.Consumer>
