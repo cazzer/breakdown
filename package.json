@@ -55,6 +55,7 @@
     "@types/recompose": "^0.26.4",
     "babel-loader": "^8.0.0-beta",
     "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^1.0.0",
     "html-webpack-plugin": "^3.2.0",
     "source-map-loader": "^0.2.3",
