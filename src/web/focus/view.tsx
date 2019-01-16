@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import React, { Component } from 'react'
-import { Query } from 'react-apollo'
+import { compose, Query } from 'react-apollo'
 import { Route } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button'
 import ArrowUpward from '@material-ui/icons/ArrowUpward'
 
 import ItemList from '../items'
+import { RedBox } from '../red-box'
 
 import ValueView from './value-view'
 import itemByIdQuery from './item-by-id.gql'
@@ -65,7 +66,10 @@ class FocusView extends Component {
   }
 }
 
-const StyledFocusView = withStyles(styles)(FocusView)
+const StyledFocusView = compose(
+  withStyles(styles),
+  RedBox,
+)(FocusView)
 
 const ConnectedFocusView = ({ match }) => (
   <Query
@@ -75,9 +79,11 @@ const ConnectedFocusView = ({ match }) => (
     }}
   >
     {(itemQuery => (
-      itemQuery.loading
-        ? null
-        : <StyledFocusView item={itemQuery.data.itemById} />
+      <StyledFocusView
+        error={itemQuery.error}
+        item={get(itemQuery.data, 'itemById')}
+        loading={itemQuery.loading}
+      />
     ))}
   </Query>
 )
