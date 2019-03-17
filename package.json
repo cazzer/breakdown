@@ -23,8 +23,8 @@
     "graphql-tag": "^2.9.2",
     "knex": "^0.15.2",
     "lodash": "^4.17.10",
-    "pg-pool": "^2.0.3",
-    "postgraphile": "^4.0.0-rc.2",
+    "pg": "^7.9.0",
+    "postgraphile": "^4.4.0-beta.5",
     "prop-types": "^15.6.2",
     "query-string": "^6.1.0",
     "querystring": "^0.2.0",
@@ -50,6 +50,7 @@
     "@babel/runtime": "^7.1.2",
     "@types/classnames": "^2.2.6",
     "@types/lodash": "^4.14.116",
+    "@types/pg": "^7.4.13",
     "@types/query-string": "^6.1.0",
     "@types/react-router-dom": "^4.3.0",
     "@types/recompose": "^0.26.4",
@@ -78,7 +79,8 @@
     "web:prod": "webpack --env=prod --progress --profile --colors --config webpack.prod.js",
     "dev": "babel src --out-dir lib --extensions \".ts,.tsx\" -w",
     "build": "babel src --out-dir lib --extensions \".ts\" --ignore src/web",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "sam-local": "sam local invoke PostgraphileFunction --event assets/sample-api-request.json --docker-network breakdown_database"
   },
   "sideEffects": false
 }

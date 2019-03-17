@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile'
-import Pool from 'pg-pool'
+import { Pool } from 'pg'
 import { graphql } from 'graphql'
 
 import * as config from '../config'
@@ -21,7 +21,7 @@ const pool = new Pool({
   max: 1
 })
 
-export default epsagon.lambdaWrapper(async (event) => {
+export default epsagon.lambdaWrapper(async (event: object) => {
   console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
   const roles = get(event, 'requestContext.authorizer.claims.roles', userId)
@@ -39,7 +39,7 @@ export default epsagon.lambdaWrapper(async (event) => {
           'jwt.claims.roles': roles
         }
       },
-      async context => {
+      async (context: object) => {
         return await graphql(
           postgraphileSchema,
           graphqlInput.query,

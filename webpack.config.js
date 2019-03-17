@@ -1,4 +1,5 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const path = require('path')
@@ -51,6 +52,7 @@ module.exports = {
     publicPath: '/'
   },
   plugins: [
+    new CopyWebpackPlugin([ 'chrome/manifest.json' ]),
     new webpack.DefinePlugin({
       'process.env': {
         BUILD_TIMESTAMP: Date.now()

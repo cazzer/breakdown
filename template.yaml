@@ -98,15 +98,12 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          DEBUG: postgraphile*
           DB_HOST: !GetAtt Database.Endpoint.Address
           DB_NAME: !Ref DatabaseName
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
           EPSAGON_TOKEN: !Ref EpsagonToken
-          POSTGRES_DATABASE_VERSION: 10.4
-          POSTGRES_DRIVER_VERSION: PostgreSql
 
   ApiPolicy:
     Type: AWS::IAM::Policy
