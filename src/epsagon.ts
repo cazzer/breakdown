@@ -1,4 +1,4 @@
-import epsagon from 'epsagon'
+import * as epsagon from 'epsagon'
 
 epsagon.init({
   token: process.env.EPSAGON_TOKEN,
