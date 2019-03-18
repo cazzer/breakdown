@@ -1,0 +1,12 @@
+{
+  "requestContext": {
+    "authorizer": {
+      "claims": {
+        "sub": "3bbb6b1e-5413-4771-8a86-8a0829d3124f",
+        "roles": "3bbb6b1e-5413-4771-8a86-8a0829d3124f",
+        "cognito:username": "cazzer"
+      }
+    }
+  },
+  "body": "{\"operationName\":\"AllItems\",\"variables\":{\"condition\":{\"parentId\":null}},\"query\":\"query AllItems($condition: ItemCondition!) {  allItems(condition: $condition) {    nodes {      id      label      value      parentId      itemByParentId {        id        label        __typename      }      __typename    }    __typename  }}\"}"
+}

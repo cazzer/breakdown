@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0",
+  "name": "Breakdown the browser plugin",
+  "manifest_version": 2,
+  "description": "A wall to throw ideas at, and a space to organize them",
+  "browser_action": {
+    "default_title": "Breakdown",
+    "default_popup": "./index.html"
+  },
+  "permissions": [ "contextMenus", "tabs", "storage", "https://api.thinstack.io/*", "https://cognito-idp.us-west-2.amazonaws.com/*" ],
+  "content_security_policy": "default-src 'self'; script-src 'self'; style-src * 'unsafe-inline'; img-src 'self' data:;"
+}
