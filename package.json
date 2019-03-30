@@ -18,7 +18,7 @@
     "aws-xray-sdk-core": "^2.0.0",
     "aws-xray-sdk-postgres": "^2.0.0",
     "classnames": "^2.2.6",
-    "epsagon": "^1.16.0",
+    "epsagon": "^1.17.0",
     "graphql": "0.13.0",
     "graphql-tag": "^2.9.2",
     "knex": "^0.15.2",
