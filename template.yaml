@@ -593,7 +593,7 @@ Resources:
       DBInstanceIdentifier: breakdown-rds
       DBName: !Ref DatabaseName
       Engine: postgres
-      EngineVersion: 11.1
+      EngineVersion: 10.6
       MasterUsername: !Ref DatabaseUser
       MasterUserPassword: !Ref DatabasePassword
       MonitoringRoleArn: !GetAtt RdsMonitoringRole.Arn
