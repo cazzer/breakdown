@@ -21,6 +21,10 @@ const pool = new Pool({
   max: 1
 })
 
+pool.on('error', error => {
+  console.error('Postgres generated pool error!', error)
+})
+
 export default epsagon.lambdaWrapper(async (event: object) => {
   console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
@@ -40,6 +44,7 @@ export default epsagon.lambdaWrapper(async (event: object) => {
         }
       },
       async (context: object) => {
+        console.log('With context')
         return await graphql(
           postgraphileSchema,
           graphqlInput.query,

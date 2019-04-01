@@ -19,12 +19,12 @@
     "aws-xray-sdk-postgres": "^2.0.0",
     "classnames": "^2.2.6",
     "epsagon": "^1.17.0",
-    "graphql": "0.13.0",
+    "graphql": "^14.2.1",
     "graphql-tag": "^2.9.2",
     "knex": "^0.15.2",
     "lodash": "^4.17.10",
-    "pg": "7.8.2",
-    "postgraphile": "^4.4.0-beta.5",
+    "pg": "^7.9.0",
+    "postgraphile": "^4.4.0-beta.8",
     "prop-types": "^15.6.2",
     "query-string": "^6.1.0",
     "querystring": "^0.2.0",
@@ -71,8 +71,8 @@
   },
   "name": "breakdown",
   "resolutions": {
-    "graphql": "0.13.0",
-    "**/*/graphql": "0.13.0"
+    "graphql": "14.2.1",
+    "**/*/graphql": "14.2.1"
   },
   "scripts": {
     "web:dev": "webpack-dev-server --open",
