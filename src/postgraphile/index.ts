@@ -25,7 +25,7 @@ pool.on('error', error => {
   console.error('Postgres generated pool error!', error)
 })
 
-export default epsagon.lambdaWrapper(async (event: object) => {
+export default async (event: object) => {
   console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
   const roles = get(event, 'requestContext.authorizer.claims.roles', userId)
@@ -77,4 +77,4 @@ export default epsagon.lambdaWrapper(async (event: object) => {
       statusCode: 500
     }
   }
-})
+}
