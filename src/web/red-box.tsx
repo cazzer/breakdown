@@ -1,7 +1,6 @@
 import React from 'react'
-import { Typography } from '@material-ui/core';
 
-export const RedBox = (component) => (
+export const RedBox = (Component: React.ComponentType) => (
   props: React.Props<Object>
 ) => {
   if (props.loading) {
@@ -14,5 +13,5 @@ export const RedBox = (component) => (
     )
   }
 
-  return <component {...props} />
+  return <Component {...props} />
 }
