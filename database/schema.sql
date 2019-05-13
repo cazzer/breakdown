@@ -42,7 +42,7 @@ end;
 $$ language plpgsql;
 
 create trigger update_item_time_updated_trigger
-after update on items
+before update on items
 for each row
 execute procedure update_item_time_updated();
 
