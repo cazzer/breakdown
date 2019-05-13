@@ -28,8 +28,23 @@ create table if not exists breakdown.items (
   parent_id uuid references breakdown.items(id) on delete set null,
   public boolean default false,
   time_created timestamp without time zone default now() not null,
+  time_updated timestamp without time zone default now() not null,
   value text
 );
+
+-- items.time_updated column
+create or replace function update_item_time_updated()
+returns trigger as $$
+begin
+  new.time_updated = now();
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger update_item_time_updated_trigger
+after update on items
+for each row
+execute procedure update_item_time_updated();
 
 create type permission_role as enum (
   'reader',
