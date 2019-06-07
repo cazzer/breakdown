@@ -102,6 +102,7 @@ class Search extends React.Component {
             >
               <InputLabel htmlFor="search">Search</InputLabel>
               <Input
+                autoComplete="off"
                 autoFocus
                 id="search"
                 onChange={this.handleSearch}

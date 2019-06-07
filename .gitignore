@@ -5,3 +5,4 @@ dist/
 *.log
 pgdata
 packaged-template.yaml
+*.env
