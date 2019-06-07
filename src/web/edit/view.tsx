@@ -23,7 +23,7 @@ import {
   removeItemFromAllItems,
   updateItemInAllItems
 } from '../cache-handlers'
-import { null } from 'pg-sql2';
+import { TabsProvider, TabsContext } from '../with-tabs'
 
 const styles = theme => ({
   content: {
@@ -57,8 +57,8 @@ class EditItemForm extends Component {
     super(props)
 
     this.state = {
-      label: '',
-      value: '',
+      label: get(props, ['item', 'label'], ''),
+      value: get(props, ['item', 'value'], ''),
       parentId: get(props, ['item', 'itemByParentId', 'id'], null),
       ...props.item,
       __typename: undefined
@@ -253,7 +253,18 @@ export const CreateItemView = (props) => {
     )
   }
 
-  return <CreateItem onSave={props.history.goBack} />
+  return (
+    <TabsProvider>
+      <TabsContext.Consumer>
+        {(({ currentTab = {} }) => (
+          <CreateItem item={{
+            label: get(currentTab, 'title'),
+            value: get(currentTab, 'url')
+          }} onSave={props.history.goBack} />
+        ))}
+      </TabsContext.Consumer>
+    </TabsProvider>
+  )
 }
 
 const updateItem = gql`
