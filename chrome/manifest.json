@@ -7,6 +7,6 @@
     "default_title": "Breakdown",
     "default_popup": "./index.html"
   },
-  "permissions": [ "contextMenus", "tabs", "storage", "https://api.thinstack.io/*", "https://cognito-idp.us-west-2.amazonaws.com/*" ],
-  "content_security_policy": "default-src 'self'; script-src 'self'; style-src * 'unsafe-inline'; img-src 'self' data:;"
+  "permissions": [ "contextMenus", "tabs", "storage" ],
+  "content_security_policy": "default-src 'self'; script-src 'self'; style-src * 'unsafe-inline'; connect-src https://cognito-idp.us-west-2.amazonaws.com/ https://api.thinstack.io/;"
 }
