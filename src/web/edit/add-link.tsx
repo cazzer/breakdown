@@ -7,7 +7,7 @@ import get from 'lodash/get'
 
 const styles = theme => ({
   root: {
-    marginLeft: theme.spacing.unit
+    marginLeft: theme.spacing(1)
   }
 })
 

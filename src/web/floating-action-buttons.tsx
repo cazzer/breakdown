@@ -9,7 +9,7 @@ const styles = theme => ({
   root: {
     bottom: theme.spacing(1),
     position: 'fixed',
-    right: theme.spacing.unit
+    right: theme.spacing(1)
   }
 })
 

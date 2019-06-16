@@ -19,13 +19,13 @@ import itemByIdQuery from './item-by-id.gql'
 
 const styles = theme => ({
   backButton: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   content: {
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing(4)
   },
   item: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   root: {
     flowGrow: 1

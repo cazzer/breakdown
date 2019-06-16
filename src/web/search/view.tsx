@@ -16,7 +16,7 @@ import { CubeLoader } from '../loading';
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    padding: theme.spacing.unit
+    padding: theme.spacing(1)
   },
   paper: {
     padding: theme.spacing(2),

@@ -17,7 +17,7 @@ const StyledMarkdown = withStyles(theme => ({
 ))
 const StyledImage = withStyles(theme => ({
   image: {
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)}px 0`,
     width: '100%'
   }
 }))(({ classes, src}) => (
@@ -26,7 +26,7 @@ const StyledImage = withStyles(theme => ({
 
 const StyledPlayer = withStyles(theme => ({
   root: {
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)}px 0`,
   }
 }))(({ classes, url }) => (
   <ReactPlayer

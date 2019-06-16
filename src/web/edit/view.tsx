@@ -28,7 +28,7 @@ const styles = theme => ({
     padding: theme.spacing(2)
   },
   root: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   labelContainer: {
     position: 'relative'
@@ -38,11 +38,11 @@ const styles = theme => ({
     marginRight: theme.spacing(1)
   },
   previewHeading: {
-    margin: `${theme.spacing.unit}px 0`
+    margin: `${theme.spacing(1)}px 0`
   },
   preview: {
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit
+    padding: theme.spacing(1)
   },
   save: {
     padding: theme.spacing(1)

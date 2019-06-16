@@ -6,7 +6,7 @@ import SearchIcon from '@material-ui/icons/Search'
 
 const styles = theme => ({
   root: {
-    marginLeft: theme.spacing.unit
+    marginLeft: theme.spacing(1)
   }
 })
 
