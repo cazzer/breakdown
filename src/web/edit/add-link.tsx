@@ -1,7 +1,7 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import { Link, withRouter } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 import get from 'lodash/get'
 
@@ -21,9 +21,9 @@ const SearchLink = (props) => (
     }}
     className={props.classes.root}
   >
-    <Button variant="fab" color="primary" aria-label="Add">
+    <Fab color="primary" aria-label="Add">
       <AddIcon />
-    </Button>
+    </Fab>
   </Link>
 )
 
