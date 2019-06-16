@@ -7,7 +7,7 @@ import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
 import { setContext } from 'apollo-link-context'
 
-const authLink = setContext(async (request) => {
+const authLink = setContext(async () => {
   const session = await Auth.currentSession()
 
   return {
