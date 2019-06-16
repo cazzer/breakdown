@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import gql from 'graphql-tag'
-import Input from '@material-ui/core/Input'
+import TextField from '@material-ui/core/TextField'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -18,12 +18,12 @@ const styles = theme => ({
     flexGrow: 1,
   },
   paper: {
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing(2),
     color: theme.palette.text.secondary,
   },
   margin: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1)
   }
 })
 
@@ -148,7 +148,7 @@ class Search extends React.PureComponent {
     return (
       <div className={classes.container}>
         {this.state.isOpen ? (
-          <Input
+          <TextField
             autoComplete="off"
             autoFocus
             id="search"

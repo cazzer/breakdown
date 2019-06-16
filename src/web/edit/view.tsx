@@ -8,9 +8,7 @@ import FormControl from '@material-ui/core/FormControl'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
-import Input from '@material-ui/core/Input'
 import TextField from '@material-ui/core/TextField'
-import InputLabel from '@material-ui/core/InputLabel'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
@@ -27,7 +25,7 @@ import { EditGroups } from '../groups/edit'
 const styles = theme => ({
   content: {
     display: 'flex',
-    padding: theme.spacing.unit * 2
+    padding: theme.spacing(2)
   },
   root: {
     margin: theme.spacing.unit
@@ -36,8 +34,8 @@ const styles = theme => ({
     position: 'relative'
   },
   margin: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   previewHeading: {
     margin: `${theme.spacing.unit}px 0`
@@ -47,7 +45,7 @@ const styles = theme => ({
     padding: theme.spacing.unit
   },
   save: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1)
   },
 })
 
@@ -120,10 +118,10 @@ class EditItemForm extends Component {
         <FormControl className={classes.content}>
           <Grid container spacing={8}>
             <Grid className={classes.labelContainer} item xs={12} md={6}>
-              <InputLabel htmlFor="label">title</InputLabel>
-              <Input
+              <TextField
                 autoFocus
                 id="label"
+                label="label"
                 fullWidth
                 onChange={this.handleChange('label')}
                 type="text"

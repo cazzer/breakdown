@@ -7,7 +7,7 @@ import SearchLink from './search/link'
 
 const styles = theme => ({
   root: {
-    bottom: theme.spacing.unit,
+    bottom: theme.spacing(1),
     position: 'fixed',
     right: theme.spacing.unit
   }

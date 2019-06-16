@@ -45,7 +45,7 @@ class FocusView extends Component {
               className={classes.content}
             >
               <Grid className={classes.title} item xs={12} xl={4}>
-                <Typography variant="h6">
+                <Typography color="textPrimary" variant="h6">
                   {item.label}
                 </Typography>
               </Grid>

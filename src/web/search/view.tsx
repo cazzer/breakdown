@@ -1,12 +1,10 @@
 import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
 import gql from 'graphql-tag'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import Paper from '@material-ui/core/Paper'
+import TextField from '@material-ui/core/TextField'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
@@ -21,7 +19,7 @@ const styles = theme => ({
     padding: theme.spacing.unit
   },
   paper: {
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing(2),
     color: theme.palette.text.secondary,
   }
 })
@@ -36,6 +34,7 @@ const ItemList = ({ items }) => (
         <ListItem button>
           <ListItemText
             primary={item.label}
+            primaryTypographyProps={{ color: 'textPrimary'}}
           />
         </ListItem>
       </Link>
@@ -71,7 +70,16 @@ const ConnectedItemList = ({ term }) => {
 
         const results = searchResults.data.search.nodes
         if (!results.length) {
-          return <Typography>Nothing to see here.</Typography>
+          return (
+            <Typography
+              color="textSecondary"
+              align="center"
+              variant="caption"
+              paragraph={true}
+            >
+              Nothing here
+            </Typography>
+          )
         }
 
         return <ItemList items={results} />
@@ -100,11 +108,11 @@ class Search extends React.Component {
             <FormControl
               fullWidth
             >
-              <InputLabel htmlFor="search">Search</InputLabel>
-              <Input
+              <TextField
                 autoComplete="off"
                 autoFocus
                 id="search"
+                label="search"
                 onChange={this.handleSearch}
                 type="text"
                 value={query}
@@ -113,7 +121,12 @@ class Search extends React.Component {
           </Grid>
           <Grid item xs={12}>
             {query.length < 2 ? (
-              <Typography>
+              <Typography
+                color="textSecondary"
+                align="center"
+                variant="caption"
+                paragraph={true}
+              >
                 Start typing to start searching...
               </Typography>
             ) : (

@@ -14,7 +14,7 @@ interface GroupData {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     backButton: {
-      margin: theme.spacing.unit
+      margin: theme.spacing(1)
     }
   })
 )

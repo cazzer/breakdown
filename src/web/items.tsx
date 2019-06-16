@@ -19,7 +19,7 @@ import { ItemInterface } from '../../typings'
 
 const styles = theme => ({
   empty: {
-    marginTop: theme.spacing.unit
+    marginTop: theme.spacing(1)
   },
   root: {
   },
@@ -51,7 +51,9 @@ const ItemPreview = ((props: ItemInterface) => {
     return (
       <ListItemText
         primary={props.label}
+        primaryTypographyProps={{ color: 'textPrimary' }}
         secondary={props.value}
+        secondaryTypographyProps={{ color: 'textSecondary' }}
       />
     )
   } else {
@@ -59,6 +61,7 @@ const ItemPreview = ((props: ItemInterface) => {
       <div>
         <ListItemText
           primary={props.label}
+          primaryTypographyProps={{ color: 'textPrimary' }}
         />
         {(~['markdown', 'image'].indexOf(type))
           ? <ValuePreview value={props.value} />
@@ -78,7 +81,12 @@ const ItemsList = (props: {
   if (!items.length) {
     return (
     <div className={classes.empty}>
-      <Typography align="center" variant="caption">
+      <Typography
+        color="textSecondary"
+        align="center"
+        variant="caption"
+        paragraph={true}
+      >
         Nothing here
       </Typography>
     </div>
