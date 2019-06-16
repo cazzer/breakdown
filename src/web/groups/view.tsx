@@ -27,7 +27,10 @@ function GroupsView(
   return (
     <>
       {props.groups.map(group => (
-        <Link to={`/view/focus/${group.id}`}>
+        <Link
+          key={group.id}
+          to={`/view/focus/${group.id}`}
+        >
           <Button variant="outlined" className={classes.backButton}>
             <ArrowUpward />
             {group.label}
