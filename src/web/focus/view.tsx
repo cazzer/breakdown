@@ -12,6 +12,7 @@ import ArrowUpward from '@material-ui/icons/ArrowUpward'
 
 import ItemList from '../items'
 import { RedBox } from '../red-box'
+import { Groups } from '../groups/view'
 
 import ValueView from './value-view'
 import itemByIdQuery from './item-by-id.gql'
@@ -34,18 +35,10 @@ const styles = theme => ({
 class FocusView extends Component {
   render() {
     const { classes, item } = this.props
-    const parent = get(item.itemRelationshipsByChildId, ['nodes', 0, 'itemByParentId'])
     return (
       <div className={classes.root}>
         <Paper className={classes.item}>
-          {parent && (
-            <Link to={`/view/focus/${parent.id}`}>
-              <Button variant="outlined" className={classes.backButton}>
-                <ArrowUpward />
-                {parent.label}
-              </Button>
-            </Link>
-          )}
+          <Groups childId={item.id} />
           <Link to={`/view/focus/${item.id}/edit`}>
             <Grid
               container

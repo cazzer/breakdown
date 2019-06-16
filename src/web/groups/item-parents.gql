@@ -1,0 +1,10 @@
+query ItemParents($condition: ItemRelationshipCondition!) {
+  allItemRelationships(condition: $condition) {
+    nodes {
+      itemByParentId {
+        id
+        label
+      }
+    }
+  }
+}

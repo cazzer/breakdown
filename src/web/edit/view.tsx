@@ -16,14 +16,13 @@ import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
 
 import itemByIdQuery from '../focus/item-by-id.gql'
-import SearchDropDown from '../search/dropdown'
 import ValueView from '../focus/value-view'
 import {
   addItemToAllItems,
   removeItemFromAllItems,
   updateItemInAllItems
 } from '../cache-handlers'
-import { null } from 'pg-sql2';
+import { EditGroups } from '../groups/edit'
 
 const styles = theme => ({
   content: {
@@ -149,10 +148,10 @@ class EditItemForm extends Component {
               </Paper>
             </Grid>
             <Grid item xs={12}>
-              <SearchDropDown
-                onUpdate={this.handleParentUpdate}
-                selectedItem={parent}
-              />
+              <Typography className={classes.previewHeading} variant="h5">
+                Groups
+              </Typography>
+              <EditGroups childId={this.props.item.id} />
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h5">
