@@ -56,7 +56,6 @@ class EditItemForm extends Component {
     this.state = {
       label: '',
       value: '',
-      parentId: get(props.item.itemRelationshipsByChildId, ['nodes', 0, 'itemByParentId', 'id']),
       ...props.item,
       __typename: undefined
     }
@@ -112,7 +111,6 @@ class EditItemForm extends Component {
 
   render() {
     const { classes } = this.props
-    const parent = get(this.props.item.itemRelationshipsByChildId, ['nodes', 0, 'itemByParentId'])
     return (
       <Paper className={classes.root}>
         <FormControl className={classes.content}>
@@ -149,7 +147,7 @@ class EditItemForm extends Component {
               <Typography className={classes.previewHeading} variant="h5">
                 Groups
               </Typography>
-              <EditGroups childId={this.props.item.id} />
+              <EditGroups childId={get(this.props, ['item', 'id'])} />
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h5">

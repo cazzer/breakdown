@@ -47,21 +47,29 @@ function EditGroupsView(props) {
   )
 }
 
-export const EditGroups = (props: object) => (
-  <Query
-    query={parentsByChildId}
-    variables={{
-      condition: {
-        childId: props.childId
-      }
-    }}
-  >
-    {({ data, loading }) => {
-      return loading
-        ? null
-        : <EditGroupsView groups={
-          data.allItemRelationships.nodes.map(group => group.itemByParentId)
-        } />
-    }}
-  </Query>
-)
+export const EditGroups = (
+  props: { childId: string }
+) => {
+  if (!props.childId) {
+    return <EditGroupsView groups={[]} />
+  }
+
+  return (
+    <Query
+      query={parentsByChildId}
+      variables={{
+        condition: {
+          childId: props.childId
+        }
+      }}
+    >
+      {({ data, loading }) => {
+        return loading
+          ? null
+          : <EditGroupsView groups={
+            data.allItemRelationships.nodes.map(group => group.itemByParentId)
+          } />
+      }}
+    </Query>
+  )
+}
