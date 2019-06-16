@@ -42,7 +42,7 @@ const ValuePreview = withStyles(theme => ({
     color: theme.palette.text.secondary
   }
 }))(({ classes, value }) => (
-  <ValueView className={classes.root} value={value} />
+  <ValueView className={classes.root} value={value} preview={true} />
 ))
 
 const ItemPreview = ((props: ItemInterface) => {

@@ -7,8 +7,6 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { Link } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import ArrowUpward from '@material-ui/icons/ArrowUpward'
 
 import ItemList from '../items'
 import { RedBox } from '../red-box'

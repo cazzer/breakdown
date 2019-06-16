@@ -16,7 +16,6 @@ const styles = theme => ({
 const FloatingActionButtons = ({ classes }) => (
   <div className={classes.root}>
     <Switch>
-      <Route path="/view/focus/:itemId" component={AddLink} />
       <Route path="/add" component={null} />
       <Route component={AddLink} />
     </Switch>

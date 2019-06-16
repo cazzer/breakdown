@@ -10,9 +10,13 @@ const StyledMarkdown = withStyles(theme => ({
   root: {
     color: theme.palette.primary.contrastText
   }
-}))(({ classes, className, source }) => (
+}))(({ classes, className, source, preview = false }) => (
   <div className={className || classes.root}>
-    <Markdown source={source} />
+    <Markdown
+      source={source}
+      disallowedTypes={preview ? ['link'] : []}
+      unwrapDisallowed={preview}
+    />
   </div>
 ))
 const StyledImage = withStyles(theme => ({
@@ -50,7 +54,8 @@ const StyledLink = withStyles(theme => ({
 export default (props: {
   className: String,
   label: String,
-  value: String
+  value: String,
+  preview?: Boolean
 }) => {
   const type = guessType(props.value)
   switch (type) {

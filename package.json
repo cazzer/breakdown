@@ -33,7 +33,7 @@
     "react-apollo-hooks": "^0.4.5",
     "react-dom": "^16.8.6",
     "react-loading": "^2.0.3",
-    "react-markdown": "^3.6.0",
+    "react-markdown": "^4.0.8",
     "react-player": "^1.6.6",
     "react-router-dom": "^4.3.1",
     "react-transition-group": "^2.4.0",
