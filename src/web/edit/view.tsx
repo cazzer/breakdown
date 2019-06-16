@@ -59,7 +59,7 @@ class EditItemForm extends Component {
     this.state = {
       label: '',
       value: '',
-      parentId: get(props, ['item', 'itemByParentId', 'id'], null),
+      parentId: get(props.item.itemRelationshipsByChildId, ['nodes', 0, 'itemByParentId', 'id']),
       ...props.item,
       __typename: undefined
     }
@@ -115,6 +115,7 @@ class EditItemForm extends Component {
 
   render() {
     const { classes } = this.props
+    const parent = get(this.props.item.itemRelationshipsByChildId, ['nodes', 0, 'itemByParentId'])
     return (
       <Paper className={classes.root}>
         <FormControl className={classes.content}>
@@ -150,10 +151,7 @@ class EditItemForm extends Component {
             <Grid item xs={12}>
               <SearchDropDown
                 onUpdate={this.handleParentUpdate}
-                selectedItem={
-                  this.props.parentItem
-                  || get(this.props.item, 'itemByParentId')
-                }
+                selectedItem={parent}
               />
             </Grid>
             <Grid item xs={12}>

@@ -117,10 +117,13 @@ query AllItems($condition: ItemCondition!) {
       id,
       label,
       value,
-      parentId,
-      itemByParentId {
-        id,
-        label
+      itemRelationshipsByParentId {
+        nodes {
+          itemByParentId {
+            id,
+            label
+          }
+        }
       }
     }
   }

@@ -29,8 +29,17 @@ create table if not exists breakdown.items (
   public boolean default false,
   time_created timestamp without time zone default now() not null,
   time_updated timestamp without time zone default now() not null,
-  value text
+  value text,
+  type text
 );
+
+create table if not exists breakdown.item_relationships (
+  parent_id uuid references breakdown.items(id) on delete cascade,
+  child_id uuid references breakdown.items(id) on delete cascade,
+  time_created timestamp without time zone default now() not null
+);
+
+create unique index on breakdown.item_relationships (parent_id, child_id);
 
 -- items.time_updated column
 create or replace function update_item_time_updated()

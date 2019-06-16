@@ -34,14 +34,15 @@ const styles = theme => ({
 class FocusView extends Component {
   render() {
     const { classes, item } = this.props
+    const parent = get(item.itemRelationshipsByChildId, ['nodes', 0, 'itemByParentId'])
     return (
       <div className={classes.root}>
         <Paper className={classes.item}>
-          {item.itemByParentId && (
-            <Link to={`/view/focus/${item.itemByParentId.id}`}>
+          {parent && (
+            <Link to={`/view/focus/${parent.id}`}>
               <Button variant="outlined" className={classes.backButton}>
                 <ArrowUpward />
-                {item.itemByParentId.label}
+                {parent.label}
               </Button>
             </Link>
           )}
