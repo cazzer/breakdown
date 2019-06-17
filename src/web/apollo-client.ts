@@ -17,7 +17,7 @@ const authLink = setContext(async () => {
   }
 })
 
-const cache = new InMemoryCache()
+export const cache = new InMemoryCache()
 
 persistCache({
   debug: process.env.NODE_ENV !== 'production',
@@ -44,7 +44,7 @@ export default new ApolloClient({
   cache,
   defaultOptions: {
     query: {
-      fetchPolicy: 'cache-and-network'
+      fetchPolicy: 'network-only'
     }
   }
 })

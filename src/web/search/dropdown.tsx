@@ -66,8 +66,21 @@ const ConnectedItemList = (
           return <CubeLoader />
         }
 
+        if (!data.search.nodes.length) {
+            <Typography
+              color="textSecondary"
+              variant="caption"
+            >
+              No results found
+            </Typography>
+        }
+
         return data.search.nodes.map(item => (
-          <ListItem button key={item.id}>
+          <ListItem
+            button
+            key={item.id}
+            onClick={props.handleItemClick(item)}
+          >
             <ListItemText
               primary={item.label}
             />
@@ -91,18 +104,9 @@ const Dropdown = ({
   >
     <Paper>
       <List>
-        <ListItem
-          button
-          onClick={handleItemClick({ label: query })}
-        >
-          <ListItemText
-            primary={query}
-          />
-        </ListItem>
-        <Divider />
         {
           query.length > 2
-            ? <ConnectedItemList query={query} />
+            ? <ConnectedItemList handleItemClick={handleItemClick} query={query} />
             : (
               <Typography
                 color="textSecondary"

@@ -1,6 +1,7 @@
 import get from 'lodash/get'
 import React, { Component } from 'react'
-import { compose, Query } from 'react-apollo'
+import { Query } from 'react-apollo'
+import { compose } from 'redux'
 import { Route } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'

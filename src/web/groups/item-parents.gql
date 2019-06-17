@@ -1,6 +1,7 @@
 query ItemParents($condition: ItemRelationshipCondition!) {
   allItemRelationships(condition: $condition) {
     nodes {
+      id
       itemByParentId {
         id
         label
