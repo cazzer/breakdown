@@ -34,6 +34,7 @@ create table if not exists breakdown.items (
 );
 
 create table if not exists breakdown.item_relationships (
+  id uuid default uuid_generate_v4() not null primary key,
   parent_id uuid references breakdown.items(id) on delete cascade,
   child_id uuid references breakdown.items(id) on delete cascade,
   time_created timestamp without time zone default now() not null
