@@ -12,6 +12,7 @@ import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
+import uuidv4 from 'uuid/v4'
 
 import itemByIdQuery from '../focus/item-by-id.gql'
 import ValueView from '../focus/value-view'
@@ -54,6 +55,7 @@ class EditItemForm extends Component {
     super(props)
 
     this.state = {
+      id: uuidv4(),
       label: '',
       value: '',
       ...props.item,

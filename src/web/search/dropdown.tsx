@@ -9,14 +9,12 @@ import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import Divider from '@material-ui/core/Divider'
 import { Query } from 'react-apollo'
 import React from 'react'
 import { CubeLoader } from '../loading';
 
 const styles = theme => ({
-  container: {
-    flexGrow: 1,
-  },
   paper: {
     padding: theme.spacing(2),
     color: theme.palette.text.secondary,
@@ -53,7 +51,9 @@ query Search($input: String!) {
 }
 `
 
-const ConnectedItemList = (props) => {
+const ConnectedItemList = (
+  props: { query: String }
+) => {
   return (
     <Query
       query={searchItems}
@@ -61,17 +61,18 @@ const ConnectedItemList = (props) => {
         input: props.query
       }}
     >
-      {(searchResults) => {
-        if (searchResults.loading) {
+      {({ data, loading }) => {
+        if (loading) {
           return <CubeLoader />
         }
 
-        const results = searchResults.data.search.nodes
-        if (!results.length) {
-          return <Typography>Nothing to see here.</Typography>
-        }
-
-        return <ItemList items={results} {...props} />
+        return data.search.nodes.map(item => (
+          <ListItem button key={item.id}>
+            <ListItemText
+              primary={item.label}
+            />
+          </ListItem>
+        ))
       }}
     </Query>
   )
@@ -89,15 +90,29 @@ const Dropdown = ({
     style={{ width: anchorElement.clientWidth }}
   >
     <Paper>
-      <MenuItem onClick={handleItemClick(null)}>No Parent</MenuItem>
-      {query.length > 2 ? (
-        <ConnectedItemList
-          handleItemClick={handleItemClick}
-          query={query}
-        />
-      ) : (
-        <Typography>Type more to see more...</Typography>
-      )}
+      <List>
+        <ListItem
+          button
+          onClick={handleItemClick({ label: query })}
+        >
+          <ListItemText
+            primary={query}
+          />
+        </ListItem>
+        <Divider />
+        {
+          query.length > 2
+            ? <ConnectedItemList query={query} />
+            : (
+              <Typography
+                color="textSecondary"
+                variant="caption"
+              >
+                Type more to search
+              </Typography>
+            )
+        }
+      </List>
     </Paper>
   </Popper>
 )
@@ -116,24 +131,10 @@ class Search extends React.PureComponent {
 
   handleItemClick = item => () => {
     this.setState({
-      isOpen: false,
-      query: '',
-      selectedItem: item
+      query: ''
     })
 
-    this.props.onUpdate(item ? item.id : null)
-  }
-
-  handleCloseSearch = () => {
-    this.setState({
-      isOpen: false
-    })
-  }
-
-  handleOpenSearch = () => {
-    this.setState({
-      isOpen: true
-    })
+    this.props.handleSelect(item)
   }
 
   handleSearch = event => {
@@ -146,31 +147,19 @@ class Search extends React.PureComponent {
   render() {
     const { classes } = this.props
     return (
-      <div className={classes.container}>
-        {this.state.isOpen ? (
-          <TextField
-            autoComplete="off"
-            autoFocus
-            id="search"
-            fullWidth
-            onChange={this.handleSearch}
-            onFocus={this.handleSearch}
-            type="text"
-            value={this.state.query}
-          />
-        ) : (
-          <List>
-            <ListItem button onClick={this.handleOpenSearch} >
-              <ListItemText
-                primary="Parent Item"
-                secondary={get(this.state.selectedItem, 'label', 'None')}
-              />
-            </ListItem>
-          </List>
-        )}
+      <>
+        <TextField
+          autoComplete="off"
+          autoFocus
+          id="search"
+          onChange={this.handleSearch}
+          onFocus={this.handleSearch}
+          type="text"
+          value={this.state.query}
+        />
         {
-          this.state.isOpen &&
           this.state.anchorElement &&
+          this.state.query &&
           <Dropdown
             anchorElement={this.state.anchorElement}
             handleItemClick={this.handleItemClick}
@@ -178,7 +167,7 @@ class Search extends React.PureComponent {
             query={this.state.query}
           />
         }
-      </div>
+      </>
     )
   }
 }
