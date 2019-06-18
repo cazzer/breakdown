@@ -3,7 +3,7 @@ import { DataProxy } from 'apollo-cache'
 import { allItemsQuery } from './items'
 import parentsByChildId from './groups/item-parents.gql'
 
-import { cache } from './apollo-client'
+import client from './apollo-client'
 
 export function removeItemFromAllItems(
   cache: DataProxy,
@@ -139,8 +139,11 @@ export function updateItemInAllItems(
   })
 }
 
-export function removeFromParentsByChildId(relationshipId, childId) {
-  let data = cache.readQuery({
+export function addParentToChild (
+  relationship: object,
+  childId: string
+) {
+  let data = client.readQuery({
     query: parentsByChildId,
     variables: {
       condition: {
@@ -149,7 +152,39 @@ export function removeFromParentsByChildId(relationshipId, childId) {
     }
   })
 
-  cache.writeQuery({
+  client.writeQuery({
+    query: parentsByChildId,
+    variables: {
+      condition: {
+        childId
+      }
+    },
+    data: {
+      allItemRelationships: {
+        ...data.allItemRelationships,
+        nodes: [
+          ...data.allItemRelationships.nodes,
+          relationship
+        ]
+      }
+    }
+  })
+}
+
+export function removeParentFromChild(
+  relationshipId: string,
+  childId: string
+) {
+  let data = client.readQuery({
+    query: parentsByChildId,
+    variables: {
+      condition: {
+        childId
+      }
+    }
+  })
+
+  client.writeQuery({
     query: parentsByChildId,
     variables: {
       condition: {
