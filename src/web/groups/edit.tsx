@@ -1,14 +1,16 @@
 import React from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
-import TextField from '@material-ui/core/TextField'
 import uuidv4 from 'uuid/v4'
-import { Query, useMutation } from 'react-apollo'
+import { useMutation, useQuery } from 'react-apollo'
 import parentsByChildId from './item-parents.gql'
 import SearchDropdown from '../search/dropdown'
 import createRelationshipMutation from './create-relationship-mutation.gql'
 import deleteRelationshipMutation from './delete-relationship-mutation.gql'
-import { removeFromParentsByChildId } from '../cache-handlers'
+import {
+  addParentToChild,
+  removeParentFromChild
+} from '../cache-handlers'
 
 
 interface GroupData {
@@ -34,11 +36,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function EditGroupView(props: {
   childId: string,
-  group: GroupData
+  group: GroupData,
+  isNew?: boolean
 }) {
   const classes = useStyles()
-  const things = useMutation(deleteRelationshipMutation)
-  const [deleteRelationship, { called, data }] = things
+  const [deleteRelationship, deleteResult] =
+    useMutation(deleteRelationshipMutation)
 
   const handleDelete = () => () => {
     deleteRelationship({
@@ -46,42 +49,32 @@ function EditGroupView(props: {
         relationshipInput: {
           id: props.group.relationshipId
         }
+      },
+      update: (proxy) => {
+        removeParentFromChild(
+          proxy,
+          props.group.relationshipId,
+          props.childId
+        )
       }
     })
-  }
-
-  if (data) {
-    removeFromParentsByChildId(props.group.relationshipId, props.childId)
   }
 
   return (
     <Chip
       className={classes.chip}
-      clickable={!called}
+      clickable={!deleteResult.called}
       label={props.group.label}
       onDelete={handleDelete()}
-      variant={called ? 'outlined' : 'default'}
+      variant={deleteResult.called ? 'outlined' : 'default'}
     />
   )
 }
 
 function EditGroupsView(props) {
-  const classes = useStyles()
-  const [groups, setGroups] = React.useState<GroupData[]>(
-    props.groups
-  )
-  const [addRelationship, { addLoading, addData }] = useMutation(createRelationshipMutation)
+  const [addRelationship, addResult] = useMutation(createRelationshipMutation)
 
   const handleSelect = (groupToAdd: GroupData) => {
-    setGroups(groups => [
-      ...groups,
-      groupToAdd.id ? groupToAdd : {
-        id: uuidv4(),
-        label: groupToAdd.label,
-        new: true
-      }
-    ])
-
     addRelationship({
       variables: {
         relationshipInput: {
@@ -90,13 +83,19 @@ function EditGroupsView(props) {
             parentId: groupToAdd.id
           }
         }
+      },
+      update: (proxy, addResult) => {
+        addParentToChild(proxy, {
+          ...addResult.data.createItemRelationship.itemRelationship,
+          itemByParentId: groupToAdd
+        }, props.childId)
       }
     })
   }
 
   return (
     <>
-      {groups.map((group: GroupData) => (
+      {props.groups.map((group: GroupData) => (
         <EditGroupView
           childId={props.childId}
           key={group.relationshipId}
@@ -108,36 +107,33 @@ function EditGroupsView(props) {
   )
 }
 
-export const EditGroups = (
+export function EditGroups(
   props: { childId: string }
-) => {
+) {
   if (!props.childId) {
     return <EditGroupsView groups={[]} />
   }
 
+  const { data, loading } = useQuery(parentsByChildId, {
+    variables: {
+      condition: {
+        childId: props.childId
+      }
+    }
+  })
+
+  if (loading) {
+    return null
+  }
+
   return (
-    <Query
-      query={parentsByChildId}
-      variables={{
-        condition: {
-          childId: props.childId
-        }
-      }}
-    >
-      {({ data, loading }) => {
-        return loading
-          ? null
-          : (
-            <EditGroupsView
-              childId={props.childId}
-              groups={
-                data.allItemRelationships.nodes.map(group => ({
-                  relationshipId: group.id,
-                  ...group.itemByParentId
-                }))
-            } />
-          )
-      }}
-    </Query>
+    <EditGroupsView
+      childId={props.childId}
+      groups={
+        data.allItemRelationships.nodes.map(group => ({
+          relationshipId: group.id,
+          ...group.itemByParentId
+        }))
+    } />
   )
 }

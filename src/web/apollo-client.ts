@@ -17,7 +17,9 @@ const authLink = setContext(async () => {
   }
 })
 
-export const cache = new InMemoryCache()
+const cache = new InMemoryCache({
+  dataIdFromObject: o => o.id
+})
 
 persistCache({
   debug: process.env.NODE_ENV !== 'production',
