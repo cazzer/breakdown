@@ -68,6 +68,6 @@ export default (props: {
     case 'link':
       return <StyledLink url={props.value} />
     default:
-      return <Typography>{props.value}</Typography>
+      return <Typography color="textSecondary">{props.value}</Typography>
   }
 }

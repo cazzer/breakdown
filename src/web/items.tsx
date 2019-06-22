@@ -122,17 +122,9 @@ export const allItemsQuery = gql`
 query AllItems($condition: ItemCondition!) {
   allItems(condition: $condition) {
     nodes {
-      id,
-      label,
-      value,
-      itemRelationshipsByParentId {
-        nodes {
-          itemByParentId {
-            id,
-            label
-          }
-        }
-      }
+      id
+      label
+      value
     }
   }
 }

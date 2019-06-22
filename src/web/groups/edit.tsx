@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
 import uuidv4 from 'uuid/v4'
@@ -11,7 +11,6 @@ import {
   addParentToChild,
   removeParentFromChild
 } from '../cache-handlers'
-
 
 interface GroupData {
   id: string
@@ -37,13 +36,18 @@ const useStyles = makeStyles((theme: Theme) =>
 function EditGroupView(props: {
   childId: string,
   group: GroupData,
-  isNew?: boolean
+  isNew?: boolean,
+  onDelete?: Function
 }) {
   const classes = useStyles()
   const [deleteRelationship, deleteResult] =
     useMutation(deleteRelationshipMutation)
 
   const handleDelete = () => () => {
+    if (props.onDelete) {
+      return props.onDelete(props.group)
+    }
+
     deleteRelationship({
       variables: {
         relationshipInput: {
@@ -66,15 +70,16 @@ function EditGroupView(props: {
       clickable={!deleteResult.called}
       label={props.group.label}
       onDelete={handleDelete()}
-      variant={deleteResult.called ? 'outlined' : 'default'}
+      variant={deleteResult.called || props.isNew ? 'outlined' : 'default'}
     />
   )
 }
 
 function EditGroupsView(props) {
+  const [newGroups, setGroups] = useState([])
   const [addRelationship, addResult] = useMutation(createRelationshipMutation)
 
-  const handleSelect = (groupToAdd: GroupData) => {
+  function addRelationshipHandler(groupToAdd: GroupData) {
     addRelationship({
       variables: {
         relationshipInput: {
@@ -93,6 +98,25 @@ function EditGroupsView(props) {
     })
   }
 
+  const handleDelete = (oldGroup: GroupData) => {
+    setGroups(newGroups.filter(group => group.id !== oldGroup.id))
+  }
+
+  const handleSelect = (groupToAdd: GroupData) => {
+    if (!props.childId) {
+      setGroups([
+        ...newGroups,
+        groupToAdd
+      ])
+    } else {
+      addRelationshipHandler(groupsToAdd)
+    }
+  }
+
+  if (props.childId && newGroups.length) {
+    console.log('do something!')
+  }
+
   return (
     <>
       {props.groups.map((group: GroupData) => (
@@ -100,6 +124,15 @@ function EditGroupsView(props) {
           childId={props.childId}
           key={group.relationshipId}
           group={group}
+        />
+      ))}
+      {newGroups.map((group: GroupData) => (
+        <EditGroupView
+          childId={props.childId}
+          key={group.id}
+          group={group}
+          isNew={true}
+          onDelete={handleDelete}
         />
       ))}
       <SearchDropdown handleSelect={handleSelect} />

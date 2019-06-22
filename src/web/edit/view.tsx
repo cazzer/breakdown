@@ -78,7 +78,6 @@ class EditItemForm extends Component {
   handleSave = async () => {
     const item = {
       label: this.state.label,
-      parentId: this.state.parentId,
       public: this.state.public !== null
         ? this.state.public
         : this.props.item.public,
@@ -91,7 +90,7 @@ class EditItemForm extends Component {
 
     await this.props.upsert({
       variables: {
-        itemInput: !this.props.new
+        itemInput: !this.props.isNew
           ? {
             id: this.props.item.id,
             itemPatch: item
@@ -101,8 +100,6 @@ class EditItemForm extends Component {
           }
       }
     })
-
-    this.props.onSave()
   }
 
   handleCheckPublic = event => {
@@ -190,14 +187,9 @@ const createItem = gql`
 mutation createItem($itemInput: CreateItemInput!) {
   createItem(input: $itemInput) {
     item {
-      id,
-      label,
-      parentId,
-      value,
-      itemByParentId {
-        id,
-        label
-      }
+      id
+      label
+      value
     }
   }
 }
@@ -215,7 +207,7 @@ export const CreateItem = (props) => (
       <StyledEditItem
         item={props.item}
         upsert={createItemMutation}
-        new
+        isNew
         onSave={props.onSave}
         {...props}
       />
@@ -240,7 +232,6 @@ export const CreateItemView = (props) => {
             : (
               <CreateItem
                 item={{ itemByParentId: data.itemById }}
-                onSave={props.history.goBack}
               />
             )
         }}
