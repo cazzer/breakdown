@@ -16,6 +16,7 @@ import { CubeLoader } from './loading'
 import { guessType } from './focus/type-guesser'
 import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
+import itemChildrenQuery from './item-children.gql'
 
 const styles = theme => ({
   empty: {
@@ -118,18 +119,6 @@ const ItemsList = (props: {
 
 const StyledItemsList = withStyles(styles)(ItemsList)
 
-export const allItemsQuery = gql`
-query AllItems($condition: ItemCondition!) {
-  allItems(condition: $condition) {
-    nodes {
-      id
-      label
-      value
-    }
-  }
-}
-`
-
 export default (
   props: { parentId: String }
 ) => (
@@ -139,12 +128,15 @@ export default (
         parentId: (props.parentId !== 'root') ? props.parentId : null
       }
     }}
-    query={allItemsQuery}
+    query={itemChildrenQuery}
   >
     {({ loading, data }) => (
       loading
         ? <CubeLoader />
-        : <StyledItemsList items={get(data, ['allItems', 'nodes'], [])} />
+        : <StyledItemsList items={
+          get(data, ['allItemRelationships', 'nodes'], [])
+            .map(itemRelationship => itemRelationship.itemByChildId)
+        } />
     )}
   </Query>
 )

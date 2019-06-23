@@ -1,0 +1,13 @@
+query ItemChildren($condition: ItemRelationshipCondition!) {
+  allItemRelationships(condition: $condition) {
+    nodes {
+      id
+      itemByChildId {
+        id
+        label
+        value
+        timeCreated
+      }
+    }
+  }
+}

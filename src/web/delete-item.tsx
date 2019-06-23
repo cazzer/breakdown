@@ -1,11 +1,10 @@
 import gql from 'graphql-tag'
-import get from 'lodash/get'
 import React from 'react'
 import { Mutation } from 'react-apollo'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { allItemsQuery } from './items'
+import itemChildrenQuery from './item-children.gql'
 
 class DeleteItem extends React.Component {
   state = {
@@ -54,7 +53,7 @@ export default (props) => (
     mutation={deleteItemMutation}
     update={(cache) => {
       const data = cache.readQuery({
-        query: allItemsQuery,
+        query: itemChildrenQuery,
         variables: {
           condition: {
             parentId: props.parentId || null
@@ -62,7 +61,7 @@ export default (props) => (
         }
       })
       cache.writeQuery({
-        query: allItemsQuery,
+        query: itemChildrenQuery,
         variables: {
           condition: {
             parentId: props.parentId || null

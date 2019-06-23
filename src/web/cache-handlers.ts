@@ -1,6 +1,6 @@
 import { DataProxy } from 'apollo-cache'
 
-import { allItemsQuery } from './items'
+import itemChildrenQuery from './item-children.gql'
 import parentsByChildId from './groups/item-parents.gql'
 
 export function removeItemFromAllItems(
@@ -10,7 +10,7 @@ export function removeItemFromAllItems(
 ) {
   try {
     let data = cache.readQuery({
-      query: allItemsQuery,
+      query: itemChildrenQuery,
       variables: {
         condition: {
           parentId
@@ -19,7 +19,7 @@ export function removeItemFromAllItems(
     })
 
     cache.writeQuery({
-      query: allItemsQuery,
+      query: itemChildrenQuery,
       variables: {
         condition: {
           parentId
