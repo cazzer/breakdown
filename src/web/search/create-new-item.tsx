@@ -3,12 +3,30 @@ import { useMutation } from 'react-apollo'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
 import createItemMutation from '../edit/create-item.gql'
 import { addItemToAllItems } from '../cache-handlers'
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    listItemLoading: {
+      background: `
+        repeating-linear-gradient(
+          135deg,
+          transparent,
+          transparent 10px,
+          ${theme.palette.primary.dark} 10px,
+          ${theme.palette.primary.dark} 20px
+        )
+      `
+    }
+  })
+)
+
 export default function CreateNewItem(props) {
   const [createItem, { error, loading }] = useMutation(createItemMutation)
+  const classes = useStyles()
 
   function handleCreateItem() {
     createItem({
@@ -20,8 +38,9 @@ export default function CreateNewItem(props) {
         }
       },
       update: (proxy, mutationResult) => {
-        addItemToAllItems(proxy, mutationResult, null)
-        props.onCreate(mutationResult.data.createItem.item)
+        const newItem = mutationResult.data.createItem.item
+        addItemToAllItems(proxy, newItem, null)
+        props.onCreate(newItem)
       }
     })
   }
@@ -30,6 +49,9 @@ export default function CreateNewItem(props) {
     <List>
       <ListItem
         button
+        classes={{
+          root: loading ? classes.listItemLoading : undefined
+        }}
         disabled={loading}
         onClick={handleCreateItem}
       >
