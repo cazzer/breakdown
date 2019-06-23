@@ -11,12 +11,16 @@ import queryString from 'query-string'
 import { Query } from 'react-apollo'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { CubeLoader } from '../loading';
+import { CubeLoader } from '../loading'
+import CreateNewItem from './create-new-item'
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     padding: theme.spacing(1)
+  },
+  search: {
+    fontSize: theme.typography.h2.fontSize
   },
   paper: {
     padding: theme.spacing(2),
@@ -96,6 +100,10 @@ class Search extends React.Component {
     })
   }
 
+  handleCreateNew = newItem => {
+    this.props.history.push(`view/focus/${newItem.id}`)
+  }
+
   render() {
     const { classes } = this.props
     const query = decodeURIComponent(
@@ -115,24 +123,53 @@ class Search extends React.Component {
                 label="search"
                 onChange={this.handleSearch}
                 type="text"
+                inputProps={{ className: classes.search }}
                 value={query}
               />
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
-            {query.length < 2 ? (
+          {query.length ? (
+            <>
+              <Grid item xs={6}>
+                <Typography color="textSecondary">
+                  something new
+                </Typography>
+                <CreateNewItem label={query} onCreate={this.handleCreateNew} />
+              </Grid>
+              <Grid item xs={6}>
+                {query.length < 2 ? (
+                  <Typography
+                    color="textSecondary"
+                    align="center"
+                    variant="caption"
+                    paragraph={true}
+                  >
+                    keep typing to search
+                  </Typography>
+                ) : (
+                  <>
+                    <Typography color="textSecondary">
+                      search results
+                    </Typography>
+                    <ConnectedItemList term={query} />
+                  </>
+                )}
+              </Grid>
+            </>
+          )
+          : (
+            <Grid item xs={12}>
               <Typography
                 color="textSecondary"
                 align="center"
                 variant="caption"
                 paragraph={true}
               >
-                Start typing to start searching...
+                what are you looking for?
               </Typography>
-            ) : (
-              <ConnectedItemList term={query} />
-            )}
-          </Grid>
+            </Grid>
+          )}
+
         </Grid>
       </div>
     )

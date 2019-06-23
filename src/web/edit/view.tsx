@@ -22,6 +22,7 @@ import {
   updateItemInAllItems
 } from '../cache-handlers'
 import { EditGroups } from '../groups/edit'
+import createItem from './create-item.gql'
 
 const styles = theme => ({
   content: {
@@ -182,18 +183,6 @@ class EditItemForm extends Component {
 }
 
 const StyledEditItem = withStyles(styles)(EditItemForm)
-
-const createItem = gql`
-mutation createItem($itemInput: CreateItemInput!) {
-  createItem(input: $itemInput) {
-    item {
-      id
-      label
-      value
-    }
-  }
-}
-`
 
 export const CreateItem = (props) => (
   <Mutation

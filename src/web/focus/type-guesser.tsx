@@ -3,6 +3,10 @@ const imageRegExp = /\.(gif|jpg|jpeg|png)$/
 const linkRegExp = /^https?:\/\//
 
 export function guessType(value: String = '') {
+  if (!value) {
+    return 'text'
+  }
+
   if (value.match(imageRegExp)) {
     return 'image'
   }
