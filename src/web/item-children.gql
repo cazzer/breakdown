@@ -7,6 +7,7 @@ query ItemChildren($condition: ItemRelationshipCondition!) {
         label
         value
         timeCreated
+        timeUpdated
       }
     }
   }

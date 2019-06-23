@@ -1,0 +1,14 @@
+query RecentItems {
+  allItems(
+    orderBy: TIME_UPDATED_DESC,
+    first: 30
+  ) {
+    nodes {
+      id
+      label
+      value
+      timeCreated
+      timeUpdated
+    }
+  }
+}

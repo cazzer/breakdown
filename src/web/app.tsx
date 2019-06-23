@@ -20,6 +20,7 @@ import { CreateItemView, EditItemView } from './edit/view'
 import Navigation, { BelowNavigation } from './navigation'
 import { AuthContext, AuthProvider } from './auth/withAuth'
 import { CubeLoader } from './loading'
+import { RecentItemList } from './items'
 
 const buildDate = new Date(process.env.BUILD_TIMESTAMP)
 console.log(`Built on ${buildDate.toString()}`)
@@ -62,7 +63,8 @@ class ConnectedApp extends React.Component {
             <Switch>
               <Route path="/home/:parentId/:childId?" component={SplitView} />
               <Route path="/view/focus/:itemId/edit" component={EditItemView} />
-              <Route path="/view/focus/:itemId?" component={FocusWrapperView} />
+              <Route path="/view/focus/:itemId" component={FocusWrapperView} />
+              <Route path="/view/focus" component={RecentItemList} />
               <Route path="/add" component={CreateItemView} />
               <Route path="/search" component={Search} />
               <Route component={RedirectFocus} />
