@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import React from 'react'
-import { Mutation } from 'react-apollo'
+import { useMutation } from 'react-apollo'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
 
@@ -48,21 +48,20 @@ mutation DeleteItem($itemId: DeleteItemByIdInput!) {
 }
 `
 
-export default (props) => (
-  <Mutation
-    mutation={deleteItemMutation}
-    update={(cache) => {
+export default function (props) {
+  const [deleteItem] = useMutation(deleteItemMutation, {
+    update: (cache) => {
       if (props.parentId) {
         removeItemFromAllItems(cache, props, props.parentId)
       }
       removeFromRecentItems(cache, props)
-    }}
-  >
-    {(deleteItem) => (
-      <DeleteItem
-        deleteItem={deleteItem}
-        {...props}
-      />
-    )}
-  </Mutation>
-)
+    }
+  })
+
+  return (
+    <DeleteItem
+      deleteItem={deleteItem}
+      {...props}
+    />
+  )
+}

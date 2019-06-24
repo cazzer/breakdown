@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import get from 'lodash/get'
 import React, { Component } from 'react'
-import { Mutation, Query } from 'react-apollo'
+import { useQuery, useMutation } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
@@ -23,6 +23,7 @@ import {
 } from '../cache-handlers'
 import { EditGroups } from '../groups/edit'
 import createItem from './create-item.gql'
+import { CubeLoader } from '../loading'
 
 const styles = theme => ({
   content: {
@@ -184,51 +185,45 @@ class EditItemForm extends Component {
 
 const StyledEditItem = withStyles(styles)(EditItemForm)
 
-export const CreateItem = (props) => (
-  <Mutation
-    mutation={createItem}
-    update={(cache, result) => {
+export function CreateItem(props) {
+  const [createItemMutation] = useMutation(createItem, {
+    update: (cache, result) => {
       const { item } = result.data.createItem
       addItemToAllItems(cache, item, item.parentId)
-    }}
-  >
-    {(createItemMutation) => (
-      <StyledEditItem
-        item={props.item}
-        upsert={createItemMutation}
-        isNew
-        onSave={props.onSave}
-        {...props}
-      />
-    )}
-  </Mutation>
-)
+    }
+  })
 
-export const CreateItemView = (props) => {
+  return (
+    <StyledEditItem
+      item={props.item}
+      upsert={createItemMutation}
+      isNew
+      onSave={props.onSave}
+      {...props}
+    />
+  )
+}
+
+export function CreateItemView(props) {
   const query = queryString.parse(props.location.search)
 
-  if (query.parentId) {
-    return (
-      <Query
-        query={itemByIdQuery}
-        variables={{
-          id: query.parentId
-        }}
-      >
-        {({ data, loading }) => {
-          return loading
-            ? null
-            : (
-              <CreateItem
-                item={{ itemByParentId: data.itemById }}
-              />
-            )
-        }}
-      </Query>
-    )
+  if (!query.parentId) {
+    return <CreateItem onSave={props.history.goBack} />
   }
 
-  return <CreateItem onSave={props.history.goBack} />
+  const { data, loading } = useQuery(itemByIdQuery, {
+    variables: {
+      id: query.parentId
+    }
+  })
+
+  return loading
+    ? <CubeLoader />
+    : (
+      <CreateItem
+        item={{ itemByParentId: data.itemById }}
+      />
+    )
 }
 
 const updateItem = gql`
@@ -249,10 +244,9 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
 }
 `
 
-export const EditItem = (props) => (
-  <Mutation
-    mutation={updateItem}
-    update={(cache, result) => {
+export function EditItem(props) {
+  const [editItemMutation] = useMutation(updateItem, {
+    update: (cache, result) => {
       const oldParentId = get(props, ['item', 'itemByParentId', 'id'], null)
       const { item } = result.data.updateItemById
 
@@ -262,29 +256,26 @@ export const EditItem = (props) => (
         removeItemFromAllItems(cache, item, oldParentId)
         addItemToAllItems(cache, item, item.parentId)
       }
-    }}
-  >
-    {(editItemMutation) => (
-      <StyledEditItem
-        item={props.item}
-        onSave={props.onSave}
-        upsert={editItemMutation}
-      />
-    )}
-  </Mutation>
-)
+    }
+  })
 
-export const EditItemView = (props) => (
-  <Query
-    query={itemByIdQuery}
-    variables={{
+  return (
+    <StyledEditItem
+      item={props.item}
+      onSave={props.onSave}
+      upsert={editItemMutation}
+    />
+  )
+}
+
+export function EditItemView(props) {
+  const { data, loading } = useQuery(itemByIdQuery, {
+    variables: {
       id: get(props.match.params, 'itemId')
-    }}
-  >
-    {({ data, loading}) => {
-     return loading
-        ? null
-        : <EditItem item={data.itemById} onSave={props.history.goBack} />
-    }}
-  </Query>
-)
+    }
+  })
+
+  return loading
+    ? null
+    : <EditItem item={data.itemById} onSave={props.history.goBack} />
+}

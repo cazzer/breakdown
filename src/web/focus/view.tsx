@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import React, { Component } from 'react'
-import { Query } from 'react-apollo'
+import { useQuery } from 'react-apollo'
 import { compose } from 'redux'
 import { Route } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
@@ -64,22 +64,21 @@ const StyledFocusView = compose(
   RedBox,
 )(FocusView)
 
-const ConnectedFocusView = ({ match }) => (
-  <Query
-    query={itemByIdQuery}
-    variables={{
+function ConnectedFocusView({ match }) {
+  const { data, error, loading } = useQuery(itemByIdQuery, {
+    variables: {
       id: match.params.itemId
-    }}
-  >
-    {(itemQuery => (
-      <StyledFocusView
-        error={itemQuery.error}
-        item={get(itemQuery.data, 'itemById')}
-        loading={itemQuery.loading}
-      />
-    ))}
-  </Query>
-)
+    }
+  })
+
+  return (
+    <StyledFocusView
+      error={error}
+      item={get(data, 'itemById')}
+      loading={loading}
+    />
+  )
+}
 
 export const FocusWrapperView = (props) => (
   <div>

@@ -1,16 +1,13 @@
-import get from 'lodash/get'
 import gql from 'graphql-tag'
 import TextField from '@material-ui/core/TextField'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import Divider from '@material-ui/core/Divider'
-import { Query } from 'react-apollo'
+import { useQuery } from 'react-apollo'
 import React from 'react'
 import { CubeLoader } from '../loading';
 
@@ -54,41 +51,36 @@ query Search($input: String!) {
 const ConnectedItemList = (
   props: { query: String }
 ) => {
-  return (
-    <Query
-      query={searchItems}
-      variables={{
-        input: props.query
-      }}
+  const { data, loading } = useQuery(searchItems, {
+    variables: {
+      input: props.query
+    }
+  })
+
+  if (loading) {
+    return <CubeLoader />
+  }
+
+  if (!data.search.nodes.length) {
+      <Typography
+        color="textSecondary"
+        variant="caption"
+      >
+        No results found
+      </Typography>
+  }
+
+  return data.search.nodes.map(item => (
+    <ListItem
+      button
+      key={item.id}
+      onClick={props.handleItemClick(item)}
     >
-      {({ data, loading }) => {
-        if (loading) {
-          return <CubeLoader />
-        }
-
-        if (!data.search.nodes.length) {
-            <Typography
-              color="textSecondary"
-              variant="caption"
-            >
-              No results found
-            </Typography>
-        }
-
-        return data.search.nodes.map(item => (
-          <ListItem
-            button
-            key={item.id}
-            onClick={props.handleItemClick(item)}
-          >
-            <ListItemText
-              primary={item.label}
-            />
-          </ListItem>
-        ))
-      }}
-    </Query>
-  )
+      <ListItemText
+        primary={item.label}
+      />
+    </ListItem>
+  ))
 }
 
 const Dropdown = ({
