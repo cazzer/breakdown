@@ -54,6 +54,7 @@ export default function CreateNewItem(props) {
         }}
         disabled={loading}
         onClick={handleCreateItem}
+        ContainerProps={{ tabIndex: 0 }}
       >
         <ListItemText
           primary={props.label}

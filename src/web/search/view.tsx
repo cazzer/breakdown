@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
-import { Query, useMutation } from 'react-apollo'
+import { useMutation, useQuery } from 'react-apollo'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CubeLoader } from '../loading'
@@ -61,37 +61,34 @@ query Search($input: String!) {
 }
 `
 
-const ConnectedItemList = ({ term }) => {
-  return (
-    <Query
-      query={searchItems}
-      variables={{
-        input: term
-      }}
-    >
-      {(searchResults) => {
-        if (searchResults.loading) {
-          return <CubeLoader />
-        }
+function ConnectedItemList({ term }) {
+  const { data, loading } = useQuery(searchItems, {
+    variables: {
+      input: term
+    },
+    fetchPolicy: 'cache-and-network'
+  })
 
-        const results = searchResults.data.search.nodes
-        if (!results.length) {
-          return (
-            <Typography
-              color="textSecondary"
-              align="center"
-              variant="caption"
-              paragraph={true}
-            >
-              Nothing here
-            </Typography>
-          )
-        }
+  if (loading) {
+    return <CubeLoader />
+  }
 
-        return <ItemList items={results} />
-      }}
-    </Query>
-  )
+  const results = data.search.nodes
+
+  if (!results.length) {
+    return (
+      <Typography
+        color="textSecondary"
+        align="center"
+        variant="caption"
+        paragraph={true}
+      >
+        Nothing here
+      </Typography>
+    )
+  }
+
+  return <ItemList items={results} />
 }
 
 class Search extends React.Component {
