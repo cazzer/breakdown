@@ -244,7 +244,7 @@ function StatefulSearch(props) {
               variant="caption"
               paragraph={true}
             >
-              add a child to this group
+              add an item to this group
             </Typography>
           </Grid>
         )}

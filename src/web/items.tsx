@@ -26,8 +26,6 @@ const useStyles = makeStyles((theme?: Theme) =>
     empty: {
       marginTop: theme.spacing(1)
     },
-    root: {
-    },
     listItem: {
       display: 'flex',
       flexGrow: 1
@@ -38,23 +36,32 @@ const useStyles = makeStyles((theme?: Theme) =>
     listItemActions: {
       display: 'flex',
       flexDirection: 'column'
+    },
+    root: {
+      fontSize: '.75em',
+      color: theme.palette.text.secondary
+    },
+    paper: {
+      padding: theme.spacing(3, 2)
     }
   })
 )
 
-const ValuePreview = withStyles(theme => ({
-  root: {
-    fontSize: '.75em',
-    color: theme.palette.text.secondary
-  },
-  paper: {
-    padding: theme.spacing(3, 2)
-  }
-}))(({ classes, value }) => (
-  <Paper className={classes.paper}>
-    <ValueView className={classes.root} value={value} preview={true} />
-  </Paper>
-))
+function ValuePreview(props: {
+  value: string
+}) {
+  const classes = useStyles()
+
+  return (
+    <Paper className={classes.paper}>
+      <ValueView
+        className={classes.root}
+        value={props.value}
+        preview={true}
+      />
+    </Paper>
+  )
+}
 
 const ItemPreview = ((props: ItemInterface) => {
   const type = guessType(props.value)
@@ -69,7 +76,7 @@ const ItemPreview = ((props: ItemInterface) => {
     )
   } else {
     return (
-      <div>
+      <>
         <ListItemText
           primary={props.label}
           primaryTypographyProps={{ color: 'textPrimary' }}
@@ -78,13 +85,12 @@ const ItemPreview = ((props: ItemInterface) => {
           ? <ValuePreview value={props.value} />
           : null
         }
-      </div>
+      </>
     )
   }
 })
 
 function ItemsList(props: {
-  addMore?: boolean
   items: Array<ItemInterface>
   parentId?: string
 }) {
@@ -100,38 +106,33 @@ function ItemsList(props: {
           variant="caption"
           paragraph={true}
         >
-          Nothing here
+          this group has no items in it
         </Typography>
       </div>
     )
   }
 
   return (
-    <div className={classes.root}>
-      <List>
-        {items.map(item => (
-          <ListItem button className={classes.listItem} divider key={item.id}>
-            <Link className={classes.listItemLink} to={`/view/focus/${item.id}`}>
-              <ItemPreview label={item.label} value={item.value} />
-              <Typography variant="caption" color="textSecondary">
-                Edited {moment(item.timeUpdated).calendar()}
-              </Typography>
+    <List>
+      {items.map(item => (
+        <ListItem button className={classes.listItem} divider key={item.id}>
+          <Link className={classes.listItemLink} to={`/view/focus/${item.id}`}>
+            <ItemPreview label={item.label} value={item.value} />
+            <Typography variant="caption" color="textSecondary">
+              Edited {moment(item.timeUpdated).calendar()}
+            </Typography>
+          </Link>
+          <div className={classes.listItemActions}>
+            <Link to={`/view/focus/${item.id}/edit`}>
+              <IconButton aria-label="Focus">
+                <EditIcon />
+              </IconButton>
             </Link>
-            <div className={classes.listItemActions}>
-              <Link to={`/view/focus/${item.id}/edit`}>
-                <IconButton aria-label="Focus">
-                  <EditIcon />
-                </IconButton>
-              </Link>
-              <DeleteItem id={item.id} parentId={props.parentId} />
-            </div>
-          </ListItem>
-        ))}
-      </List>
-      {props.addMore && (
-        <SearchView parentId={props.parentId} />
-      )}
-    </div>
+            <DeleteItem id={item.id} parentId={props.parentId} />
+          </div>
+        </ListItem>
+      ))}
+    </List>
   )
 }
 
@@ -146,7 +147,7 @@ export function RecentItemList() {
 }
 
 export default function(
-  props: { parentId: String }
+  props: { parentId: string }
 ) {
   const { data, loading } = useQuery(itemChildrenQuery, {
     variables: {
@@ -161,9 +162,18 @@ export default function(
   }
 
   return (
-    <StyledItemsList items={
-      get(data, ['allItemRelationships', 'nodes'], [])
-        .map(itemRelationship => itemRelationship.itemByChildId)
-    } addMore parentId={props.parentId} />
+    <>
+      {loading
+        ? <CubeLoader />
+        : <ItemsList
+            items={
+              get(data, ['allItemRelationships', 'nodes'], [])
+                .map(itemRelationship => itemRelationship.itemByChildId)
+            }
+            parentId={props.parentId}
+          />
+      }
+      <SearchView parentId={props.parentId} />
+    </>
   )
 }

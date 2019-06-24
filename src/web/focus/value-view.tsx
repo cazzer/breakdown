@@ -53,7 +53,6 @@ const StyledLink = withStyles(theme => ({
 
 export default (props: {
   className: String,
-  label: String,
   value: String,
   preview?: Boolean
 }) => {
