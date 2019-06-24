@@ -3,6 +3,7 @@ import { DataProxy } from 'apollo-cache'
 import itemChildrenQuery from './item-children.gql'
 import parentsByChildId from './groups/item-parents.gql'
 import recentItemsQuery from './recent-items.gql'
+import itemByIdQuery from './focus/item-by-id.gql'
 
 const DEFAULT_ALL_ITEMS_DATA = {
   allItems: {
@@ -104,7 +105,7 @@ export function removeItemFromAllItems(
 export function addItemToAllItems(
   cache: DataProxy,
   addedItem: Object,
-  parentId: String
+  parentId?: String
 ) {
   let data
 
@@ -144,16 +145,15 @@ export function addItemToAllItems(
 export function updateItemInAllItems(
   cache: DataProxy,
   updatedItem: Object,
-  parentId: String
 ) {
   let data
 
   try {
     data = cache.readQuery({
-      query: itemChildrenQuery,
+      query: itemByIdQuery,
       variables: {
         condition: {
-          parentId
+          id: updatedItem.id
         }
       }
     })
@@ -164,7 +164,6 @@ export function updateItemInAllItems(
     return addItemToAllItems(
       cache,
       updatedItem,
-      parentId
     )
   }
 

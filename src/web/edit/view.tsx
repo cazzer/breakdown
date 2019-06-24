@@ -248,15 +248,9 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
 export function EditItem(props) {
   const [editItemMutation] = useMutation(updateItem, {
     update: (cache, result) => {
-      const oldParentId = get(props, ['item', 'itemByParentId', 'id'], null)
       const { item } = result.data.updateItemById
 
-      if (oldParentId === item.parentId) {
-        updateItemInAllItems(cache, item, item.parentId)
-      } else {
-        removeItemFromAllItems(cache, item, oldParentId)
-        addItemToAllItems(cache, item, item.parentId)
-      }
+      updateItemInAllItems(cache, item)
     }
   })
 
