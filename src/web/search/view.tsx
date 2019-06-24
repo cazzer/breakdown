@@ -30,7 +30,7 @@ const styles = theme => ({
   }
 })
 
-const ItemList = ({ items }) => (
+const ItemLinkList = ({ items }) => (
   <List>
     {items.map(item => (
       <Link
@@ -48,23 +48,48 @@ const ItemList = ({ items }) => (
   </List>
 )
 
+function ItemButtonList({ items, onClick }) {
+  const handleClick = (item) => () => {
+    onClick(item)
+  }
+
+  return (
+    <List>
+      {items.map(item => (
+        <ListItem button key={item.id} onClick={handleClick(item)}>
+          <ListItemText
+            primary={item.label}
+            primaryTypographyProps={{ color: 'textPrimary'}}
+          />
+        </ListItem>
+      ))}
+    </List>
+  )
+}
+
 const searchItems = gql`
 query Search($input: String!) {
   search(term: $input) {
     nodes {
-      id,
-      label,
-      parentId,
+      id
+      label
+      parentId
       value
+      timeCreated
+      timeUpdated
     }
   }
 }
 `
 
-function ConnectedItemList({ term }) {
+function ConnectedItemList(props: {
+  term: string,
+  component: any,
+  onClick?: Function
+}) {
   const { data, loading } = useQuery(searchItems, {
     variables: {
-      input: term
+      input: props.term
     },
     fetchPolicy: 'cache-and-network'
   })
@@ -88,7 +113,7 @@ function ConnectedItemList({ term }) {
     )
   }
 
-  return <ItemList items={results} />
+  return <props.component items={results} onClick={props.onClick} />
 }
 
 class Search extends React.Component {
@@ -150,7 +175,7 @@ class Search extends React.Component {
                     <Typography color="textSecondary">
                       search results
                     </Typography>
-                    <ConnectedItemList term={query} />
+                    <ConnectedItemList component={ItemLinkList} term={query} />
                   </>
                 )}
               </Grid>
@@ -225,11 +250,34 @@ function StatefulSearch(props) {
         </Grid>
         {query.length ? (
           <>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <Typography color="textSecondary">
                 something new
               </Typography>
               <CreateNewItem label={query} onCreate={handleCreateNew} />
+            </Grid>
+            <Grid item xs={6}>
+              {query.length < 2 ? (
+                <Typography
+                  color="textSecondary"
+                  align="center"
+                  variant="caption"
+                  paragraph={true}
+                >
+                  keep typing to search
+                </Typography>
+              ) : (
+                <>
+                  <Typography color="textSecondary">
+                    search results
+                  </Typography>
+                  <ConnectedItemList
+                    component={ItemButtonList}
+                    term={query}
+                    onClick={handleCreateNew}
+                  />
+                </>
+              )}
             </Grid>
           </>
         )
