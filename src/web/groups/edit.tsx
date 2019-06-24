@@ -152,7 +152,8 @@ export function EditGroups(
       condition: {
         childId: props.childId
       }
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   if (loading) {

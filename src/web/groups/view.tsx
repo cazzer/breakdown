@@ -49,7 +49,8 @@ export function Groups(
       condition: {
         childId: props.childId
       }
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   return loading

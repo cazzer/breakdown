@@ -54,7 +54,8 @@ const ConnectedItemList = (
   const { data, loading } = useQuery(searchItems, {
     variables: {
       input: props.query
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   if (loading) {

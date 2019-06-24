@@ -214,7 +214,8 @@ export function CreateItemView(props) {
   const { data, loading } = useQuery(itemByIdQuery, {
     variables: {
       id: query.parentId
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   return loading
@@ -272,7 +273,8 @@ export function EditItemView(props) {
   const { data, loading } = useQuery(itemByIdQuery, {
     variables: {
       id: get(props.match.params, 'itemId')
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   return loading

@@ -68,7 +68,8 @@ function ConnectedFocusView({ match }) {
   const { data, error, loading } = useQuery(itemByIdQuery, {
     variables: {
       id: match.params.itemId
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   return (
