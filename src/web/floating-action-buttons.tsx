@@ -16,10 +16,6 @@ const styles = theme => ({
 const FloatingActionButtons = ({ classes }) => (
   <div className={classes.root}>
     <Switch>
-      <Route path="/add" component={null} />
-      <Route component={AddLink} />
-    </Switch>
-    <Switch>
       <Route path="/search" component={null} />
       <Route component={SearchLink} />
     </Switch>
