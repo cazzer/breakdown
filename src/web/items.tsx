@@ -1,49 +1,67 @@
-import gql from 'graphql-tag'
 import get from 'lodash/get'
-import { withStyles } from '@material-ui/core'
 import React from 'react'
-import { Query } from 'react-apollo'
+import { useQuery } from 'react-apollo'
 import { Link } from 'react-router-dom'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
+import moment from 'moment'
 
 import DeleteItem from './delete-item'
 import { CubeLoader } from './loading'
 import { guessType } from './focus/type-guesser'
 import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
+import itemChildrenQuery from './item-children.gql'
+import recentItemsQuery from './recent-items.gql'
+import { SearchView } from './search/view'
 
-const styles = theme => ({
-  empty: {
-    marginTop: theme.spacing.unit
-  },
-  root: {
-  },
-  listItem: {
-    display: 'flex',
-    flexGrow: 1
-  },
-  listItemLink: {
-    width: '100%'
-  },
-  listItemActions: {
-    display: 'flex',
-    flexDirection: 'column'
-  }
-})
+const useStyles = makeStyles((theme?: Theme) =>
+  createStyles({
+    empty: {
+      marginTop: theme.spacing(1)
+    },
+    listItem: {
+      display: 'flex',
+      flexGrow: 1
+    },
+    listItemLink: {
+      width: '100%'
+    },
+    listItemActions: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    root: {
+      fontSize: '.75em',
+      color: theme.palette.text.secondary
+    },
+    paper: {
+      padding: theme.spacing(3, 2)
+    }
+  })
+)
 
-const ValuePreview = withStyles(theme => ({
-  root: {
-    fontSize: '.75em',
-    color: theme.palette.text.secondary
-  }
-}))(({ classes, value }) => (
-  <ValueView className={classes.root} value={value} />
-))
+function ValuePreview(props: {
+  value: string
+}) {
+  const classes = useStyles()
+
+  return (
+    <Paper className={classes.paper}>
+      <ValueView
+        className={classes.root}
+        value={props.value}
+        preview={true}
+      />
+    </Paper>
+  )
+}
 
 const ItemPreview = ((props: ItemInterface) => {
   const type = guessType(props.value)
@@ -51,97 +69,114 @@ const ItemPreview = ((props: ItemInterface) => {
     return (
       <ListItemText
         primary={props.label}
+        primaryTypographyProps={{ color: 'textPrimary' }}
         secondary={props.value}
+        secondaryTypographyProps={{ color: 'textSecondary' }}
       />
     )
   } else {
     return (
-      <div>
+      <>
         <ListItemText
           primary={props.label}
+          primaryTypographyProps={{ color: 'textPrimary' }}
         />
         {(~['markdown', 'image'].indexOf(type))
           ? <ValuePreview value={props.value} />
           : null
         }
-      </div>
+      </>
     )
   }
 })
 
-const ItemsList = (props: {
-  classes: Object,
+function ItemsList(props: {
   items: Array<ItemInterface>
-}) => {
-  const { classes, items } = props
+  parentId?: string
+}) {
+  const { items } = props
+  const classes = useStyles()
 
   if (!items.length) {
     return (
-    <div className={classes.empty}>
-      <Typography align="center" variant="caption">
-        Nothing here
-      </Typography>
-    </div>
+      <div className={classes.empty}>
+        <Typography
+          color="textSecondary"
+          align="center"
+          variant="caption"
+          paragraph={true}
+        >
+          this group has no items in it
+        </Typography>
+      </div>
     )
   }
 
   return (
-    <div className={classes.root}>
-      <List>
-        {items.map(item => (
-          <ListItem button className={classes.listItem} divider key={item.id}>
-            <Link className={classes.listItemLink} to={`/view/focus/${item.id}`}>
-              <ItemPreview label={item.label} value={item.value} />
+    <List>
+      {items.map(item => (
+        <ListItem button className={classes.listItem} divider key={item.id}>
+          <Link className={classes.listItemLink} to={`/view/focus/${item.id}`}>
+            <ItemPreview label={item.label} value={item.value} />
+            <Typography variant="caption" color="textSecondary">
+              Edited {moment(item.timeUpdated).calendar()}
+            </Typography>
+          </Link>
+          <div className={classes.listItemActions}>
+            <Link to={`/view/focus/${item.id}/edit`}>
+              <IconButton aria-label="Focus">
+                <EditIcon />
+              </IconButton>
             </Link>
-            <div className={classes.listItemActions}>
-              <Link to={`/view/focus/${item.id}/edit`}>
-                <IconButton aria-label="Focus">
-                  <EditIcon />
-                </IconButton>
-              </Link>
-              <DeleteItem id={item.id} parentId={item.parentId} />
-            </div>
-          </ListItem>
-        ))}
-      </List>
-    </div>
+            <DeleteItem id={item.id} parentId={props.parentId} />
+          </div>
+        </ListItem>
+      ))}
+    </List>
   )
 }
 
-const StyledItemsList = withStyles(styles)(ItemsList)
+export function RecentItemList() {
+  const { data, loading } = useQuery(recentItemsQuery, {
+    fetchPolicy: 'cache-and-network'
+  })
 
-export const allItemsQuery = gql`
-query AllItems($condition: ItemCondition!) {
-  allItems(condition: $condition) {
-    nodes {
-      id,
-      label,
-      value,
-      parentId,
-      itemByParentId {
-        id,
-        label
-      }
-    }
+  if (loading) {
+    return <CubeLoader />
   }
-}
-`
 
-export default (
-  props: { parentId: String }
-) => (
-  <Query
-    variables={{
+  return <ItemsList items={data.allItems.nodes} />
+}
+
+export default function(
+  props: { parentId: string }
+) {
+  const { data, loading } = useQuery(itemChildrenQuery, {
+    variables: {
       condition: {
-        parentId: (props.parentId !== 'root') ? props.parentId : null
+        parentId: props.parentId
       }
-    }}
-    query={allItemsQuery}
-  >
-    {({ loading, data }) => (
-      loading
+    },
+    fetchPolicy: 'cache-and-network'
+  })
+
+  if (loading) {
+    return <CubeLoader />
+  }
+
+  return (
+    <>
+      {loading
         ? <CubeLoader />
-        : <StyledItemsList items={get(data, ['allItems', 'nodes'], [])} />
-    )}
-  </Query>
-)
+        : <ItemsList
+            items={
+              get(data, ['allItemRelationships', 'nodes'], [])
+                .map(itemRelationship => itemRelationship.itemByChildId)
+            }
+            parentId={props.parentId}
+          />
+      }
+      <SearchView parentId={props.parentId} />
+    </>
+  )
+}

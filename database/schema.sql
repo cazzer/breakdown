@@ -10,13 +10,13 @@ grant application_user to postgres;
 create table if not exists breakdown.users_and_groups (
   id uuid default uuid_generate_v4() not null primary key,
   name text,
-  time_created timestamp without time zone default now() not null
+  time_created timestamp with time zone default now() not null
 );
 
 create table if not exists breakdown.user_group_membership (
   member_id uuid references breakdown.users_and_groups(id),
   group_id uuid references breakdown.users_and_groups(id),
-  time_created timestamp without time zone default now() not null
+  time_created timestamp with time zone default now() not null
 );
 
 create unique index on breakdown.user_group_membership (member_id, group_id);
@@ -27,10 +27,20 @@ create table if not exists breakdown.items (
   location_created geography(pointz),
   parent_id uuid references breakdown.items(id) on delete set null,
   public boolean default false,
-  time_created timestamp without time zone default now() not null,
-  time_updated timestamp without time zone default now() not null,
-  value text
+  time_created timestamp with time zone default now() not null,
+  time_updated timestamp with time zone default now() not null,
+  value text,
+  type text
 );
+
+create table if not exists breakdown.item_relationships (
+  id uuid default uuid_generate_v4() not null primary key,
+  parent_id uuid references breakdown.items(id) on delete cascade,
+  child_id uuid references breakdown.items(id) on delete cascade,
+  time_created timestamp with time zone default now() not null
+);
+
+create unique index on breakdown.item_relationships (parent_id, child_id);
 
 -- items.time_updated column
 create or replace function update_item_time_updated()
@@ -55,7 +65,7 @@ create table if not exists breakdown.permissions (
   item_id uuid references breakdown.items(id) on delete cascade,
   user_or_group_id uuid references breakdown.users_and_groups(id) on delete cascade,
   role permission_role default 'reader' not null,
-  time_created timestamp without time zone default now() not null
+  time_created timestamp with time zone default now() not null
 );
 
 create index on breakdown.permissions(item_id);

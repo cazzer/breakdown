@@ -73,7 +73,7 @@ class Navigation extends React.Component {
       <AppBar position="fixed">
         <Toolbar>
           <Link to="/view/focus" className={classes.flex}>
-            <Typography variant="h6">
+            <Typography color="textPrimary" variant="h6">
               Breakdown
             </Typography>
           </Link>

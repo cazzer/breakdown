@@ -1,54 +1,54 @@
 import gql from 'graphql-tag'
 import get from 'lodash/get'
 import React, { Component } from 'react'
-import { Mutation, Query } from 'react-apollo'
+import { useQuery, useMutation } from 'react-apollo'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
-import Input from '@material-ui/core/Input'
 import TextField from '@material-ui/core/TextField'
-import InputLabel from '@material-ui/core/InputLabel'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
+import uuidv4 from 'uuid/v4'
 
 import itemByIdQuery from '../focus/item-by-id.gql'
-import SearchDropDown from '../search/dropdown'
 import ValueView from '../focus/value-view'
 import {
   addItemToAllItems,
   removeItemFromAllItems,
   updateItemInAllItems
 } from '../cache-handlers'
-import { null } from 'pg-sql2';
+import { EditGroups } from '../groups/edit'
+import createItem from './create-item.gql'
+import { CubeLoader } from '../loading'
 
 const styles = theme => ({
   content: {
     display: 'flex',
-    padding: theme.spacing.unit * 2
+    padding: theme.spacing(2)
   },
   root: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   labelContainer: {
     position: 'relative'
   },
   margin: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   previewHeading: {
-    margin: `${theme.spacing.unit}px 0`
+    margin: `${theme.spacing(1)}px 0`
   },
   preview: {
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit
+    padding: theme.spacing(1)
   },
   save: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1)
   },
 })
 
@@ -57,9 +57,9 @@ class EditItemForm extends Component {
     super(props)
 
     this.state = {
+      id: uuidv4(),
       label: '',
       value: '',
-      parentId: get(props, ['item', 'itemByParentId', 'id'], null),
       ...props.item,
       __typename: undefined
     }
@@ -80,7 +80,6 @@ class EditItemForm extends Component {
   handleSave = async () => {
     const item = {
       label: this.state.label,
-      parentId: this.state.parentId,
       public: this.state.public !== null
         ? this.state.public
         : this.props.item.public,
@@ -93,7 +92,7 @@ class EditItemForm extends Component {
 
     await this.props.upsert({
       variables: {
-        itemInput: !this.props.new
+        itemInput: !this.props.isNew
           ? {
             id: this.props.item.id,
             itemPatch: item
@@ -103,8 +102,6 @@ class EditItemForm extends Component {
           }
       }
     })
-
-    this.props.onSave()
   }
 
   handleCheckPublic = event => {
@@ -120,10 +117,10 @@ class EditItemForm extends Component {
         <FormControl className={classes.content}>
           <Grid container spacing={8}>
             <Grid className={classes.labelContainer} item xs={12} md={6}>
-              <InputLabel htmlFor="label">title</InputLabel>
-              <Input
+              <TextField
                 autoFocus
                 id="label"
+                label="label"
                 fullWidth
                 onChange={this.handleChange('label')}
                 type="text"
@@ -148,13 +145,10 @@ class EditItemForm extends Component {
               </Paper>
             </Grid>
             <Grid item xs={12}>
-              <SearchDropDown
-                onUpdate={this.handleParentUpdate}
-                selectedItem={
-                  this.props.parentItem
-                  || get(this.props.item, 'itemByParentId')
-                }
-              />
+              <Typography className={classes.previewHeading} variant="h5">
+                Groups
+              </Typography>
+              <EditGroups childId={get(this.props, ['item', 'id'])} />
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h5">
@@ -191,69 +185,46 @@ class EditItemForm extends Component {
 
 const StyledEditItem = withStyles(styles)(EditItemForm)
 
-const createItem = gql`
-mutation createItem($itemInput: CreateItemInput!) {
-  createItem(input: $itemInput) {
-    item {
-      id,
-      label,
-      parentId,
-      value,
-      itemByParentId {
-        id,
-        label
-      }
-    }
-  }
-}
-`
-
-export const CreateItem = (props) => (
-  <Mutation
-    mutation={createItem}
-    update={(cache, result) => {
+export function CreateItem(props) {
+  const [createItemMutation] = useMutation(createItem, {
+    update: (cache, result) => {
       const { item } = result.data.createItem
       addItemToAllItems(cache, item, item.parentId)
-    }}
-  >
-    {(createItemMutation) => (
-      <StyledEditItem
-        item={props.item}
-        upsert={createItemMutation}
-        new
-        onSave={props.onSave}
-        {...props}
-      />
-    )}
-  </Mutation>
-)
+    }
+  })
 
-export const CreateItemView = (props) => {
+  return (
+    <StyledEditItem
+      item={props.item}
+      upsert={createItemMutation}
+      isNew
+      onSave={props.onSave}
+      {...props}
+    />
+  )
+}
+
+export function CreateItemView(props) {
   const query = queryString.parse(props.location.search)
 
-  if (query.parentId) {
-    return (
-      <Query
-        query={itemByIdQuery}
-        variables={{
-          id: query.parentId
-        }}
-      >
-        {({ data, loading }) => {
-          return loading
-            ? null
-            : (
-              <CreateItem
-                item={{ itemByParentId: data.itemById }}
-                onSave={props.history.goBack}
-              />
-            )
-        }}
-      </Query>
-    )
+  if (!query.parentId) {
+    return <CreateItem onSave={props.history.goBack} />
   }
 
-  return <CreateItem onSave={props.history.goBack} />
+  const { data, loading } = useQuery(itemByIdQuery, {
+    variables: {
+      id: query.parentId
+    },
+    fetchPolicy: 'cache-and-network'
+  })
+
+  return loading
+    ? <CubeLoader />
+    : (
+      <CreateItem
+        item={{ itemByParentId: data.itemById }}
+      />
+    )
 }
 
 const updateItem = gql`
@@ -274,42 +245,33 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
 }
 `
 
-export const EditItem = (props) => (
-  <Mutation
-    mutation={updateItem}
-    update={(cache, result) => {
-      const oldParentId = get(props, ['item', 'itemByParentId', 'id'], null)
+export function EditItem(props) {
+  const [editItemMutation] = useMutation(updateItem, {
+    update: (cache, result) => {
       const { item } = result.data.updateItemById
 
-      if (oldParentId === item.parentId) {
-        updateItemInAllItems(cache, item, item.parentId)
-      } else {
-        removeItemFromAllItems(cache, item, oldParentId)
-        addItemToAllItems(cache, item, item.parentId)
-      }
-    }}
-  >
-    {(editItemMutation) => (
-      <StyledEditItem
-        item={props.item}
-        onSave={props.onSave}
-        upsert={editItemMutation}
-      />
-    )}
-  </Mutation>
-)
+      updateItemInAllItems(cache, item)
+    }
+  })
 
-export const EditItemView = (props) => (
-  <Query
-    query={itemByIdQuery}
-    variables={{
+  return (
+    <StyledEditItem
+      item={props.item}
+      onSave={props.onSave}
+      upsert={editItemMutation}
+    />
+  )
+}
+
+export function EditItemView(props) {
+  const { data, loading } = useQuery(itemByIdQuery, {
+    variables: {
       id: get(props.match.params, 'itemId')
-    }}
-  >
-    {({ data, loading}) => {
-     return loading
-        ? null
-        : <EditItem item={data.itemById} onSave={props.history.goBack} />
-    }}
-  </Query>
-)
+    },
+    fetchPolicy: 'cache-and-network'
+  })
+
+  return loading
+    ? null
+    : <EditItem item={data.itemById} onSave={props.history.goBack} />
+}

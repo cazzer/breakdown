@@ -1,11 +1,10 @@
 import gql from 'graphql-tag'
-import get from 'lodash/get'
 import React from 'react'
-import { Mutation } from 'react-apollo'
+import { useMutation } from 'react-apollo'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { allItemsQuery } from './items'
+import { removeItemFromAllItems, removeFromRecentItems } from './cache-handlers'
 
 class DeleteItem extends React.Component {
   state = {
@@ -49,41 +48,20 @@ mutation DeleteItem($itemId: DeleteItemByIdInput!) {
 }
 `
 
-export default (props) => (
-  <Mutation
-    mutation={deleteItemMutation}
-    update={(cache) => {
-      const data = cache.readQuery({
-        query: allItemsQuery,
-        variables: {
-          condition: {
-            parentId: props.parentId || null
-          }
-        }
-      })
-      cache.writeQuery({
-        query: allItemsQuery,
-        variables: {
-          condition: {
-            parentId: props.parentId || null
-          }
-        },
-        data: {
-          allItems: {
-            ...data.allItems,
-            nodes: data.allItems.nodes.filter(
-              node => node.id !== props.id
-            )
-          }
-        }
-      })
-    }}
-  >
-    {(deleteItem) => (
-      <DeleteItem
-        deleteItem={deleteItem}
-        {...props}
-      />
-    )}
-  </Mutation>
-)
+export default function (props) {
+  const [deleteItem] = useMutation(deleteItemMutation, {
+    update: (cache) => {
+      if (props.parentId) {
+        removeItemFromAllItems(cache, props, props.parentId)
+      }
+      removeFromRecentItems(cache, props)
+    }
+  })
+
+  return (
+    <DeleteItem
+      deleteItem={deleteItem}
+      {...props}
+    />
+  )
+}

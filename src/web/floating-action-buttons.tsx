@@ -7,19 +7,14 @@ import SearchLink from './search/link'
 
 const styles = theme => ({
   root: {
-    bottom: theme.spacing.unit,
+    bottom: theme.spacing(1),
     position: 'fixed',
-    right: theme.spacing.unit
+    right: theme.spacing(1)
   }
 })
 
 const FloatingActionButtons = ({ classes }) => (
   <div className={classes.root}>
-    <Switch>
-      <Route path="/view/focus/:itemId" component={AddLink} />
-      <Route path="/add" component={null} />
-      <Route component={AddLink} />
-    </Switch>
     <Switch>
       <Route path="/search" component={null} />
       <Route component={SearchLink} />

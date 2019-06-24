@@ -7,7 +7,7 @@ import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
 import { setContext } from 'apollo-link-context'
 
-const authLink = setContext(async (request) => {
+const authLink = setContext(async () => {
   const session = await Auth.currentSession()
 
   return {
@@ -17,7 +17,9 @@ const authLink = setContext(async (request) => {
   }
 })
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache({
+  dataIdFromObject: o => o.id
+})
 
 persistCache({
   debug: process.env.NODE_ENV !== 'production',
@@ -44,7 +46,7 @@ export default new ApolloClient({
   cache,
   defaultOptions: {
     query: {
-      fetchPolicy: 'cache-and-network'
+      fetchPolicy: 'network-only'
     }
   }
 })

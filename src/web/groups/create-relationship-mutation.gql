@@ -1,0 +1,7 @@
+mutation createRelationship($relationshipInput: CreateItemRelationshipInput!) {
+  createItemRelationship(input: $relationshipInput) {
+    itemRelationship {
+      id
+    }
+  }
+}

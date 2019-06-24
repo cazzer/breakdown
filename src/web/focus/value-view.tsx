@@ -10,14 +10,18 @@ const StyledMarkdown = withStyles(theme => ({
   root: {
     color: theme.palette.primary.contrastText
   }
-}))(({ classes, className, source }) => (
+}))(({ classes, className, source, preview = false }) => (
   <div className={className || classes.root}>
-    <Markdown source={source} />
+    <Markdown
+      source={source}
+      disallowedTypes={preview ? ['link'] : []}
+      unwrapDisallowed={preview}
+    />
   </div>
 ))
 const StyledImage = withStyles(theme => ({
   image: {
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)}px 0`,
     width: '100%'
   }
 }))(({ classes, src}) => (
@@ -26,7 +30,7 @@ const StyledImage = withStyles(theme => ({
 
 const StyledPlayer = withStyles(theme => ({
   root: {
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)}px 0`,
   }
 }))(({ classes, url }) => (
   <ReactPlayer
@@ -49,8 +53,8 @@ const StyledLink = withStyles(theme => ({
 
 export default (props: {
   className: String,
-  label: String,
-  value: String
+  value: String,
+  preview?: Boolean
 }) => {
   const type = guessType(props.value)
   switch (type) {
@@ -63,6 +67,6 @@ export default (props: {
     case 'link':
       return <StyledLink url={props.value} />
     default:
-      return <Typography>{props.value}</Typography>
+      return <Typography color="textSecondary">{props.value}</Typography>
   }
 }

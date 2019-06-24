@@ -1,29 +1,24 @@
-import get from 'lodash/get'
 import gql from 'graphql-tag'
-import Input from '@material-ui/core/Input'
+import TextField from '@material-ui/core/TextField'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import { Query } from 'react-apollo'
+import { useQuery } from 'react-apollo'
 import React from 'react'
 import { CubeLoader } from '../loading';
 
 const styles = theme => ({
-  container: {
-    flexGrow: 1,
-  },
   paper: {
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing(2),
     color: theme.palette.text.secondary,
   },
   margin: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1)
   }
 })
 
@@ -53,28 +48,40 @@ query Search($input: String!) {
 }
 `
 
-const ConnectedItemList = (props) => {
-  return (
-    <Query
-      query={searchItems}
-      variables={{
-        input: props.query
-      }}
+const ConnectedItemList = (
+  props: { query: String }
+) => {
+  const { data, loading } = useQuery(searchItems, {
+    variables: {
+      input: props.query
+    },
+    fetchPolicy: 'cache-and-network'
+  })
+
+  if (loading) {
+    return <CubeLoader />
+  }
+
+  if (!data.search.nodes.length) {
+      <Typography
+        color="textSecondary"
+        variant="caption"
+      >
+        No results found
+      </Typography>
+  }
+
+  return data.search.nodes.map(item => (
+    <ListItem
+      button
+      key={item.id}
+      onClick={props.handleItemClick(item)}
     >
-      {(searchResults) => {
-        if (searchResults.loading) {
-          return <CubeLoader />
-        }
-
-        const results = searchResults.data.search.nodes
-        if (!results.length) {
-          return <Typography>Nothing to see here.</Typography>
-        }
-
-        return <ItemList items={results} {...props} />
-      }}
-    </Query>
-  )
+      <ListItemText
+        primary={item.label}
+      />
+    </ListItem>
+  ))
 }
 
 const Dropdown = ({
@@ -89,15 +96,20 @@ const Dropdown = ({
     style={{ width: anchorElement.clientWidth }}
   >
     <Paper>
-      <MenuItem onClick={handleItemClick(null)}>No Parent</MenuItem>
-      {query.length > 2 ? (
-        <ConnectedItemList
-          handleItemClick={handleItemClick}
-          query={query}
-        />
-      ) : (
-        <Typography>Type more to see more...</Typography>
-      )}
+      <List>
+        {
+          query.length > 2
+            ? <ConnectedItemList handleItemClick={handleItemClick} query={query} />
+            : (
+              <Typography
+                color="textSecondary"
+                variant="caption"
+              >
+                Type more to search
+              </Typography>
+            )
+        }
+      </List>
     </Paper>
   </Popper>
 )
@@ -116,24 +128,10 @@ class Search extends React.PureComponent {
 
   handleItemClick = item => () => {
     this.setState({
-      isOpen: false,
-      query: '',
-      selectedItem: item
+      query: ''
     })
 
-    this.props.onUpdate(item ? item.id : null)
-  }
-
-  handleCloseSearch = () => {
-    this.setState({
-      isOpen: false
-    })
-  }
-
-  handleOpenSearch = () => {
-    this.setState({
-      isOpen: true
-    })
+    this.props.handleSelect(item)
   }
 
   handleSearch = event => {
@@ -146,31 +144,19 @@ class Search extends React.PureComponent {
   render() {
     const { classes } = this.props
     return (
-      <div className={classes.container}>
-        {this.state.isOpen ? (
-          <Input
-            autoComplete="off"
-            autoFocus
-            id="search"
-            fullWidth
-            onChange={this.handleSearch}
-            onFocus={this.handleSearch}
-            type="text"
-            value={this.state.query}
-          />
-        ) : (
-          <List>
-            <ListItem button onClick={this.handleOpenSearch} >
-              <ListItemText
-                primary="Parent Item"
-                secondary={get(this.state.selectedItem, 'label', 'None')}
-              />
-            </ListItem>
-          </List>
-        )}
+      <>
+        <TextField
+          autoComplete="off"
+          autoFocus
+          id="search"
+          onChange={this.handleSearch}
+          onFocus={this.handleSearch}
+          type="text"
+          value={this.state.query}
+        />
         {
-          this.state.isOpen &&
           this.state.anchorElement &&
+          this.state.query &&
           <Dropdown
             anchorElement={this.state.anchorElement}
             handleItemClick={this.handleItemClick}
@@ -178,7 +164,7 @@ class Search extends React.PureComponent {
             query={this.state.query}
           />
         }
-      </div>
+      </>
     )
   }
 }

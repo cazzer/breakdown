@@ -1,30 +1,30 @@
 import get from 'lodash/get'
 import React, { Component } from 'react'
-import { compose, Query } from 'react-apollo'
+import { useQuery } from 'react-apollo'
+import { compose } from 'redux'
 import { Route } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { Link } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import ArrowUpward from '@material-ui/icons/ArrowUpward'
 
 import ItemList from '../items'
 import { RedBox } from '../red-box'
+import { Groups } from '../groups/view'
 
 import ValueView from './value-view'
 import itemByIdQuery from './item-by-id.gql'
 
 const styles = theme => ({
   backButton: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   content: {
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing(4)
   },
   item: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   root: {
     flowGrow: 1
@@ -37,21 +37,14 @@ class FocusView extends Component {
     return (
       <div className={classes.root}>
         <Paper className={classes.item}>
-          {item.itemByParentId && (
-            <Link to={`/view/focus/${item.itemByParentId.id}`}>
-              <Button variant="outlined" className={classes.backButton}>
-                <ArrowUpward />
-                {item.itemByParentId.label}
-              </Button>
-            </Link>
-          )}
+          <Groups childId={item.id} />
           <Link to={`/view/focus/${item.id}/edit`}>
             <Grid
               container
               className={classes.content}
             >
               <Grid className={classes.title} item xs={12} xl={4}>
-                <Typography variant="h6">
+                <Typography color="textPrimary" variant="h6">
                   {item.label}
                 </Typography>
               </Grid>
@@ -71,22 +64,22 @@ const StyledFocusView = compose(
   RedBox,
 )(FocusView)
 
-const ConnectedFocusView = ({ match }) => (
-  <Query
-    query={itemByIdQuery}
-    variables={{
+function ConnectedFocusView({ match }) {
+  const { data, error, loading } = useQuery(itemByIdQuery, {
+    variables: {
       id: match.params.itemId
-    }}
-  >
-    {(itemQuery => (
-      <StyledFocusView
-        error={itemQuery.error}
-        item={get(itemQuery.data, 'itemById')}
-        loading={itemQuery.loading}
-      />
-    ))}
-  </Query>
-)
+    },
+    fetchPolicy: 'cache-and-network'
+  })
+
+  return (
+    <StyledFocusView
+      error={error}
+      item={get(data, 'itemById')}
+      loading={loading}
+    />
+  )
+}
 
 export const FocusWrapperView = (props) => (
   <div>
