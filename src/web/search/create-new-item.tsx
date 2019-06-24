@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
 import createItemMutation from '../edit/create-item.gql'
-import { addItemToAllItems } from '../cache-handlers'
+import { addToRecentItems } from '../cache-handlers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,7 +39,7 @@ export default function CreateNewItem(props) {
       },
       update: (proxy, mutationResult) => {
         const newItem = mutationResult.data.createItem.item
-        addItemToAllItems(proxy, newItem, null)
+        addToRecentItems(proxy, newItem)
         props.onCreate(newItem)
       }
     })

@@ -20,6 +20,7 @@ import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
 import itemChildrenQuery from './item-children.gql'
 import recentItemsQuery from './recent-items.gql'
+import { SearchView } from './search/view'
 
 const styles = theme => ({
   empty: {
@@ -82,8 +83,10 @@ const ItemPreview = ((props: ItemInterface) => {
 })
 
 const ItemsList = (props: {
+  addMore?: boolean
   classes: Object,
   items: Array<ItemInterface>
+  parentId?: string
 }) => {
   const { classes, items } = props
 
@@ -119,11 +122,14 @@ const ItemsList = (props: {
                   <EditIcon />
                 </IconButton>
               </Link>
-              <DeleteItem id={item.id} parentId={item.parentId} />
+              <DeleteItem id={item.id} parentId={props.parentId} />
             </div>
           </ListItem>
         ))}
       </List>
+      {props.addMore && (
+        <SearchView parentId={props.parentId} />
+      )}
     </div>
   )
 }
@@ -157,7 +163,7 @@ export default (
         : <StyledItemsList items={
           get(data, ['allItemRelationships', 'nodes'], [])
             .map(itemRelationship => itemRelationship.itemByChildId)
-        } />
+        } addMore parentId={props.parentId} />
     )}
   </Query>
 )

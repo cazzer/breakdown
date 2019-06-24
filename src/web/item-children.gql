@@ -1,5 +1,5 @@
 query ItemChildren($condition: ItemRelationshipCondition!) {
-  allItemRelationships(condition: $condition) {
+  allItemRelationships(condition: $condition, orderBy: TIME_CREATED_ASC) {
     nodes {
       id
       itemByChildId {

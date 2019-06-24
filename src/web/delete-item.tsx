@@ -4,7 +4,7 @@ import { Mutation } from 'react-apollo'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import itemChildrenQuery from './item-children.gql'
+import { removeItemFromAllItems } from './cache-handlers'
 
 class DeleteItem extends React.Component {
   state = {
@@ -52,30 +52,7 @@ export default (props) => (
   <Mutation
     mutation={deleteItemMutation}
     update={(cache) => {
-      const data = cache.readQuery({
-        query: itemChildrenQuery,
-        variables: {
-          condition: {
-            parentId: props.parentId || null
-          }
-        }
-      })
-      cache.writeQuery({
-        query: itemChildrenQuery,
-        variables: {
-          condition: {
-            parentId: props.parentId || null
-          }
-        },
-        data: {
-          allItems: {
-            ...data.allItems,
-            nodes: data.allItems.nodes.filter(
-              node => node.id !== props.id
-            )
-          }
-        }
-      })
+      removeItemFromAllItems(cache, props, props.parentId)
     }}
   >
     {(deleteItem) => (

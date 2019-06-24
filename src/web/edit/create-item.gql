@@ -4,6 +4,8 @@ mutation createItem($itemInput: CreateItemInput!) {
       id
       label
       value
+      timeCreated
+      timeUpdated
     }
   }
 }

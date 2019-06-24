@@ -8,11 +8,13 @@ import TextField from '@material-ui/core/TextField'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
-import { Query } from 'react-apollo'
-import React from 'react'
+import { Query, useMutation } from 'react-apollo'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CubeLoader } from '../loading'
 import CreateNewItem from './create-new-item'
+import createRelationshipMutation from '../groups/create-relationship-mutation.gql'
+import { addItemToAllItems } from '../cache-handlers'
 
 const styles = theme => ({
   root: {
@@ -177,4 +179,79 @@ class Search extends React.Component {
 }
 
 export default withStyles(styles)(Search)
+
+function StatefulSearch(props) {
+  const [query, setQuery] = useState('')
+  const [createRelationship, { data, loading }] = useMutation(createRelationshipMutation)
+
+  const handleSearch = (event) => {
+    setQuery(event.target.value)
+  }
+
+  const handleCreateNew = (newItem) => {
+    createRelationship({
+      variables: {
+        relationshipInput: {
+          itemRelationship: {
+            childId: newItem.id,
+            parentId: props.parentId
+          }
+        }
+      },
+      update: (proxy, result) => {
+        addItemToAllItems(proxy, {
+          ...result.data.createItemRelationship.itemRelationship,
+          itemByChildId: newItem
+        }, props.parentId)
+        setQuery('')
+      }
+    })
+  }
+
+  return (
+    <div className={props.classes.root}>
+      <Grid container>
+        <Grid item xs={12}>
+          <FormControl
+            fullWidth
+          >
+            <TextField
+              autoComplete="off"
+              id="search"
+              label="search"
+              onChange={handleSearch}
+              type="text"
+              inputProps={{ className: props.classes.search }}
+              value={query}
+            />
+          </FormControl>
+        </Grid>
+        {query.length ? (
+          <>
+            <Grid item xs={12}>
+              <Typography color="textSecondary">
+                something new
+              </Typography>
+              <CreateNewItem label={query} onCreate={handleCreateNew} />
+            </Grid>
+          </>
+        )
+        : (
+          <Grid item xs={12}>
+            <Typography
+              color="textSecondary"
+              align="center"
+              variant="caption"
+              paragraph={true}
+            >
+              add a child to this group
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
+    </div>
+  )
+}
+
+export const SearchView = withStyles(styles)(StatefulSearch)
 
