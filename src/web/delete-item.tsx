@@ -4,7 +4,7 @@ import { Mutation } from 'react-apollo'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { removeItemFromAllItems } from './cache-handlers'
+import { removeItemFromAllItems, removeFromRecentItems } from './cache-handlers'
 
 class DeleteItem extends React.Component {
   state = {
@@ -52,7 +52,10 @@ export default (props) => (
   <Mutation
     mutation={deleteItemMutation}
     update={(cache) => {
-      removeItemFromAllItems(cache, props, props.parentId)
+      if (props.parentId) {
+        removeItemFromAllItems(cache, props, props.parentId)
+      }
+      removeFromRecentItems(cache, props)
     }}
   >
     {(deleteItem) => (
