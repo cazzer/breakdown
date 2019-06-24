@@ -215,7 +215,6 @@ export function CreateItemView(props) {
     variables: {
       id: query.parentId
     },
-    fetchPolicy: 'cache-and-network'
   })
 
   return loading
@@ -268,7 +267,6 @@ export function EditItemView(props) {
     variables: {
       id: get(props.match.params, 'itemId')
     },
-    fetchPolicy: 'cache-and-network'
   })
 
   return loading

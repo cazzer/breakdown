@@ -55,7 +55,6 @@ const ConnectedItemList = (
     variables: {
       input: props.query
     },
-    fetchPolicy: 'cache-and-network'
   })
 
   if (loading) {

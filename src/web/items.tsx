@@ -137,9 +137,7 @@ function ItemsList(props: {
 }
 
 export function RecentItemList() {
-  const { data, loading } = useQuery(recentItemsQuery, {
-    fetchPolicy: 'cache-and-network'
-  })
+  const { data, loading } = useQuery(recentItemsQuery)
 
   if (loading) {
     return <CubeLoader />
@@ -157,7 +155,6 @@ export default function(
         parentId: props.parentId
       }
     },
-    fetchPolicy: 'cache-and-network'
   })
 
   if (loading) {

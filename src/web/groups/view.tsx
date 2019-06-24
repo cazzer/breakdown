@@ -50,7 +50,6 @@ export function Groups(
         childId: props.childId
       }
     },
-    fetchPolicy: 'cache-and-network'
   })
 
   return loading

@@ -69,7 +69,6 @@ function ConnectedFocusView({ match }) {
     variables: {
       id: match.params.itemId
     },
-    fetchPolicy: 'cache-and-network'
   })
 
   return (

@@ -91,7 +91,6 @@ function ConnectedItemList(props: {
     variables: {
       input: props.term
     },
-    fetchPolicy: 'cache-and-network'
   })
 
   if (loading) {
