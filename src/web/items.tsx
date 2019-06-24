@@ -1,9 +1,8 @@
-import gql from 'graphql-tag'
 import get from 'lodash/get'
-import { withStyles } from '@material-ui/core'
 import React from 'react'
-import { Query, useQuery } from 'react-apollo'
+import { useQuery } from 'react-apollo'
 import { Link } from 'react-router-dom'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -22,24 +21,26 @@ import itemChildrenQuery from './item-children.gql'
 import recentItemsQuery from './recent-items.gql'
 import { SearchView } from './search/view'
 
-const styles = theme => ({
-  empty: {
-    marginTop: theme.spacing(1)
-  },
-  root: {
-  },
-  listItem: {
-    display: 'flex',
-    flexGrow: 1
-  },
-  listItemLink: {
-    width: '100%'
-  },
-  listItemActions: {
-    display: 'flex',
-    flexDirection: 'column'
-  }
-})
+const useStyles = makeStyles((theme?: Theme) =>
+  createStyles({
+    empty: {
+      marginTop: theme.spacing(1)
+    },
+    root: {
+    },
+    listItem: {
+      display: 'flex',
+      flexGrow: 1
+    },
+    listItemLink: {
+      width: '100%'
+    },
+    listItemActions: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  })
+)
 
 const ValuePreview = withStyles(theme => ({
   root: {
@@ -82,26 +83,26 @@ const ItemPreview = ((props: ItemInterface) => {
   }
 })
 
-const ItemsList = (props: {
+function ItemsList(props: {
   addMore?: boolean
-  classes: Object,
   items: Array<ItemInterface>
   parentId?: string
-}) => {
-  const { classes, items } = props
+}) {
+  const { items } = props
+  const classes = useStyles()
 
   if (!items.length) {
     return (
-    <div className={classes.empty}>
-      <Typography
-        color="textSecondary"
-        align="center"
-        variant="caption"
-        paragraph={true}
-      >
-        Nothing here
-      </Typography>
-    </div>
+      <div className={classes.empty}>
+        <Typography
+          color="textSecondary"
+          align="center"
+          variant="caption"
+          paragraph={true}
+        >
+          Nothing here
+        </Typography>
+      </div>
     )
   }
 
@@ -134,8 +135,6 @@ const ItemsList = (props: {
   )
 }
 
-const StyledItemsList = withStyles(styles)(ItemsList)
-
 export function RecentItemList() {
   const { data, loading } = useQuery(recentItemsQuery)
 
@@ -143,27 +142,28 @@ export function RecentItemList() {
     return <CubeLoader />
   }
 
-  return <StyledItemsList items={data.allItems.nodes} />
+  return <ItemsList items={data.allItems.nodes} />
 }
 
-export default (
+export default function(
   props: { parentId: String }
-) => (
-  <Query
-    variables={{
+) {
+  const { data, loading } = useQuery(itemChildrenQuery, {
+    variables: {
       condition: {
         parentId: props.parentId
       }
-    }}
-    query={itemChildrenQuery}
-  >
-    {({ loading, data }) => (
-      loading
-        ? <CubeLoader />
-        : <StyledItemsList items={
-          get(data, ['allItemRelationships', 'nodes'], [])
-            .map(itemRelationship => itemRelationship.itemByChildId)
-        } addMore parentId={props.parentId} />
-    )}
-  </Query>
-)
+    }
+  })
+
+  if (loading) {
+    return <CubeLoader />
+  }
+
+  return (
+    <StyledItemsList items={
+      get(data, ['allItemRelationships', 'nodes'], [])
+        .map(itemRelationship => itemRelationship.itemByChildId)
+    } addMore parentId={props.parentId} />
+  )
+}
