@@ -109,7 +109,7 @@ function EditGroupsView(props) {
         groupToAdd
       ])
     } else {
-      addRelationshipHandler(groupsToAdd)
+      addRelationshipHandler(groupToAdd)
     }
   }
 
