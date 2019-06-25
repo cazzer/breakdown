@@ -217,6 +217,7 @@ Resources:
               - codepipeline:*
               - acm:*
               - cognito-identity:*
+              - events:*
       Roles:
         - !Ref PipelineRole
         - !Ref CodebuildRole
