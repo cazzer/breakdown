@@ -210,6 +210,7 @@ function StatefulSearch(props) {
   }
 
   const handleCreateNew = (newItem) => {
+    setQuery('')
     createRelationship({
       variables: {
         relationshipInput: {
@@ -224,7 +225,6 @@ function StatefulSearch(props) {
           ...result.data.createItemRelationship.itemRelationship,
           itemByChildId: newItem
         }, props.parentId)
-        setQuery('')
       }
     })
   }
