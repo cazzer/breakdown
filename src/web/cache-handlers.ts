@@ -5,36 +5,15 @@ import parentsByChildId from './groups/item-parents.gql'
 import recentItemsQuery from './recent-items.gql'
 import itemByIdQuery from './focus/item-by-id.gql'
 
-const DEFAULT_ALL_ITEMS_DATA = {
-  allItems: {
-    nodes: [],
-    __typename: 'ItemsConnection'
-  }
-}
-
 export function removeFromRecentItems(
   cache: DataProxy,
   removedItem: Object
 ) {
-  let data
-  try {
-    data = cache.readQuery({
-      query: recentItemsQuery
-    })
-  } catch (error) {
-    return
-  }
-
-  cache.writeQuery({
+  removeFromCache({
+    cache,
     query: recentItemsQuery,
-    data: {
-      allItems: {
-        ...data.allItems,
-        nodes: data.allItems.nodes.filter(item => (
-          item.id !== removedItem.id
-        ))
-      }
-    }
+    dataKey: 'allItems',
+    filter: item => item.id !== removedItem.id
   })
 }
 
@@ -42,63 +21,25 @@ export function addToRecentItems(
   cache: DataProxy,
   newItem: Object
 ) {
-  let data
-  try {
-    data = cache.readQuery({
-      query: recentItemsQuery
-    })
-  } catch (error) {
-    data = DEFAULT_ALL_ITEMS_DATA
-  }
-
-  cache.writeQuery({
+  addToCache({
+    cache,
     query: recentItemsQuery,
-    data: {
-      allItems: {
-        ...data.allItems,
-        nodes: [
-          newItem,
-          ...data.allItems.nodes
-        ]
-      }
-    }
+    dataKey: 'allItems',
+    item: newItem
   })
 }
 
 export function removeItemFromAllItems(
   cache: DataProxy,
   removedItem: Object,
-  parentId: String
+  parentId: string
 ) {
-  let data
-  try {
-    data = cache.readQuery({
-      query: itemChildrenQuery,
-      variables: {
-        condition: {
-          parentId
-        }
-      }
-    })
-  } catch (error) {
-    return
-  }
-
-  cache.writeQuery({
+  removeFromCache({
+    cache,
     query: itemChildrenQuery,
-    variables: {
-      condition: {
-        parentId
-      }
-    },
-    data: {
-      allItemRelationships: {
-        ...data.allItemRelationships,
-        nodes: data.allItemRelationships.nodes.filter(relationship => (
-          relationship.itemByChildId.id !== removedItem.id
-        ))
-      }
-    }
+    variables: { condition: { parentId } },
+    dataKey: 'allItemRelationships',
+    filter: relationship => relationship.itemByChildId.id !== removedItem.id
   })
 }
 
@@ -107,38 +48,13 @@ export function addItemToAllItems(
   addedItem: Object,
   parentId?: String
 ) {
-  let data
-
-  try {
-    data = cache.readQuery({
-      query: itemChildrenQuery,
-      variables: {
-        condition: {
-          parentId
-        }
-      }
-    })
-  }
-  catch (error) {
-    data = DEFAULT_ALL_ITEMS_DATA
-  }
-
-  cache.writeQuery({
+  addToCache({
+    addLast: true,
+    cache,
+    variables: { condition: { parentId } },
+    dataKey: 'allItemRelationships',
+    item: addedItem,
     query: itemChildrenQuery,
-    variables: {
-      condition: {
-        parentId
-      }
-    },
-    data: {
-      allItemRelationships: {
-        ...data.allItemRelationships,
-        nodes: [
-          ...data.allItemRelationships.nodes,
-          addedItem
-        ]
-      }
-    }
   })
 }
 
@@ -146,45 +62,17 @@ export function updateItemInAllItems(
   cache: DataProxy,
   updatedItem: Object,
 ) {
-  let data
-
-  try {
-    data = cache.readQuery({
-      query: itemByIdQuery,
-      variables: {
-        condition: {
-          id: updatedItem.id
-        }
-      }
-    })
-  }
-  catch (error) {
-    // it's ok if this list isn't in the cache yet,
-    // we'll add it
-    return addItemToAllItems(
-      cache,
-      updatedItem,
-    )
-  }
-
-  // ok the list is in the cache, time to do some work
-  cache.writeQuery({
-    query: itemChildrenQuery,
-    variables: {
-      condition: {
-        parentId
-      }
-    },
-    data: {
-      allItems: {
-        ...data.allItemRelationships,
-        nodes: data.allItemRelationships.nodes.map(item => (
-          item.id === updatedItem.id
-            ? updatedItem
-            : item
-        ))
-      }
-    }
+  updateInCache({
+    cache,
+    variables: { id: updatedItem.id },
+    dataKey: 'itemById',
+    item: updatedItem,
+    filter: item => (
+      item.id === updatedItem.id
+        ? updatedItem
+        : item
+    ),
+    query: itemByIdQuery
   })
 }
 
@@ -193,31 +81,13 @@ export function addParentToChild (
   relationship: object,
   childId: string
 ) {
-  let data = cache.readQuery({
-    query: parentsByChildId,
-    variables: {
-      condition: {
-        childId
-      }
-    }
-  })
-
-  cache.writeQuery({
-    query: parentsByChildId,
-    variables: {
-      condition: {
-        childId
-      }
-    },
-    data: {
-      allItemRelationships: {
-        ...data.allItemRelationships,
-        nodes: [
-          ...data.allItemRelationships.nodes,
-          relationship
-        ]
-      }
-    }
+  addToCache({
+    addLast: true,
+    cache,
+    variables: { condition: { childId } },
+    dataKey: 'allItemRelationships',
+    item: relationship,
+    query: parentsByChildId
   })
 }
 
@@ -226,29 +96,138 @@ export function removeParentFromChild(
   relationshipId: string,
   childId: string
 ) {
-  let data = cache.readQuery({
-    query: parentsByChildId,
-    variables: {
-      condition: {
-        childId
+  removeFromCache({
+    cache,
+    variables: { condition: { childId } },
+    dataKey: 'allItemRelationships',
+    filter: (item: { id: string }) => item.id !== relationshipId,
+    query: parentsByChildId
+  })
+}
+
+function addToCache({
+  addLast,
+  cache,
+  variables = {},
+  dataKey,
+  item,
+  query,
+} : {
+  addLast?: boolean
+  cache: DataProxy,
+  variables?: object,
+  dataKey: string,
+  item: any,
+  query: any,
+}) {
+  let data: any
+  try {
+    data = cache.readQuery({
+      query,
+      variables
+    })
+  }
+  catch (error) {
+    console.error(error)
+    data = {
+      [dataKey]: {
+        nodes: [],
+        ___typename: item.__typename
+      }
+    }
+  }
+
+  const nodes = addLast
+    ? [ ...data[dataKey].nodes, item ]
+    : [ item, ...data[dataKey].nodes ]
+
+  cache.writeQuery({
+    query,
+    variables,
+    data: {
+      [dataKey]: {
+        ...data[dataKey],
+        nodes
       }
     }
   })
+}
+
+function updateInCache(options : {
+  cache: DataProxy,
+  variables?: object,
+  dataKey: string,
+  item: any,
+  filter: Function,
+  query: any,
+}) {
+  try {
+    modifyInCache({
+      ...options,
+      modifier: 'map'
+    })
+  }
+  catch (error) {
+    addToCache(options)
+  }
+}
+
+function removeFromCache(options : {
+  cache: DataProxy,
+  variables?: object,
+  dataKey: string,
+  filter: Function,
+  query: any,
+}) {
+  modifyInCache({
+    ...options,
+    modifier: 'filter'
+  })
+}
+
+function modifyInCache({
+  cache,
+  variables = {},
+  dataKey,
+  filter,
+  item,
+  modifier,
+  query,
+} : {
+  cache: DataProxy,
+  variables?: object,
+  dataKey: string,
+  filter: Function,
+  item?: any,
+  modifier: string,
+  query: any,
+}) {
+  let data: any
+  try {
+    data = cache.readQuery({
+      query,
+      variables
+    })
+  }
+  catch (error) {
+    // it's ok to cache miss if we're removing the item anyway
+    if (modifier === 'filter') {
+      return
+    } else {
+      throw error
+    }
+  }
 
   cache.writeQuery({
-    query: parentsByChildId,
-    variables: {
-      condition: {
-        childId
-      }
-    },
+    query,
+    variables,
     data: {
-      allItemRelationships: {
-        ...data.allItemRelationships,
-        nodes: data.allItemRelationships.nodes.filter(item => (
-          item.id !== relationshipId
-        ))
-      }
+      [dataKey]: data[dataKey].nodes
+        ? {
+          ...data[dataKey],
+          nodes: data[dataKey].nodes[modifier](filter)
+        }
+        : { ...data[dataKey], ...item }
     }
   })
 }
