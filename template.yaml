@@ -104,12 +104,6 @@ Resources:
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
           EPSAGON_TOKEN: !Ref EpsagonToken
-      Events:
-        KeepWarm:
-          Type: Schedule
-          Properties:
-            Schedule: rate(5 minutes)
-            Input: '{"keepWarm" : true}'
 
   ApiPolicy:
     Type: AWS::IAM::Policy
