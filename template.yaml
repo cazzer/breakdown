@@ -109,12 +109,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(5 minutes)
-            Input: '{{
-  "requestContext": {
-      "authorizer": {}
-  },
-  "body": "{\"operationName\":\"introspect\",\"query\":\"query introspect { __schema { types { name fields { name } } } } \"}"
-}}'
+            Input: '{"requestContext": { "authorizer": {} }, "body": "{\"operationName\":\"introspect\",\"query\":\"query introspect { __schema { types { name fields { name } } } } \"}" }'
 
   ApiPolicy:
     Type: AWS::IAM::Policy
