@@ -24,7 +24,7 @@
     "knex": "^0.15.2",
     "lodash": "^4.17.10",
     "pg": "^7.9.0",
-    "postgraphile": "^4.4.0-beta.8",
+    "postgraphile": "^4.4.1",
     "prop-types": "^15.6.2",
     "query-string": "^6.1.0",
     "querystring": "^0.2.0",
