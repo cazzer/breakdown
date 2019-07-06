@@ -40,7 +40,9 @@ export default epsagon.lambdaWrapper(async (
   console.time(`${userId}/${graphqlInput.operationName}`)
 
   try {
+    console.log('Awaiting schema')
     const postgraphileSchema = await postgraphileSchemaPromise
+    console.log('Schema ready, awaiting Postgraphile context')
     const result = await withPostGraphileContext(
       {
         pgPool: pool,
@@ -50,7 +52,7 @@ export default epsagon.lambdaWrapper(async (
         }
       },
       async (context: object) => {
-        console.log('With context')
+        console.log('Context ready, calling operation')
         return await graphql(
           postgraphileSchema,
           graphqlInput.query,
