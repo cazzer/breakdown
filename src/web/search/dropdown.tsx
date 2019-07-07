@@ -7,9 +7,12 @@ import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import { useQuery } from 'react-apollo'
-import React from 'react'
-import { CubeLoader } from '../loading';
+import { useQuery, useMutation } from 'react-apollo'
+import React, { useState } from 'react'
+import Divider from '@material-ui/core/Divider'
+import { CubeLoader } from '../loading'
+import createItemMutation from '../edit/create-item.gql'
+import { addToRecentItems } from '../cache-handlers'
 
 const styles = theme => ({
   paper: {
@@ -21,21 +24,6 @@ const styles = theme => ({
     marginRight: theme.spacing(1)
   }
 })
-
-const ItemList = ({
-  items,
-  handleItemClick
-}) => (
-  <div>
-    {items.map(item => (
-      <ListItem button key={item.id} onClick={handleItemClick(item)}>
-        <ListItemText
-          primary={item.label}
-        />
-      </ListItem>
-    ))}
-  </div>
-)
 
 const searchItems = gql`
 query Search($input: String!) {
@@ -97,6 +85,17 @@ const Dropdown = ({
     <Paper>
       <List>
         {
+          query.length &&
+            <ListItem
+              button
+              key="new"
+              onClick={handleItemClick({label: query})}
+            >
+              <ListItemText primary={query} />
+            </ListItem>
+        }
+        <Divider />
+        {
           query.length > 2
             ? <ConnectedItemList handleItemClick={handleItemClick} query={query} />
             : (
@@ -113,59 +112,72 @@ const Dropdown = ({
   </Popper>
 )
 
-class Search extends React.PureComponent {
-  constructor(props) {
-    super(props)
+function Search(props) {
+  const [state, setState] = useState({
+    anchorElement: null,
+    isOpen: false,
+    query: '',
+    selectedItem: props.selectedItem
+  })
+  const [createItem, { error, loading }] = useMutation(createItemMutation)
 
-    this.state = {
-      anchorElement: null,
-      isOpen: false,
-      query: '',
-      selectedItem: this.props.selectedItem
-    }
-  }
-
-  handleItemClick = item => () => {
-    this.setState({
+  const handleItemClick = item => () => {
+    setState({
       query: ''
     })
 
-    this.props.handleSelect(item)
+    if (item.id) {
+      return props.handleSelect(item)
+    }
+
+    createItem({
+      variables: {
+        itemInput: {
+          item: {
+            label: item.label
+          }
+        }
+      },
+      update: (proxy, mutationResult) => {
+        const newItem = mutationResult.data.createItem.item
+        addToRecentItems(proxy, newItem)
+        props.handleSelect(newItem)
+      }
+    })
   }
 
-  handleSearch = event => {
-    this.setState({
+  const handleSearch = event => {
+    setState({
       anchorElement: event.target,
       query: event.target.value
     })
   }
 
-  render() {
-    const { classes } = this.props
-    return (
-      <>
-        <TextField
-          autoComplete="off"
-          autoFocus
-          id="search"
-          onChange={this.handleSearch}
-          onFocus={this.handleSearch}
-          type="text"
-          value={this.state.query}
+  return (
+    <>
+      <TextField
+        autoComplete="off"
+        autoFocus
+        id="search"
+        onChange={handleSearch}
+        onFocus={handleSearch}
+        type="text"
+        value={state.query}
+        disabled={loading}
+      />
+      {
+        state.anchorElement &&
+        state.query &&
+        !loading &&
+        <Dropdown
+          anchorElement={state.anchorElement}
+          handleItemClick={handleItemClick}
+          isOpen={true}
+          query={state.query}
         />
-        {
-          this.state.anchorElement &&
-          this.state.query &&
-          <Dropdown
-            anchorElement={this.state.anchorElement}
-            handleItemClick={this.handleItemClick}
-            isOpen={true}
-            query={this.state.query}
-          />
-        }
-      </>
-    )
-  }
+      }
+    </>
+  )
 }
 
 export default withStyles(styles)(Search)
