@@ -46,7 +46,7 @@ export default new ApolloClient({
   cache,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: 'cache-and-network'
+      fetchPolicy: 'cache-first'
     }
   }
 })
