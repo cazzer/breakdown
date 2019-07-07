@@ -1,10 +1,14 @@
 import React from 'react'
+import { CubeLoader } from './loading'
 
 export const RedBox = (Component: React.ComponentType) => (
-  props: React.Props<Object>
+  props: {
+    error: string,
+    loading: boolean
+  }
 ) => {
   if (props.loading) {
-    return <div>Loading...</div>
+    return <CubeLoader />
   }
 
   if (props.error) {
