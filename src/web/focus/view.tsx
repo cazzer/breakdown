@@ -18,6 +18,7 @@ import { Groups } from '../groups/view'
 import DeleteItem from '../delete-item'
 import ValueView from './value-view'
 import itemByIdQuery from './item-by-id.gql'
+import Users from '../permissions/view'
 
 const styles = theme => ({
   backButton: {
@@ -31,16 +32,35 @@ const styles = theme => ({
   },
   root: {
     flowGrow: 1
+  },
+  permissions: {
+    padding: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'row-reverse'
   }
 })
 
 class FocusView extends Component {
   render() {
     const { classes, item } = this.props
+    const permissions = get(item, ['permissionsByItemId', 'nodes'], [])
+      .map(permission => ({
+        id: permission.id,
+        role: permission.role,
+        userOrGroup: permission.usersAndGroupByUserOrGroupId
+      }))
+
     return (
       <div className={classes.root}>
         <Paper className={classes.item}>
-          <Groups childId={item.id} />
+          <Grid container>
+            <Grid item xs={12} sm={6}>
+              <Groups childId={item.id} />
+            </Grid>
+            <Grid item xs={12} sm={6} className={classes.permissions}>
+              <Users permissions={permissions} />
+            </Grid>
+          </Grid>
           <Grid
             container
             className={classes.content}
