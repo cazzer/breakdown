@@ -4,14 +4,6 @@ query Item($id: UUID!) {
     label
     public
     value
-    itemRelationshipsByChildId {
-      nodes {
-        itemByParentId {
-          id,
-          label
-        }
-      }
-    }
     permissionsByItemId {
       nodes {
         id

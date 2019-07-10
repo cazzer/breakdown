@@ -2,6 +2,7 @@ import React from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Tooltip from '@material-ui/core/Tooltip'
 import Avatar from '@material-ui/core/Avatar'
+import PublicIcon from '@material-ui/icons/Public'
 
 interface UserData {
   id: string
@@ -14,15 +15,16 @@ interface UserData {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    backButton: {
-      margin: theme.spacing(1)
+    avatar: {
+      marginRight: theme.spacing(1)
     }
   })
 )
 
 export default function Users(
   props: {
-    permissions: UserData[]
+    permissions: UserData[],
+    public?: boolean
   } = {
     permissions: []
   }
@@ -31,9 +33,16 @@ export default function Users(
 
   return (
     <>
+      {props.public && (
+        <Tooltip title="public">
+          <Avatar className={classes.avatar}>
+            <PublicIcon />
+          </Avatar>
+        </Tooltip>
+      )}
       {props.permissions.map(permission => (
         <Tooltip key={permission.id} title={permission.userOrGroup.name}>
-          <Avatar>
+          <Avatar className={classes.avatar}>
             {
               permission.userOrGroup.name
                 .substring(0, 1)

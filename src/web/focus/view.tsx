@@ -58,7 +58,7 @@ class FocusView extends Component {
               <Groups childId={item.id} />
             </Grid>
             <Grid item xs={12} sm={6} className={classes.permissions}>
-              <Users permissions={permissions} />
+              <Users permissions={permissions} public={item.public} />
             </Grid>
           </Grid>
           <Grid
