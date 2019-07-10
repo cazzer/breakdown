@@ -93,7 +93,7 @@ Resources:
     Properties:
       Handler: lib/postgraphile.default
       Role: !GetAtt PostgraphileFunctionRole.Arn
-      Runtime: nodejs10.15
+      Runtime: nodejs10.x
       Timeout: 30
       Tracing: Active
       Environment:
@@ -474,7 +474,7 @@ Resources:
     Properties:
       Handler: lib/cognito/post-confirmation.default
       Role: !GetAtt PostConfirmationFunctionRole.Arn
-      Runtime: nodejs10.15
+      Runtime: nodejs10.x
       Timeout: 30
       Tracing: Active
       Environment:
@@ -521,7 +521,7 @@ Resources:
     Properties:
       Handler: lib/cognito/pre-sign-up.default
       Role: !GetAtt PreSignUpFunctionRole.Arn
-      Runtime: nodejs10.15
+      Runtime: nodejs10.x
       Timeout: 30
       Tracing: Active
       Environment:
@@ -563,7 +563,7 @@ Resources:
     Properties:
       Handler: lib/cognito/pre-token-generation.default
       Role: !GetAtt PreTokenGenerationFunctionRole.Arn
-      Runtime: nodejs10.15
+      Runtime: nodejs10.x
       Timeout: 30
       Tracing: Active
       Environment:
