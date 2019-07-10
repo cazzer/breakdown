@@ -95,6 +95,7 @@ Resources:
       Role: !GetAtt PostgraphileFunctionRole.Arn
       Runtime: nodejs10.x
       Timeout: 30
+      MemorySize: 192
       Tracing: Active
       Environment:
         Variables:
@@ -476,6 +477,7 @@ Resources:
       Role: !GetAtt PostConfirmationFunctionRole.Arn
       Runtime: nodejs10.x
       Timeout: 30
+      MemorySize: 192
       Tracing: Active
       Environment:
         Variables:
@@ -523,6 +525,7 @@ Resources:
       Role: !GetAtt PreSignUpFunctionRole.Arn
       Runtime: nodejs10.x
       Timeout: 30
+      MemorySize: 192
       Tracing: Active
       Environment:
         Variables:
@@ -565,6 +568,7 @@ Resources:
       Role: !GetAtt PreTokenGenerationFunctionRole.Arn
       Runtime: nodejs10.x
       Timeout: 30
+      MemorySize: 192
       Tracing: Active
       Environment:
         Variables:
