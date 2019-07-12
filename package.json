@@ -22,7 +22,7 @@
     "graphql": "^14.2.1",
     "graphql-tag": "^2.9.2",
     "knex": "^0.15.2",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.13",
     "pg": "^7.9.0",
     "postgraphile": "^4.4.1",
     "prop-types": "^15.6.2",
