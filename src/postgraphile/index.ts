@@ -39,9 +39,19 @@ export default epsagon.lambdaWrapper(async (
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
   console.time(`${userId}/${graphqlInput.operationName}`)
 
+  let postgraphileSchema
+
+  try {
+    postgraphileSchema = await postgraphileSchemaPromise
+  } catch (error) {
+    postgraphileSchema = createPostGraphileSchema(
+      config.DB_ENDPOINT,
+      config.DB_SCHEMA
+    )
+  }
+
   try {
     console.log('Awaiting schema')
-    const postgraphileSchema = await postgraphileSchemaPromise
     console.log('Schema ready, awaiting Postgraphile context')
     const result = await withPostGraphileContext(
       {
