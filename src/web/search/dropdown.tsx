@@ -5,7 +5,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
-import { withStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { useQuery, useMutation } from 'react-apollo'
 import React, { useState } from 'react'
@@ -14,16 +14,18 @@ import { CubeLoader } from '../loading'
 import createItemMutation from '../edit/create-item.gql'
 import { addToRecentItems } from '../cache-handlers'
 
-const styles = theme => ({
-  paper: {
-    padding: theme.spacing(2),
-    color: theme.palette.text.secondary,
-  },
-  margin: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1)
-  }
-})
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      padding: theme.spacing(2),
+      color: theme.palette.text.secondary,
+    },
+    margin: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1)
+    }
+  })
+)
 
 const searchItems = gql`
 query Search($input: String!) {
@@ -31,6 +33,17 @@ query Search($input: String!) {
     nodes {
       id,
       label
+    }
+  }
+}
+`
+
+const searchUsers = gql`
+query SearchUsers($input: String!) {
+  searchUsers(term: $input) {
+    nodes {
+      id,
+      name
     }
   }
 }
@@ -71,7 +84,44 @@ const ConnectedItemList = (
   ))
 }
 
+const ConnectedUserList = (
+  props: { query: String }
+) => {
+  const { data, loading } = useQuery(searchUsers, {
+    variables: {
+      input: props.query
+    },
+  })
+
+  if (loading) {
+    return <CubeLoader />
+  }
+
+  if (!data.searchUsers.nodes.length) {
+      <Typography
+        color="textSecondary"
+        variant="caption"
+      >
+        No results found
+      </Typography>
+  }
+
+  return data.searchUsers.nodes.map(userOrGroup => (
+    <ListItem
+      button
+      key={userOrGroup.id}
+      onClick={props.handleItemClick(userOrGroup)}
+    >
+      <ListItemText
+        primary={userOrGroup.name}
+      />
+    </ListItem>
+  ))
+}
+
 const Dropdown = ({
+  allowNew = true,
+  source = 'items',
   anchorElement,
   handleItemClick,
   isOpen,
@@ -85,19 +135,23 @@ const Dropdown = ({
     <Paper>
       <List>
         {
-          query.length &&
-            <ListItem
-              button
-              key="new"
-              onClick={handleItemClick({label: query})}
-            >
-              <ListItemText primary={query} />
-            </ListItem>
+          allowNew && query.length &&
+            <>
+              <ListItem
+                button
+                key="new"
+                onClick={handleItemClick({label: query})}
+              >
+                <ListItemText primary={query} />
+              </ListItem>
+              <Divider />
+            </>
         }
-        <Divider />
         {
           query.length > 2
-            ? <ConnectedItemList handleItemClick={handleItemClick} query={query} />
+            ? source === 'items'
+              ? <ConnectedItemList handleItemClick={handleItemClick} query={query} />
+              : <ConnectedUserList handleItemClick={handleItemClick} query={query} />
             : (
               <Typography
                 color="textSecondary"
@@ -112,7 +166,12 @@ const Dropdown = ({
   </Popper>
 )
 
-function Search(props) {
+export default function Search(props: {
+  allowNew: boolean,
+  handleSelect: Function,
+  selectedItem: any,
+  source: string
+}) {
   const [state, setState] = useState({
     anchorElement: null,
     isOpen: false,
@@ -170,14 +229,14 @@ function Search(props) {
         state.query &&
         !loading &&
         <Dropdown
+          allowNew={props.allowNew}
           anchorElement={state.anchorElement}
           handleItemClick={handleItemClick}
           isOpen={true}
           query={state.query}
+          source={props.source}
         />
       }
     </>
   )
 }
-
-export default withStyles(styles)(Search)

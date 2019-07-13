@@ -1,0 +1,7 @@
+mutation deletePermission($permission: DeletePermissionByIdInput!) {
+  deletePermissionById(input: $permission) {
+		permission {
+      id
+    }
+  }
+}

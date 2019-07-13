@@ -34,9 +34,7 @@ const styles = theme => ({
     flowGrow: 1
   },
   permissions: {
-    padding: theme.spacing(1),
-    display: 'flex',
-    flexDirection: 'row-reverse'
+    padding: theme.spacing(1)
   }
 })
 
@@ -46,6 +44,7 @@ class FocusView extends Component {
     const permissions = get(item, ['permissionsByItemId', 'nodes'], [])
       .map(permission => ({
         id: permission.id,
+        itemId: permission.itemId,
         role: permission.role,
         userOrGroup: permission.usersAndGroupByUserOrGroupId
       }))
@@ -58,7 +57,11 @@ class FocusView extends Component {
               <Groups childId={item.id} />
             </Grid>
             <Grid item xs={12} sm={6} className={classes.permissions}>
-              <Users permissions={permissions} public={item.public} />
+              <Users
+                permissions={permissions}
+                public={item.public}
+                rowReverse={true}
+              />
             </Grid>
           </Grid>
           <Grid

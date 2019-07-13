@@ -24,6 +24,7 @@ import {
 import { EditGroups } from '../groups/edit'
 import createItem from './create-item.gql'
 import { CubeLoader } from '../loading'
+import EditPermissions from '../permissions/edit'
 
 const styles = theme => ({
   content: {
@@ -112,6 +113,15 @@ class EditItemForm extends Component {
 
   render() {
     const { classes } = this.props
+    const permissions = get(this.props.item, ['permissionsByItemId', 'nodes'], [])
+      .map(permission => ({
+        id: permission.id,
+        itemId: permission.itemId,
+        role: permission.role,
+        timeCreated: permission.timeCreated,
+        userOrGroup: permission.usersAndGroupByUserOrGroupId
+      }))
+
     return (
       <Paper className={classes.root}>
         <FormControl className={classes.content}>
@@ -162,6 +172,11 @@ class EditItemForm extends Component {
                   />
                 }
                 label="Public"
+              />
+              <EditPermissions
+                itemId={this.props.item.id}
+                permissions={permissions}
+                public={this.props.item.public}
               />
             </Grid>
             <Grid item xs={12}>
@@ -234,11 +249,7 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
       label,
       parentId,
       public,
-      value,
-      itemByParentId {
-        id,
-        label
-      }
+      value
     }
   }
 }

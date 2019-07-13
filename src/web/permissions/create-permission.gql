@@ -1,0 +1,16 @@
+mutation createPermission($permissionInput: CreatePermissionInput!) {
+  createPermission(input: $permissionInput) {
+    permission {
+      id
+      itemId
+      userOrGroupId
+      role
+      timeCreated
+      usersAndGroupByUserOrGroupId {
+          id
+          name
+          timeCreated
+        }
+    }
+  }
+}

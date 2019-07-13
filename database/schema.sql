@@ -197,3 +197,11 @@ as $search$
 	from items
 	where value ~* term;
 $search$ language sql immutable;
+
+create or replace function search_users(term text)
+returns setof breakdown.users_and_groups
+as $search$
+	select *
+	from users_and_groups
+	where name ~* term;
+$search$ language sql immutable;

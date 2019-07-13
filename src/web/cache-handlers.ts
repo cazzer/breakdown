@@ -4,6 +4,60 @@ import itemChildrenQuery from './item-children.gql'
 import parentsByChildId from './groups/item-parents.gql'
 import recentItemsQuery from './recent-items.gql'
 import itemByIdQuery from './focus/item-by-id.gql'
+import itemById from './focus/item-by-id.gql'
+
+export function addPermissionToItem(
+  cache: DataProxy,
+  permission: any
+) {
+  const id = permission.itemId
+  const data = cache.readQuery({
+    query: itemById,
+    variables: { id }
+  })
+
+  cache.writeQuery({
+    query: itemById,
+    variables: { id },
+    data: {
+      itemById: {
+        ...data.itemById,
+        permissionsByItemId: {
+          ...data.itemById.permissionsByItemId,
+          nodes: [
+            ...data.itemById.permissionsByItemId.nodes,
+            permission
+          ]
+        }
+      }
+    }
+  })
+}
+
+
+export function removePermissionFromItem(
+  cache: DataProxy,
+  oldPermission: any
+) {
+  const data = cache.readQuery({
+    query: itemById,
+    variables: { id: oldPermission.itemId }
+  })
+
+  cache.writeQuery({
+    query: itemById,
+    variables: { id: oldPermission.itemId },
+    data: {
+      itemById: {
+        ...data.itemById,
+        permissionsByItemId: {
+          ...data.itemById.permissionsByItemId,
+          nodes: data.itemById.permissionsByItemId.nodes.filter(permission => permission.id !== oldPermission.id)
+        }
+      }
+    }
+  })
+}
 
 export function removeFromRecentItems(
   cache: DataProxy,

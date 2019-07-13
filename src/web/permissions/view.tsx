@@ -3,6 +3,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Tooltip from '@material-ui/core/Tooltip'
 import Avatar from '@material-ui/core/Avatar'
 import PublicIcon from '@material-ui/icons/Public'
+import cx from 'classnames'
 
 interface UserData {
   id: string
@@ -17,6 +18,12 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     avatar: {
       marginRight: theme.spacing(1)
+    },
+    container: {
+      display: 'flex',
+    },
+    rowReverse: {
+      flexDirection: 'row-reverse'
     }
   })
 )
@@ -24,15 +31,19 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Users(
   props: {
     permissions: UserData[],
-    public?: boolean
+    public?: boolean,
+    rowReverse?: boolean
   } = {
-    permissions: []
+    permissions: [],
+    rowReverse: false
   }
 ) {
   const classes = useStyles()
 
   return (
-    <>
+    <div className={cx(classes.container, {
+      [classes.rowReverse]: props.rowReverse
+    })}>
       {props.public && (
         <Tooltip title="public">
           <Avatar className={classes.avatar}>
@@ -51,6 +62,6 @@ export default function Users(
           </Avatar>
         </Tooltip>
       ))}
-    </>
+    </div>
   )
 }
