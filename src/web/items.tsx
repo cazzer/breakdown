@@ -94,7 +94,7 @@ function ItemsList(props: {
   items: Array<ItemInterface>
   parentId?: string
 }) {
-  const { items } = props
+  const items = props.items.filter(item => !!item)
   const classes = useStyles()
 
   if (!items.length) {
