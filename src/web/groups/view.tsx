@@ -52,9 +52,15 @@ export function Groups(
     },
   })
 
+  if (!data.allItemRelationships) return null
+
+  const groups = data.allItemRelationships.nodes
+    .map(
+      group => group.itemByParentId
+    )
+    .filter(group => !!group)
+
   return loading
     ? null
-    : <GroupsView groups={data.allItemRelationships.nodes.map(
-        group => group.itemByParentId
-      )} />
+    : <GroupsView groups={groups} />
 }
