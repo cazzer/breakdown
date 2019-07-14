@@ -7,14 +7,16 @@ import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
 import { setContext } from 'apollo-link-context'
 
+let ROLES: string
+
 const authLink = setContext(async () => {
   const session = await Auth.currentSession()
+  ROLES = session.idToken.payload.roles
 
   return {
     headers: {
       Authorization: session.idToken.jwtToken
-    },
-    roles: session.idToken.payload.roles
+    }
   }
 })
 
@@ -40,20 +42,29 @@ export default new ApolloClient({
       if (networkError) console.log(`[Network error]: ${networkError}`)
     }),
     authLink,
-    new ApolloLink((operation, forward) => {
-      return forward(operation).map(response => {
-        return response
-      })
-    }).concat(
-      new HttpLink({
-        uri: process.env.GRAPHQL_ENDPOINT
-      })
-    )
+    new HttpLink({
+      uri: process.env.GRAPHQL_ENDPOINT
+    })
   ]),
   cache,
   defaultOptions: {
     watchQuery: {
       fetchPolicy: 'cache-first'
+    }
+  },
+  resolvers: {
+    Item: {
+      userIsWriter(item) {
+        return item.permissionsByItemId && !!item.permissionsByItemId.nodes.find(
+          permission => (
+            ROLES.indexOf(permission.usersAndGroupByUserOrGroupId.id) > -1
+            && permission.role === 'WRITER'
+          )
+        )
+      },
+      userIsOwner() {
+        return false
+      }
     }
   }
 })

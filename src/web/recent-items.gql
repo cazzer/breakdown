@@ -9,6 +9,19 @@ query RecentItems {
       value
       timeCreated
       timeUpdated
+      userIsWriter @client
+      permissionsByItemId {
+        nodes {
+          id
+          itemId
+          role
+          timeCreated
+          usersAndGroupByUserOrGroupId {
+            id
+            name
+          }
+        }
+      }
     }
   }
 }

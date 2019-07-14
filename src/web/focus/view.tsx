@@ -77,14 +77,16 @@ class FocusView extends Component {
               <ValueView value={item.value} />
             </Grid>
             <Divider />
-            <Grid item xs={12}>
-              <Link to={`/view/focus/${item.id}/edit`}>
-                <IconButton aria-label="Focus">
-                  <EditIcon />
-                </IconButton>
-              </Link>
-              <DeleteItem id={item.id} />
-            </Grid>
+            {item.userIsWriter && (
+              <Grid item xs={12}>
+                <Link to={`/view/focus/${item.id}/edit`}>
+                  <IconButton aria-label="Focus">
+                    <EditIcon />
+                  </IconButton>
+                </Link>
+                <DeleteItem id={item.id} />
+              </Grid>
+            )}
           </Grid>
         </Paper>
       </div>

@@ -8,6 +8,19 @@ query ItemChildren($condition: ItemRelationshipCondition!) {
         value
         timeCreated
         timeUpdated
+        userIsWriter @client
+        permissionsByItemId {
+          nodes {
+            id
+            itemId
+            role
+            timeCreated
+            usersAndGroupByUserOrGroupId {
+              id
+              name
+            }
+          }
+        }
       }
     }
   }

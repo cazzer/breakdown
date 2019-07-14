@@ -122,14 +122,16 @@ function ItemsList(props: {
               Edited {moment(item.timeUpdated).calendar()}
             </Typography>
           </Link>
-          <div className={classes.listItemActions}>
-            <Link to={`/view/focus/${item.id}/edit`}>
-              <IconButton aria-label="Focus">
-                <EditIcon />
-              </IconButton>
-            </Link>
-            <DeleteItem id={item.id} parentId={props.parentId} />
-          </div>
+          {item.userIsWriter && (
+            <div className={classes.listItemActions}>
+              <Link to={`/view/focus/${item.id}/edit`}>
+                <IconButton aria-label="Focus">
+                  <EditIcon />
+                </IconButton>
+              </Link>
+              <DeleteItem id={item.id} parentId={props.parentId} />
+            </div>
+          )}
         </ListItem>
       ))}
     </List>
@@ -137,7 +139,7 @@ function ItemsList(props: {
 }
 
 export function RecentItemList() {
-  const { data, loading } = useQuery(recentItemsQuery)
+  const { data, error, loading } = useQuery(recentItemsQuery)
 
   if (loading) {
     return <CubeLoader />

@@ -4,6 +4,8 @@ query Item($id: UUID!) {
     label
     public
     value
+    userIsWriter @client
+    userIsOwner @client
     permissionsByItemId {
       nodes {
         id
