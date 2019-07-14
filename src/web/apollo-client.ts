@@ -13,7 +13,8 @@ const authLink = setContext(async () => {
   return {
     headers: {
       Authorization: session.idToken.jwtToken
-    }
+    },
+    roles: session.idToken.payload.roles
   }
 })
 
@@ -39,9 +40,15 @@ export default new ApolloClient({
       if (networkError) console.log(`[Network error]: ${networkError}`)
     }),
     authLink,
-    new HttpLink({
-      uri: process.env.GRAPHQL_ENDPOINT
-    }),
+    new ApolloLink((operation, forward) => {
+      return forward(operation).map(response => {
+        return response
+      })
+    }).concat(
+      new HttpLink({
+        uri: process.env.GRAPHQL_ENDPOINT
+      })
+    )
   ]),
   cache,
   defaultOptions: {
