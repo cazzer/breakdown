@@ -791,8 +791,6 @@ Resources:
           AttributeType: S
         - AttributeName: ItemId
           AttributeType: S
-        - AttributeName: Time
-          AttributeType: S
       KeySchema:
         - AttributeName: UserId
           KeyType: HASH
