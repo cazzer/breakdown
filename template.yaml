@@ -620,6 +620,13 @@ Resources:
       Environment:
         Variables:
           EPSAGON_TOKEN: !Ref EpsagonToken
+      Events:
+        DynamoTrigger:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt NotificationsTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 10
 
   RdsMonitoringRole:
     Type: AWS::IAM::Role
@@ -776,3 +783,18 @@ Resources:
         - "*.thinstack.io"
       ValidationMethod: DNS
 
+  NotificationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: UserId
+          AttributeType: S
+        - AttributeName: ItemId
+          AttributeType: S
+        - AttributeName: Time
+          AttributeType: S
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TimeToLiveSpecification:
+        AttributeName: Time
+        Enabled: true
