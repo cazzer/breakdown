@@ -219,6 +219,7 @@ Resources:
               - acm:*
               - cognito-identity:*
               - events:*
+              - dynamodb:*
       Roles:
         - !Ref PipelineRole
         - !Ref CodebuildRole
@@ -620,13 +621,6 @@ Resources:
       Environment:
         Variables:
           EPSAGON_TOKEN: !Ref EpsagonToken
-      Events:
-        DynamoTrigger:
-          Type: DynamoDB
-          Properties:
-            Stream: !GetAtt NotificationsTable.StreamArn
-            StartingPosition: TRIM_HORIZON
-            BatchSize: 10
 
   RdsMonitoringRole:
     Type: AWS::IAM::Role
@@ -782,25 +776,3 @@ Resources:
         - thinstack.io
         - "*.thinstack.io"
       ValidationMethod: DNS
-
-  NotificationsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: UserId
-          AttributeType: S
-        - AttributeName: ItemId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: UserId
-          KeyType: HASH
-        - AttributeName: ItemId
-          KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-      TimeToLiveSpecification:
-        AttributeName: Time
-        Enabled: true
