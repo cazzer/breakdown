@@ -49,18 +49,26 @@ export default new ApolloClient({
   cache,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: 'cache-first'
+      fetchPolicy: 'cache-and-network'
     }
   },
   resolvers: {
     Item: {
       userIsWriter(item) {
-        return item.permissionsByItemId && !!item.permissionsByItemId.nodes.find(
+        const direct = item.permissionsByItemId && !!item.permissionsByItemId.nodes.find(
           permission => (
             ROLES.indexOf(permission.usersAndGroupByUserOrGroupId.id) > -1
             && permission.role === 'WRITER'
           )
         )
+        const inherited = item.itemByInheritsFrom && !!item.itemByInheritsFrom.permissionsByItemId.nodes.find(
+          permission => (
+            ROLES.indexOf(permission.usersAndGroupByUserOrGroupId.id) > -1
+            && permission.role === 'WRITER'
+          )
+        )
+
+        return direct || inherited
       },
       userIsOwner() {
         return false

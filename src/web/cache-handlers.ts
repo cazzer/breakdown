@@ -1,10 +1,11 @@
 import { DataProxy } from 'apollo-cache'
 
-import itemChildrenQuery from './item-children.gql'
 import parentsByChildId from './groups/item-parents.gql'
-import recentItemsQuery from './recent-items.gql'
-import itemByIdQuery from './focus/item-by-id.gql'
-import itemById from './focus/item-by-id.gql'
+import {
+  Item as itemById,
+  ItemChildren as itemChildrenQuery,
+  RecentItems
+} from './focus/item-by-id.gql'
 
 export function addPermissionToItem(
   cache: DataProxy,
@@ -65,7 +66,7 @@ export function removeFromRecentItems(
 ) {
   removeFromCache({
     cache,
-    query: recentItemsQuery,
+    query: RecentItems,
     dataKey: 'allItems',
     filter: item => item.id !== removedItem.id
   })
@@ -77,7 +78,7 @@ export function addToRecentItems(
 ) {
   addToCache({
     cache,
-    query: recentItemsQuery,
+    query: RecentItems,
     dataKey: 'allItems',
     item: newItem
   })
@@ -126,7 +127,7 @@ export function updateItemInAllItems(
         ? updatedItem
         : item
     ),
-    query: itemByIdQuery
+    query: itemById
   })
 }
 

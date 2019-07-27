@@ -137,7 +137,8 @@ function NewPermission(props) {
         permissionInput: {
           permission: {
             itemId: props.itemId,
-            userOrGroupId: permission.userOrGroup.id
+            userOrGroupId: permission.userOrGroup.id,
+            role: permission.role
           }
         }
       },

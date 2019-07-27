@@ -1,11 +1,26 @@
-query Item($id: UUID!) {
-  itemById(id: $id) {
-    id
-    label
-    public
-    value
-    userIsWriter @client
-    userIsOwner @client
+fragment fullItem on Item {
+  id
+  label
+  public
+  value
+  timeCreated
+  timeUpdated
+  inheritsFrom
+  userIsWriter @client
+  userIsOwner @client
+  permissionsByItemId {
+    nodes {
+      id
+      itemId
+      role
+      timeCreated
+      usersAndGroupByUserOrGroupId {
+        id
+        name
+      }
+    }
+  }
+  itemByInheritsFrom {
     permissionsByItemId {
       nodes {
         id
@@ -17,6 +32,42 @@ query Item($id: UUID!) {
           name
         }
       }
+    }
+  }
+}
+
+query Item($id: UUID!) {
+  itemById(id: $id) {
+    ...fullItem
+  }
+}
+
+query RecentItems {
+  allItems(
+    orderBy: TIME_UPDATED_DESC,
+    first: 30
+  ) {
+    nodes {
+      ...fullItem
+    }
+  }
+}
+
+query ItemChildren($condition: ItemRelationshipCondition!) {
+  allItemRelationships(condition: $condition, orderBy: TIME_CREATED_ASC) {
+    nodes {
+      id
+      itemByChildId {
+        ...fullItem
+      }
+    }
+  }
+}
+
+mutation createItemMutation($itemInput: CreateItemInput!) {
+  createItem(input: $itemInput) {
+    item {
+      ...fullItem
     }
   }
 }

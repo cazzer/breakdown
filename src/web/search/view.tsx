@@ -253,7 +253,11 @@ function StatefulSearch(props) {
               <Typography color="textSecondary">
                 something new
               </Typography>
-              <CreateNewItem label={query} onCreate={handleCreateNew} />
+              <CreateNewItem
+                label={query}
+                parentId={props.parentId}
+                onCreate={handleCreateNew}
+              />
             </Grid>
             <Grid item xs={6}>
               {query.length < 2 ? (

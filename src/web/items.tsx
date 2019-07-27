@@ -17,8 +17,10 @@ import { CubeLoader } from './loading'
 import { guessType } from './focus/type-guesser'
 import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
-import itemChildrenQuery from './item-children.gql'
-import recentItemsQuery from './recent-items.gql'
+import {
+  ItemChildren as itemChildrenQuery,
+  RecentItems as recentItemsQuery
+} from './focus/item-by-id.gql'
 import { SearchView } from './search/view'
 
 const useStyles = makeStyles((theme?: Theme) =>
@@ -165,16 +167,13 @@ export default function(
 
   return (
     <>
-      {loading
-        ? <CubeLoader />
-        : <ItemsList
-            items={
-              get(data, ['allItemRelationships', 'nodes'], [])
-                .map(itemRelationship => itemRelationship.itemByChildId)
-            }
-            parentId={props.parentId}
-          />
-      }
+      <ItemsList
+        items={
+          get(data, ['allItemRelationships', 'nodes'], [])
+            .map(itemRelationship => itemRelationship.itemByChildId)
+        }
+        parentId={props.parentId}
+      />
       <SearchView parentId={props.parentId} />
     </>
   )

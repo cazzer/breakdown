@@ -17,7 +17,7 @@ import { RedBox } from '../red-box'
 import { Groups } from '../groups/view'
 import DeleteItem from '../delete-item'
 import ValueView from './value-view'
-import itemByIdQuery from './item-by-id.gql'
+import { Item as itemByIdQuery } from './item-by-id.gql'
 import Users from '../permissions/view'
 
 const styles = theme => ({
@@ -41,7 +41,14 @@ const styles = theme => ({
 class FocusView extends Component {
   render() {
     const { classes, item } = this.props
-    const permissions = get(item, ['permissionsByItemId', 'nodes'], [])
+    const directPermissions = get(item, ['permissionsByItemId', 'nodes'], [])
+      .map(permission => ({
+        id: permission.id,
+        itemId: permission.itemId,
+        role: permission.role,
+        userOrGroup: permission.usersAndGroupByUserOrGroupId
+      }))
+    const inheritedPermissions = get(item, ['itemByInheritsFrom', 'permissionsByItemId', 'nodes'], [])
       .map(permission => ({
         id: permission.id,
         itemId: permission.itemId,
@@ -58,7 +65,8 @@ class FocusView extends Component {
             </Grid>
             <Grid item xs={12} sm={6} className={classes.permissions}>
               <Users
-                permissions={permissions}
+                permissions={directPermissions}
+                inherited={inheritedPermissions}
                 public={item.public}
                 rowReverse={true}
               />

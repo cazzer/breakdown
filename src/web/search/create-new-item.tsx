@@ -5,7 +5,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import createItemMutation from '../edit/create-item.gql'
+import { createItemMutation } from '../focus/item-by-id.gql'
 import { addToRecentItems } from '../cache-handlers'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -33,7 +33,8 @@ export default function CreateNewItem(props) {
       variables: {
         itemInput: {
           item: {
-            label: props.label
+            label: props.label,
+            inheritsFrom: props.parentId
           }
         }
       },

@@ -93,22 +93,34 @@ to application_user
 using (
   items.public = true
   or exists(
-    select item_id
-    from breakdown.permissions
-    where (
-      permissions.user_or_group_id =
-        any(regexp_split_to_array(current_setting('jwt.claims.roles'), ',')::uuid[])
-      and permissions.item_id = items.id
-    )
+    with permissions as (
+		select item_id
+		from permissions
+		where permissions.user_or_group_id =
+		  any(regexp_split_to_array(current_setting('jwt.claims.roles'), ',')::uuid[])
+	)
+	select item_id
+	from permissions
+	where items.id = permissions.item_id
+	or items.inherits_from = permissions.item_id
   )
 )
 with check (exists(
   select item_id
   from breakdown.permissions
-  where (
-    permissions.user_or_group_id =
-      any(regexp_split_to_array(current_setting('jwt.claims.roles'), ',')::uuid[])
-    and permissions.item_id = items.id
+  where exists (
+    with permissions as (
+		select item_id, role
+		from permissions
+		where permissions.user_or_group_id =
+		  any(regexp_split_to_array(current_setting('jwt.claims.roles'), ',')::uuid[])
+	)
+	select item_id
+	from permissions
+	where (
+	  items.id = permissions.item_id
+	  or items.inherits_from = permissions.item_id
+	)
     and permissions.role = 'writer'
   )
 ));
