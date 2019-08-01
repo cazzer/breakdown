@@ -76,6 +76,10 @@ export class AuthProvider extends React.Component {
     })
   }
 
+  clearCache = () => {
+    client.resetStore()
+  }
+
   register = async ({ username, password}) => {
     this.setState({
       loading: true
@@ -94,6 +98,7 @@ export class AuthProvider extends React.Component {
     return (
       <AuthContext.Provider value={{
         ...this.state,
+        clearCache: this.clearCache,
         login: this.login,
         logout: this.logout,
         register: this.register

@@ -87,7 +87,7 @@ class Navigation extends React.Component {
               <AccountCircle />
             </IconButton>
             <AuthContext.Consumer>
-              {({ logout, user }) => (
+              {({ clearCache, logout, user }) => (
                 <Menu
                   id="menu-appbar"
                   anchorEl={this.state.anchorEl}
@@ -107,6 +107,7 @@ class Navigation extends React.Component {
                   </ListSubheader>
                   <Divider />
                   <MenuItem onClick={logout}>Logout</MenuItem>
+                  <MenuItem onClick={clearCache}>Clear Cache</MenuItem>
                   <Divider />
                   <ListSubheader className={classes.noOutline}>
                     built {moment(process.env.BUILD_TIMESTAMP).calendar().toLowerCase()}
