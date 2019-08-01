@@ -14,7 +14,7 @@ import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
 import uuidv4 from 'uuid/v4'
 
-import itemByIdQuery from '../focus/item-by-id.gql'
+import { Item as itemByIdQuery } from '../focus/item-by-id.gql'
 import ValueView from '../focus/value-view'
 import {
   addItemToAllItems,

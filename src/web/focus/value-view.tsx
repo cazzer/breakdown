@@ -42,7 +42,7 @@ const StyledPlayer = withStyles(theme => ({
 
 const StyledLink = withStyles(theme => ({
   root: {
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.primary.light,
     textDecoration: 'underline'
   }
 }))(({ classes, url }) => (
@@ -52,7 +52,7 @@ const StyledLink = withStyles(theme => ({
 ))
 
 export default (props: {
-  className: String,
+  className?: String,
   value: String,
   preview?: Boolean
 }) => {
