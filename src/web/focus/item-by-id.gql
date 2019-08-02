@@ -71,3 +71,11 @@ mutation createItemMutation($itemInput: CreateItemInput!) {
     }
   }
 }
+
+mutation updateItem($itemInput: UpdateItemByIdInput!) {
+  updateItemById(input: $itemInput) {
+    item {
+      ...fullItem
+    }
+  }
+}

@@ -131,6 +131,25 @@ export function updateItemInAllItems(
   })
 }
 
+export function updateItemInItemChildren (
+  cache: DataProxy,
+  parentId: string,
+  updatedItem: Object,
+) {
+  updateInCache({
+    cache,
+    item: updatedItem,
+    variables: { condition: { parentId } },
+    dataKey: 'allItemRelationships',
+    filter: item => (
+      item.id === updatedItem.id
+        ? updatedItem
+        : item
+    ),
+    query: itemChildrenQuery,
+  })
+}
+
 export function addParentToChild (
   cache: DataProxy,
   relationship: object,

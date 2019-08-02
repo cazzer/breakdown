@@ -1,9 +1,13 @@
-
-import React from 'react'
+import React, { useState } from 'react'
+import gql from 'graphql-tag'
+import { useMutation } from 'react-apollo'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
 import { Link } from 'react-router-dom'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
+import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
 import moment from 'moment'
@@ -15,6 +19,9 @@ import DeleteItem from './delete-item'
 import { guessType } from './focus/type-guesser'
 import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
+import { updateItemInItemChildren } from './cache-handlers'
+import { updateItem } from './focus/item-by-id.gql'
+
 
 const useStyles = makeStyles((theme?: Theme) =>
   createStyles({
@@ -55,7 +62,57 @@ function ValuePreview(props: {
   )
 }
 
-const ItemPreview = ((props: ItemInterface) => {
+const ItemEdit = (props: {
+  disabled: boolean
+  item: ItemInterface,
+  onSaveClick: Function
+}) => {
+  const [ label, setLabel ] = useState(props.item.label || '')
+  const [ value, setValue ] = useState(props.item.value || '')
+
+  const handleChangeLabel = (event) => {
+    setLabel(event.target.value)
+  }
+
+  const handleChangeValue = (event) => {
+    setValue(event.target.value)
+  }
+
+  const handleSave = () => {
+    props.onSaveClick({
+      ...props.item,
+      label,
+      value
+    })
+  }
+
+  return (
+    <div>
+      <TextField
+        onChange={handleChangeLabel}
+        value={label}
+        fullWidth
+       />
+      <TextField
+        onChange={handleChangeValue}
+        value={value}
+        fullWidth
+        multiline
+        rowsMax={6}
+      />
+      <Button
+        color="primary"
+        onClick={handleSave}
+        variant="contained"
+        disabled={props.disabled}
+      >
+        Save
+      </Button>
+    </div>
+  )
+}
+
+const ItemView = (props: ItemInterface) => {
   const type = guessType(props.value)
   switch (type) {
     case 'text':
@@ -92,18 +149,104 @@ const ItemPreview = ((props: ItemInterface) => {
         </>
       )
   }
+}
+
+const ItemContent = ((props: {
+  item: ItemInterface,
+  parentId: string
+}) => {
+  const [ editState, setEdit ] = useState('hidden')
+  const [ editItemMutation ] = useMutation(updateItem, {
+    update: (cache, result) => {
+      setEdit('hidden')
+      const { item } = result.data.updateItemById
+      updateItemInItemChildren(
+        cache,
+        props.parentId,
+        item
+      )
+    }
+  })
+
+  const { item } = props
+
+  const onMouseEnter = () => {
+    if (editState !== 'edit') {
+      setEdit('show')
+    }
+  }
+
+  const onMouseLeave = () => {
+    if (editState === 'show') {
+      setEdit('hidden')
+    }
+  }
+
+  const onEditClick = () => {
+    setEdit('edit')
+  }
+
+  const onSaveClick = (newItem: ItemInterface) => {
+    editItemMutation({
+      variables: {
+        itemInput: {
+          id: item.id,
+          itemPatch: {
+            label: newItem.label,
+            value: newItem.value
+          }
+        }
+      }
+    })
+    setEdit('disabled')
+  }
+
+  return (
+    <Grid
+      container
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <Grid item xs={11}>
+        {editState === 'edit' || editState === 'disabled'
+          ? (
+            <ItemEdit
+              disabled={editState === 'disabled'}
+              item={item}
+              onSaveClick={onSaveClick}
+            />
+          )
+          : <ItemView { ...item } />
+        }
+      </Grid>
+      {item.userIsWriter && (editState === 'show') && (
+        <Grid item xs={1}>
+          <IconButton onClick={onEditClick}>
+            <EditIcon />
+          </IconButton>
+        </Grid>
+      )}
+    </Grid>
+  )
 })
 
 export function Item(props: {
-  item: ItemInterface
+  item: ItemInterface,
+  parentId: string,
 }) {
   const classes = useStyles()
   const { item } = props
 
   return (
-    <ListItem className={classes.listItem} divider key={item.id}>
+    <ListItem
+      className={classes.listItem}
+      divider
+    >
       <div className={classes.listItemLink}>
-        <ItemPreview label={item.label} value={item.value} />
+        <ItemContent
+          item={item}
+          parentId={props.parentId}
+        />
         <Typography variant="caption" color="textSecondary">
           Edited {moment(item.timeUpdated).calendar()}
         </Typography>

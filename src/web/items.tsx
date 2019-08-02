@@ -51,7 +51,7 @@ function ItemsList(props: {
   return (
     <List>
       {items.map(item => (
-        <Item item={item} key={item.id} />
+        <Item item={item} parentId={props.parentId} key={item.id} />
       ))}
     </List>
   )

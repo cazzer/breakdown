@@ -3,4 +3,5 @@ export interface ItemInterface {
   label: String,
   parentId?: UUID,
   value?: String,
+  userIsWriter?: boolean
 }
