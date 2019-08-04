@@ -78,17 +78,17 @@ export default function(
     },
   })
 
-  if (loading) {
+  const items = get(data, ['allItemRelationships', 'nodes'], [])
+    .map(itemRelationship => itemRelationship.itemByChildId)
+
+  if (loading && !data) {
     return <CubeLoader />
   }
 
   return (
     <>
       <ItemsList
-        items={
-          get(data, ['allItemRelationships', 'nodes'], [])
-            .map(itemRelationship => itemRelationship.itemByChildId)
-        }
+        items={items}
         parentId={props.parentId}
       />
       <SearchView parentId={props.parentId} />
