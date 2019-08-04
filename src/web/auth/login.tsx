@@ -45,6 +45,12 @@ class Login extends Component {
     this.props.login(this.state)
   }
 
+  handleFormKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      this.handleLogin()
+    }
+  }
+
   handleUpdateName = event => {
     this.setState({
       username: event.target.value
@@ -73,75 +79,77 @@ class Login extends Component {
       <Grid container>
         <Grid item xs={1} md={3} />
         <Grid item xs={10} md={6}>
-          <Grid container spacing={8}>
-            <Grid item xs={12}>
-              <FormControl
-                className={classNames(classes.margin, classes.textField)}
-                fullWidth
-              >
-                <TextField
-                  autoComplete="on"
-                  autoFocus={true}
-                  id="username"
-                  label="username"
-                  onChange={this.handleUpdateName}
-                  value={this.state.username}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl
-                className={classNames(classes.margin, classes.textField)}
-                fullWidth
-              >
-                <TextField
-                  id="adornment-password"
-                  label="password"
-                  onChange={this.handleUpdatePassword}
-                  type={this.state.showPassword ? 'text' : 'password'}
-                  value={this.state.password}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="Toggle password visibility"
-                          onClick={this.handleClickShowPassword}
-                          onMouseDown={this.handleMouseDownPassword}
-                        >
-                          {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                className={classes.button}
-                color="primary"
-                disabled={loading}
-                fullWidth
-                onClick={this.handleLogin}
-                size="large"
-                variant="contained"
-              >
-                Login
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Link to="/register">
+          <form onKeyDown={this.handleFormKeyPress}>
+            <Grid container spacing={8}>
+                <Grid item xs={12}>
+                  <FormControl
+                    className={classNames(classes.margin, classes.textField)}
+                    fullWidth
+                  >
+                    <TextField
+                      autoComplete="on"
+                      autoFocus={true}
+                      id="username"
+                      label="username"
+                      onChange={this.handleUpdateName}
+                      value={this.state.username}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl
+                    className={classNames(classes.margin, classes.textField)}
+                    fullWidth
+                  >
+                    <TextField
+                      id="adornment-password"
+                      label="password"
+                      onChange={this.handleUpdatePassword}
+                      type={this.state.showPassword ? 'text' : 'password'}
+                      value={this.state.password}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="Toggle password visibility"
+                              onClick={this.handleClickShowPassword}
+                              onMouseDown={this.handleMouseDownPassword}
+                            >
+                              {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+              <Grid item xs={6}>
                 <Button
                   className={classes.button}
+                  color="primary"
+                  disabled={loading}
                   fullWidth
+                  onClick={this.handleLogin}
                   size="large"
                   variant="contained"
                 >
-                  Register
+                  Login
                 </Button>
-              </Link>
+              </Grid>
+              <Grid item xs={6}>
+                <Link to="/register">
+                  <Button
+                    className={classes.button}
+                    fullWidth
+                    size="large"
+                    variant="contained"
+                  >
+                    Register
+                  </Button>
+                </Link>
+              </Grid>
             </Grid>
-          </Grid>
+          </form>
         </Grid>
       </Grid>
     )
