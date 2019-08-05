@@ -232,7 +232,7 @@ export function CreateItemView(props) {
     },
   })
 
-  return loading
+  return loading && !data
     ? <CubeLoader />
     : (
       <CreateItem
@@ -280,7 +280,7 @@ export function EditItemView(props) {
     },
   })
 
-  return loading
+  return loading && !data
     ? null
     : <EditItem item={data.itemById} onSave={props.history.goBack} />
 }

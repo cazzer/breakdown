@@ -155,7 +155,7 @@ export function EditGroups(
     },
   })
 
-  if (loading) {
+  if (loading && !data) {
     return null
   }
 

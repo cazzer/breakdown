@@ -46,6 +46,15 @@ const useStyles = makeStyles((theme?: Theme) =>
   })
 )
 
+const useListItemStyles = makeStyles((theme?: Theme) =>
+  createStyles({
+    listItemButtons: {
+      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(1)
+    }
+  })
+)
+
 function ValuePreview(props: {
   value: string
 }) {
@@ -70,6 +79,7 @@ const ItemEdit = (props: {
 }) => {
   const [ label, setLabel ] = useState(props.item.label || '')
   const [ value, setValue ] = useState(props.item.value || '')
+  const classes = useListItemStyles()
 
   const handleChangeLabel = (event) => {
     setLabel(event.target.value)
@@ -101,10 +111,11 @@ const ItemEdit = (props: {
         multiline
         rowsMax={6}
       />
-      <Grid container>
+      <Grid container spacing={2} className={classes.listItemButtons}>
         <Grid item xs={6}>
           <Button
             color="primary"
+            fullWidth
             onClick={handleSave}
             variant="contained"
             disabled={props.disabled}
@@ -114,6 +125,7 @@ const ItemEdit = (props: {
         </Grid>
         <Grid item xs={6}>
           <Button
+            fullWidth
             onClick={props.onCancelClick}
             variant="outlined"
           >
