@@ -114,11 +114,13 @@ export function ConnectedFocusView({ match }) {
     },
   })
 
+  const item = get(data, 'itemById')
+
   return (
     <StyledFocusView
       error={error}
-      item={get(data, 'itemById')}
-      loading={loading}
+      item={item}
+      loading={loading && !item}
     />
   )
 }

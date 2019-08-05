@@ -60,7 +60,7 @@ export function Groups(
     )
     .filter(group => !!group)
 
-  return loading
+  return loading && !groups.length
     ? null
     : <GroupsView groups={groups} />
 }
