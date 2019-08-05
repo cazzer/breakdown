@@ -65,7 +65,8 @@ function ValuePreview(props: {
 const ItemEdit = (props: {
   disabled: boolean
   item: ItemInterface,
-  onSaveClick: Function
+  onSaveClick: Function,
+  onCancelClick: Function
 }) => {
   const [ label, setLabel ] = useState(props.item.label || '')
   const [ value, setValue ] = useState(props.item.value || '')
@@ -100,14 +101,26 @@ const ItemEdit = (props: {
         multiline
         rowsMax={6}
       />
-      <Button
-        color="primary"
-        onClick={handleSave}
-        variant="contained"
-        disabled={props.disabled}
-      >
-        Save
-      </Button>
+      <Grid container>
+        <Grid item xs={6}>
+          <Button
+            color="primary"
+            onClick={handleSave}
+            variant="contained"
+            disabled={props.disabled}
+          >
+            Save
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <Button
+            onClick={props.onCancelClick}
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+        </Grid>
+      </Grid>
     </div>
   )
 }
@@ -201,6 +214,10 @@ const ItemContent = ((props: {
     setEdit('disabled')
   }
 
+  const onCancelClick = () => {
+    setEdit('hidden')
+  }
+
   return (
     <Grid
       container
@@ -214,6 +231,7 @@ const ItemContent = ((props: {
               disabled={editState === 'disabled'}
               item={item}
               onSaveClick={onSaveClick}
+              onCancelClick={onCancelClick}
             />
           )
           : <ItemView { ...item } />
