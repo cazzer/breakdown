@@ -852,7 +852,7 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri:
         Fn::Sub:
-            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectionFunction.Arn}/invocations
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
 
   DisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -874,7 +874,7 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri:
         Fn::Sub:
-            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectionFunction.Arn}/invocations
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
 
   GraphQLRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -896,7 +896,7 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri:
         Fn::Sub:
-            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectionFunction.Arn}/invocations
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
 
   WebSocketDeployment:
     Type: AWS::ApiGatewayV2::Deployment
