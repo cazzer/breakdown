@@ -581,54 +581,6 @@ Resources:
           DEBUG: pre-token*
           EPSAGON_TOKEN: !Ref EpsagonToken
 
-  DynamoTriggerFunctionPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: !Sub ${AWS::StackName}-dynamo-trigger-function
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Resource: "*"
-            Effect: Allow
-            Action:
-              - "logs:*"
-              - "events:*"
-              - "dynamodb:*"
-      Roles:
-        - !Ref DynamoTriggerFunctionRole
-
-  DynamoTriggerFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                "lambda.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-
-  DynamoTriggerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: lib/dynamo-trigger/index.default
-      Role: !GetAtt DynamoTriggerFunctionRole.Arn
-      Runtime: nodejs10.x
-      Timeout: 30
-      MemorySize: 192
-      Environment:
-        Variables:
-          EPSAGON_TOKEN: !Ref EpsagonToken
-      Events:
-        DynamoTrigger:
-          Type: DynamoDB
-          Properties:
-            Stream: !GetAtt NotificationsTable.StreamArn
-            StartingPosition: TRIM_HORIZON
-            BatchSize: 1
-
   RdsMonitoringRole:
     Type: AWS::IAM::Role
     Properties:
