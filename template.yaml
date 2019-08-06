@@ -783,3 +783,145 @@ Resources:
         - thinstack.io
         - "*.thinstack.io"
       ValidationMethod: DNS
+
+  GatewayConnectFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-gateway-connect-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - "logs:*"
+              - "events:*"
+              - "dynamo:*"
+      Roles:
+        - !Ref GatewayConnectFunctionRole
+
+  GatewayConnectFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  GatewayConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/connect.default
+      Role: !GetAtt GatewayConnectFunctionRole.Arn
+      Runtime: nodejs10.x
+      Timeout: 10
+      MemorySize: 192
+      Environment:
+        Variables:
+          EPSAGON_TOKEN: !Ref EpsagonToken
+
+  WebSocketGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: SockeyeWebSocket
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: $request.body.action
+
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ConnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ConnectInteg
+
+  ConnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      Description: Connect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectionFunction.Arn}/invocations
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DisconnectInteg
+
+  DisconnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectionFunction.Arn}/invocations
+
+  GraphQLRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      RouteKey: graphql
+      AuthorizationType: NONE
+      OperationName: GraphQL
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref GraphQLInteg
+
+  GraphQLInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      Description: GraphQL Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectionFunction.Arn}/invocations
+
+  WebSocketDeployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+    - ConnectRoute
+    - DisconnectRoute
+    Properties:
+      ApiId: !Ref WebSocketGateway
+
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: prod
+      Description: Production or nothing
+      DeploymentId: !Ref WebSocketDeployment
+      ApiId: !Ref WebSocketGateway
+      AccessLogSettings:
+        DestinationArn: arn:aws:logs:us-west-2:618021262370:log-group:apigw-log-group
+        Format: >-
+          {"requestId":"$context.requestId",
+          "ip": "$context.identity.sourceIp",
+          "caller":"$context.identity.caller",
+          "user":"$context.identity.user",
+          "requestTime":"$context.requestTime",
+          "eventType":"$context.eventType",
+          "routeKey":"$context.routeKey",
+          "status":"$context.status",
+          "connectionId":"$context.connectionId"}
