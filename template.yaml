@@ -866,7 +866,7 @@ Resources:
       DeploymentId: !Ref WebSocketDeployment
       ApiId: !Ref WebSocketGateway
       AccessLogSettings:
-        DestinationArn: arn:aws:logs:us-west-2:618021262370:log-group:apigw-log-group
+        DestinationArn: arn:aws:logs:us-west-2:${AWS::AccountId}:log-group:apigw-log-group
         Format: >-
           {"requestId":"$context.requestId",
           "ip": "$context.identity.sourceIp",
