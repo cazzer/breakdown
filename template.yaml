@@ -825,6 +825,7 @@ Resources:
         Variables:
           USER_POOL_ID: !Ref UserPool
           APP_CLIENT_ID: !Ref UserPoolClient
+          EPSAGON_TOKEN: !Ref EpsagonToken
 
   WebSocketGateway:
     Type: AWS::ApiGatewayV2::Api
