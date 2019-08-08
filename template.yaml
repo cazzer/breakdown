@@ -838,7 +838,6 @@ Resources:
     Type: AWS::ApiGatewayV2::Authorizer
     Properties:
       ApiId: !Ref WebSocketGateway
-      AuthorizerResultTtlInSeconds: 3600
       AuthorizerType: REQUEST
       AuthorizerUri: !Join
         - ''
