@@ -279,6 +279,15 @@ Resources:
             Value: !Ref SentryDsn
           - Name: CDN_DISTRIBUTION_ID
             Value: !Ref WebDistribution
+          - Name: WEBSOCKET_URL
+            Value: !Join
+              - ''
+              - - 'wss://'
+                - !Ref WebSocketGateway
+                - '.execute-api.'
+                - !Ref AWS::Region
+                - '.amazonaws.com/'
+                - !Ref Stage
       ServiceRole: !Ref CodebuildRole
 
   Pipeline:
@@ -823,6 +832,21 @@ Resources:
       Name: WebSocketGateway
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: $request.body.action
+
+  WebSocketAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties: 
+      ApiId: !Ref WebSocketGateway
+      AuthorizerResultTtlInSeconds: 3600
+      AuthorizerType: REQUEST
+      AuthorizerUri: !Join
+        - ''
+        - - 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:'
+          - $AWS::AcountId
+          - ':function:'
+          - !Ref AuthorizerFunction
+      IdentitySource: 
+        - $method.request.querystring.token
 
   ConnectRoute:
     Type: AWS::ApiGatewayV2::Route

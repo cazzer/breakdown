@@ -23,13 +23,14 @@ export class AuthProvider extends React.Component {
 
   async componentDidMount() {
     try {
-      await Auth.currentSession()
+      const session = await Auth.currentSession()
       const user = await Auth.currentUserInfo()
 
       this.setState({
         loading: false,
         loggedIn: true,
-        user
+        user,
+        token: session.idToken.jwtToken
       })
     } catch (error) {
       return this.setState({
@@ -49,11 +50,13 @@ export class AuthProvider extends React.Component {
       const result = await Auth.signIn(username, password)
       if (result.signInUserSession.idToken) {
         client.resetStore()
+        const session = await Auth.currentSession()
         const user = await Auth.currentUserInfo()
         this.setState({
           loading: false,
           loggedIn: true,
-          user
+          user,
+          token: session.idToken.jwtToken
         })
       } else {
         this.setState({

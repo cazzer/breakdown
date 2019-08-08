@@ -9,6 +9,7 @@ import { ApolloProvider } from 'react-apollo'
 import Amplify from '@aws-amplify/core'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { init } from '@sentry/browser'
+import WebSocket from 'react-websocket'
 
 import Login from './auth/login'
 import Register from './auth/register'
@@ -53,23 +54,45 @@ const RedirectFocus = () => (
   <Redirect to="/view/focus" />
 )
 
+const WebSocketProvider = (props) => {
+
+  const onMessage = message => {
+    console.log(message)
+  }
+
+  return (
+    <AuthContext.Consumer>
+      {({ token }) => (
+        <WebSocket
+          url={`${process.env.WEBSOCKET_URL}?token=${token}`}
+          onMessage={onMessage}
+        >
+          {props.children}
+        </WebSocket>
+      )}
+    </AuthContext.Consumer>
+  )
+}
+
 class ConnectedApp extends React.Component {
   render() {
     return (
       <BrowserRouter>
         <ApolloProvider client={client}>
-          <Navigation />
-          <BelowNavigation>
-            <Switch>
-              <Route path="/home/:parentId/:childId?" component={SplitView} />
-              <Route path="/view/focus/:itemId/edit" component={EditItemView} />
-              <Route path="/view/focus/:itemId" component={FocusWrapperView} />
-              <Route path="/view/focus" component={RecentItemList} />
-              <Route path="/add" component={CreateItemView} />
-              <Route path="/search" component={Search} />
-              <Route component={RedirectFocus} />
-            </Switch>
-          </BelowNavigation>
+          <WebSocketProvider>
+            <Navigation />
+            <BelowNavigation>
+              <Switch>
+                <Route path="/home/:parentId/:childId?" component={SplitView} />
+                <Route path="/view/focus/:itemId/edit" component={EditItemView} />
+                <Route path="/view/focus/:itemId" component={FocusWrapperView} />
+                <Route path="/view/focus" component={RecentItemList} />
+                <Route path="/add" component={CreateItemView} />
+                <Route path="/search" component={Search} />
+                <Route component={RedirectFocus} />
+              </Switch>
+            </BelowNavigation>
+          </WebSocketProvider>
         </ApolloProvider>
       </BrowserRouter>
     )

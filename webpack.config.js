@@ -64,7 +64,8 @@ module.exports = {
       'USER_POOL_ID',
       'USER_POOL_WEB_CLIENT_ID',
       'GRAPHQL_ENDPOINT',
-      'SENTRY_DSN'
+      'SENTRY_DSN',
+      'WEBSOCKET_URL'
     ]),
     new HtmlWebpackPlugin({
       template: './src/web/index.html'

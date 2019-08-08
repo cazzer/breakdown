@@ -12,14 +12,17 @@
 
 const https = require('https')
 const jose = require('node-jose')
+import epsagon from '../epsagon'
 
 const region = 'ap-southeast-2'
 const userpoolId = process.env.USER_POOL_ID
 const appClientId = process.env.APP_CLIENT_ID
 const keys_url = `https://cognito-idp.us-west-2.amazonaws.com/${userpoolId}/.well-known/jwks.json`
 
-exports.handler = event => {
-    const token = event.token
+export default epsagon.lambdaWrapper(async event => {
+    const {
+      queryStringParameters: { token },
+    } = event
     const sections = token.split('.')
     // get the kid from the headers prior to verification
     const header = jose.util.base64url.decode(sections[0])
@@ -78,4 +81,4 @@ exports.handler = event => {
             })
         }
     })
-}
+})
