@@ -839,13 +839,7 @@ Resources:
     Properties:
       ApiId: !Ref WebSocketGateway
       AuthorizerType: REQUEST
-      AuthorizerUri: !Join
-        - ''
-        - - 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:'
-          - $AWS::AcountId
-          - ':function:'
-          - !Ref AuthorizerFunction
-          - /invocations
+      AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocation
       IdentitySource:
         - $method.request.querystring.token
       Name: CognitoAuthorizer
