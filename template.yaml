@@ -780,7 +780,7 @@ Resources:
   WebSocketGateway:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: SockeyeWebSocket
+      Name: WebSocketGateway
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: $request.body.action
 
