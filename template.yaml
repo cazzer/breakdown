@@ -836,7 +836,7 @@ Resources:
 
   WebSocketAuthorizer:
     Type: AWS::ApiGatewayV2::Authorizer
-    Properties: 
+    Properties:
       ApiId: !Ref WebSocketGateway
       AuthorizerResultTtlInSeconds: 3600
       AuthorizerType: REQUEST
@@ -846,8 +846,9 @@ Resources:
           - $AWS::AcountId
           - ':function:'
           - !Ref AuthorizerFunction
-      IdentitySource: 
+      IdentitySource:
         - $method.request.querystring.token
+      Name: CognitoAuthorizer
 
   ConnectRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -918,8 +919,8 @@ Resources:
   WebSocketDeployment:
     Type: AWS::ApiGatewayV2::Deployment
     DependsOn:
-    - ConnectRoute
-    - DisconnectRoute
+      - ConnectRoute
+      - DisconnectRoute
     Properties:
       ApiId: !Ref WebSocketGateway
 
