@@ -930,3 +930,41 @@ Resources:
       Description: Production or nothing
       DeploymentId: !Ref WebSocketDeployment
       ApiId: !Ref WebSocketGateway
+      AccessLogSettings:
+        DestinationArn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:apigw-log-group
+        Format: >-
+          {"requestId":"$context.requestId",
+          "ip": "$context.identity.sourceIp",
+          "caller":"$context.identity.caller",
+          "user":"$context.identity.user",
+          "requestTime":"$context.requestTime",
+          "eventType":"$context.eventType",
+          "routeKey":"$context.routeKey",
+          "status":"$context.status",
+          "connectionId":"$context.connectionId"}
+
+  APIGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: 'apigw-log-group'
+      RetentionInDays: 7
+
+  ApiCloudWatchLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs'
+
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiCloudWatchLogsRole.Arn
