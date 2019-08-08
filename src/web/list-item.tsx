@@ -309,9 +309,11 @@ export function Item(props: {
               <ZoomInIcon />
             </IconButton>
           </Link>
-          <IconButton onClick={onUnlinkClick}>
-            <UnlinkIcon />
-          </IconButton>
+          {props.item.relationshipId && (
+            <IconButton onClick={onUnlinkClick}>
+              <UnlinkIcon />
+            </IconButton>
+          )}
           <DeleteItem id={item.id} parentId={props.parentId} />
         </div>
       )}

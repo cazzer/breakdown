@@ -18,7 +18,7 @@ const userpoolId = process.env.USER_POOL_ID
 const appClientId = process.env.APP_CLIENT_ID
 const keys_url = `https://cognito-idp.us-west-2.amazonaws.com/${userpoolId}/.well-known/jwks.json`
 
-exports.handler = event, context, callback => {
+exports.handler = event => {
     const token = event.token
     const sections = token.split('.')
     // get the kid from the headers prior to verification
@@ -32,7 +32,7 @@ exports.handler = event, context, callback => {
                 const keys = JSON.parse(body)['keys']
                 // search for the kid in the downloaded public keys
                 const key_index = -1
-                for (const i=0 i < keys.length i++) {
+                for (const i=0; i < keys.length; i++) {
                         if (kid == keys[i].kid) {
                             key_index = i
                             break
