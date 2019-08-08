@@ -777,6 +777,46 @@ Resources:
         Variables:
           EPSAGON_TOKEN: !Ref EpsagonToken
 
+  AuthorizerFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-gateway-authorizer
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - "logs:*"
+      Roles:
+        - !Ref AuthorizerFunctionRole
+
+  AuthorizerFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  AuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/authorizer.default
+      Role: !GetAtt AuthorizerFunctionRole.Arn
+      Runtime: nodejs10.x
+      Timeout: 10
+      MemorySize: 192
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+          APP_CLIENT_ID: !Ref UserPoolClient
+
   WebSocketGateway:
     Type: AWS::ApiGatewayV2::Api
     Properties:
