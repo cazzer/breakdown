@@ -4,4 +4,5 @@ export interface ItemInterface {
   parentId?: UUID,
   value?: String,
   userIsWriter?: boolean
+  relationshipId?: UUID
 }

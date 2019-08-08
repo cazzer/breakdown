@@ -2,15 +2,11 @@ import get from 'lodash/get'
 import React from 'react'
 import { useQuery } from 'react-apollo'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List'
-import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 
 import { Item } from './list-item'
 import { CubeLoader } from './loading'
-import { guessType } from './focus/type-guesser'
-import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
 import {
   ItemChildren as itemChildrenQuery,
@@ -79,7 +75,10 @@ export default function(
   })
 
   const items = get(data, ['allItemRelationships', 'nodes'], [])
-    .map(itemRelationship => itemRelationship.itemByChildId)
+    .map(itemRelationship => ({
+      ...itemRelationship.itemByChildId,
+      relationshipId: itemRelationship.id
+    }))
 
   if (loading && !data) {
     return <CubeLoader />

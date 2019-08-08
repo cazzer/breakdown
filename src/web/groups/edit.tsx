@@ -40,8 +40,7 @@ function EditGroupView(props: {
   onDelete?: Function
 }) {
   const classes = useStyles()
-  const [deleteRelationship, deleteResult] =
-    useMutation(deleteRelationshipMutation)
+  const [deleteRelationship, deleteResult] = useMutation(deleteRelationshipMutation)
 
   const handleDelete = () => () => {
     if (props.onDelete) {

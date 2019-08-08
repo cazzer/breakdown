@@ -179,6 +179,20 @@ export function removeParentFromChild(
   })
 }
 
+export function removeChildFromParent(
+  cache: DataProxy,
+  relationshipId: string,
+  parentId: string
+) {
+  removeFromCache({
+    cache,
+    variables: { condition: { parentId } },
+    dataKey: 'allItemRelationships',
+    filter: (item: { id: string }) => item.id !== relationshipId,
+    query: itemChildrenQuery
+  })
+}
+
 function addToCache({
   addLast,
   cache,

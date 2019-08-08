@@ -1,0 +1,8 @@
+mutation deleteRelationship($relationshipInput: DeleteItemRelationshipInput!) {
+  deleteItemRelationship(input: $relationshipInput) {
+		itemRelationship {
+      childId
+      parentId
+    }
+  }
+}

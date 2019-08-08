@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
+import UnlinkIcon from '@material-ui/icons/LinkOff'
 import moment from 'moment'
 import Paper from '@material-ui/core/Paper'
 import ZoomInIcon from '@material-ui/icons/ZoomIn'
@@ -21,6 +22,8 @@ import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
 import { updateItemInItemChildren } from './cache-handlers'
 import { updateItem } from './focus/item-by-id.gql'
+import deleteRelationshipMutation from './groups/delete-relationship-mutation.gql'
+import { removeChildFromParent } from './cache-handlers'
 
 
 const useStyles = makeStyles((theme?: Theme) =>
@@ -262,10 +265,28 @@ const ItemContent = ((props: {
 
 export function Item(props: {
   item: ItemInterface,
-  parentId: string,
+  parentId: string
 }) {
   const classes = useStyles()
+  const [deleteRelationship, deleteResult] = useMutation(deleteRelationshipMutation)
   const { item } = props
+
+  const onUnlinkClick = () => {
+    deleteRelationship({
+      variables: {
+        relationshipInput: {
+          id: props.item.relationshipId
+        }
+      },
+      update: (proxy) => {
+        removeChildFromParent(
+          proxy,
+          props.item.relationshipId,
+          props.item.id
+        )
+      }
+    })
+  }
 
   return (
     <ListItem
@@ -288,6 +309,9 @@ export function Item(props: {
               <ZoomInIcon />
             </IconButton>
           </Link>
+          <IconButton onClick={onUnlinkClick}>
+            <UnlinkIcon />
+          </IconButton>
           <DeleteItem id={item.id} parentId={props.parentId} />
         </div>
       )}
