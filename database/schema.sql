@@ -30,7 +30,8 @@ create table if not exists breakdown.items (
   time_created timestamp with time zone default now() not null,
   time_updated timestamp with time zone default now() not null,
   value text,
-  type text
+  type text,
+  cover_picture text
 );
 
 create table if not exists breakdown.item_relationships (
