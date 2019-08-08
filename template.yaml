@@ -845,6 +845,7 @@ Resources:
           - $AWS::AcountId
           - ':function:'
           - !Ref AuthorizerFunction
+          - /invocations
       IdentitySource:
         - $method.request.querystring.token
       Name: CognitoAuthorizer
