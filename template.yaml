@@ -38,6 +38,15 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: SentryDsn
 
+Globals:
+  Function:
+    Runtime: nodejs10.x
+    MemorySize: 192
+    Timeout: 10
+    Environment:
+      Variables:
+        EPSAGON_TOKEN: !Ref EpsagonToken
+
 Resources:
   Api:
     Type: AWS::Serverless::Api
@@ -93,9 +102,6 @@ Resources:
     Properties:
       Handler: lib/postgraphile.default
       Role: !GetAtt PostgraphileFunctionRole.Arn
-      Runtime: nodejs10.x
-      Timeout: 30
-      MemorySize: 192
       Tracing: Active
       Environment:
         Variables:
@@ -104,7 +110,6 @@ Resources:
           DB_PASSWORD: !Ref DatabasePassword
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
-          EPSAGON_TOKEN: !Ref EpsagonToken
       Events:
         KeepWarm:
           Type: Schedule
@@ -485,10 +490,6 @@ Resources:
     Properties:
       Handler: lib/cognito/post-confirmation.default
       Role: !GetAtt PostConfirmationFunctionRole.Arn
-      Runtime: nodejs10.x
-      Timeout: 30
-      MemorySize: 192
-      Tracing: Active
       Environment:
         Variables:
           DB_HOST: !GetAtt Database.Endpoint.Address
@@ -497,7 +498,6 @@ Resources:
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
           DEBUG: post-confirmation*
-          EPSAGON_TOKEN: !Ref EpsagonToken
 
   PreSignUpFunctionPolicy:
     Type: AWS::IAM::Policy
@@ -533,13 +533,6 @@ Resources:
     Properties:
       Handler: lib/cognito/pre-sign-up.default
       Role: !GetAtt PreSignUpFunctionRole.Arn
-      Runtime: nodejs10.x
-      Timeout: 30
-      MemorySize: 192
-      Tracing: Active
-      Environment:
-        Variables:
-          EPSAGON_TOKEN: !Ref EpsagonToken
 
   PreTokenGenerationFunctionPolicy:
     Type: AWS::IAM::Policy
@@ -576,10 +569,6 @@ Resources:
     Properties:
       Handler: lib/cognito/pre-token-generation.default
       Role: !GetAtt PreTokenGenerationFunctionRole.Arn
-      Runtime: nodejs10.x
-      Timeout: 30
-      MemorySize: 192
-      Tracing: Active
       Environment:
         Variables:
           DB_HOST: !GetAtt Database.Endpoint.Address
@@ -588,7 +577,6 @@ Resources:
           DB_SCHEMA: !Ref DatabaseName
           DB_USER: !Ref DatabaseUser
           DEBUG: pre-token*
-          EPSAGON_TOKEN: !Ref EpsagonToken
 
   RdsMonitoringRole:
     Type: AWS::IAM::Role
@@ -779,12 +767,6 @@ Resources:
     Properties:
       Handler: lib/websocket-gateway/connect.default
       Role: !GetAtt GatewayConnectFunctionRole.Arn
-      Runtime: nodejs10.x
-      Timeout: 10
-      MemorySize: 192
-      Environment:
-        Variables:
-          EPSAGON_TOKEN: !Ref EpsagonToken
 
   AuthorizerFunctionPolicy:
     Type: AWS::IAM::Policy
@@ -818,14 +800,10 @@ Resources:
     Properties:
       Handler: lib/websocket-gateway/authorizer.default
       Role: !GetAtt AuthorizerFunctionRole.Arn
-      Runtime: nodejs10.x
-      Timeout: 10
-      MemorySize: 192
       Environment:
         Variables:
           USER_POOL_ID: !Ref UserPool
           APP_CLIENT_ID: !Ref UserPoolClient
-          EPSAGON_TOKEN: !Ref EpsagonToken
 
   WebSocketGateway:
     Type: AWS::ApiGatewayV2::Api
