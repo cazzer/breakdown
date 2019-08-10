@@ -838,11 +838,38 @@ Resources:
     Type: AWS::ApiGatewayV2::Authorizer
     Properties:
       ApiId: !Ref WebSocketGateway
+      AuthorizerCredentialsArn: !GetAtt AuthorizerFunctionRole.Arn
       AuthorizerType: REQUEST
       AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations
       IdentitySource:
         - $method.request.querystring.token
       Name: CognitoAuthorizer
+
+  AuthorizerPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-authorizer
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action: "lambda:invokeFunction"
+      Roles:
+        - !Ref AuthorizerRole
+
+  AuthorizerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "apigateway.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
 
   ConnectRoute:
     Type: AWS::ApiGatewayV2::Route
