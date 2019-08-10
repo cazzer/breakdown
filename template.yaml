@@ -792,6 +792,7 @@ Resources:
             Principal:
               Service:
                 - "lambda.amazonaws.com"
+                - "apigateway.amazonaws.com"
             Action:
               - "sts:AssumeRole"
 
