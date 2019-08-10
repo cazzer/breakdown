@@ -842,7 +842,7 @@ Resources:
       AuthorizerType: REQUEST
       AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations
       IdentitySource:
-        - $method.request.querystring.token
+        - route.request.querystring.token
       Name: CognitoAuthorizer
 
   AuthorizerPolicy:
