@@ -30,6 +30,7 @@ create table if not exists breakdown.items (
   time_created timestamp with time zone default now() not null,
   time_updated timestamp with time zone default now() not null,
   value text,
+  child_layout jsonb,
   type text,
   cover_picture text
 );
