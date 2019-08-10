@@ -927,12 +927,20 @@ Resources:
     Properties:
       ApiId: !Ref WebSocketGateway
 
+  WebSocketDeployment2:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - ConnectRoute
+      - DisconnectRoute
+    Properties:
+      ApiId: !Ref WebSocketGateway
+
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
       StageName: prod
       Description: Production or nothing
-      DeploymentId: !Ref WebSocketDeployment
+      DeploymentId: !Ref WebSocketDeployment2
       ApiId: !Ref WebSocketGateway
 
   APIGatewayLogGroup:
