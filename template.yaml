@@ -854,7 +854,8 @@ Resources:
     Properties:
       ApiId: !Ref WebSocketGateway
       RouteKey: $connect
-      AuthorizationType: NONE
+      AuthorizerId: !Ref WebSocketAuthorizer
+      AuthorizationType: CUSTOM
       OperationName: ConnectRoute
       Target: !Join
         - '/'
