@@ -835,20 +835,6 @@ Resources:
               - "execute-api:ManageConnections"
             Resource:
               - "arn:aws:execute-api:*:*:**/@connections/*"
-          - Effect: Allow
-            Action:
-              - "dynamodb:PutItem"
-              - "dynamodb:GetItem"
-              - "dynamodb:UpdateItem"
-              - "dynamodb:DeleteItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
-            Resource:
-              - Fn::GetAtt: [ChatConnectionsTable, Arn]
-              - Fn::Join:
-                  - "/"
-                  - - Fn::GetAtt: [ChatConnectionsTable, Arn]
-                    - "*"
       Roles:
         - !Ref AuthorizerRole
         - !Ref AuthorizerFunctionRole
