@@ -782,6 +782,7 @@ Resources:
             Effect: Allow
             Action:
               - "logs:*"
+              - "lambda:*"
       Roles:
         - !Ref AuthorizerFunctionRole
 
@@ -810,6 +811,13 @@ Resources:
         Variables:
           USER_POOL_ID: !Ref UserPool
           APP_CLIENT_ID: !Ref UserPoolClient
+
+  AuthorizerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AuthorizerFunction
+      Principal: apigateway.amazonaws.com
 
   WebSocketGateway:
     Type: AWS::ApiGatewayV2::Api
