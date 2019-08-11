@@ -826,6 +826,7 @@ Resources:
           - !Ref WebSocketGateway
           - "/stages/"
           - !Ref Stage
+
   WebSocketGateway:
     Type: AWS::ApiGatewayV2::Api
     Properties:

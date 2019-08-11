@@ -1,84 +1,78 @@
-/* Copyright 2017-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+import * as _ from 'lodash';
+import * as jwt from 'jsonwebtoken';
+import * as jwkToPem from 'jwk-to-pem';
+import * as moment from 'moment';
+import * as request from 'request';
 
- Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file
- except in compliance with the License. A copy of the License is located at
+interface DecodedJWT {
+  aud: string;
+  iss: string;
+  exp: number;
+  sub: string;
+  token_use: string;
+}
 
-     http://aws.amazon.com/apache2.0/
+interface APIGatewayWebsocketEvent {
+  methodArn: string;
+  queryStringParameters: {
+    token: string;
+  };
+  requestContext: {
+    eventType: string;
+    connectionId: string;
+    authorizer: {
+      userId: string;
+    };
+  };
+}
 
- or in the "license" file accompanying this file. This file is distributed on an "AS IS"
- BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- License for the specific language governing permissions and limitations under the License.
-*/
+const { USER_POOL_ID } = process.env
 
-const https = require('https')
-const jose = require('node-jose')
-import epsagon from '../epsagon'
+function generatePolicy(principalId: string, effect: 'Allow' | 'Deny', resource: string) {
+  return {
+    principalId,
+    context: {
+      userId: principalId, // The authorized userId that will be passed to the event object on each request
+    },
+    policyDocument: {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Action: 'execute-api:Invoke',
+          Effect: effect,
+          Resource: resource,
+        },
+      ],
+    },
+  };
+}
 
-const region = 'ap-southeast-2'
-const userpoolId = process.env.USER_POOL_ID
-const appClientId = process.env.APP_CLIENT_ID
-const keys_url = `https://cognito-idp.us-west-2.amazonaws.com/${userpoolId}/.well-known/jwks.json`
+export const authorizer = (event: APIGatewayWebsocketEvent, _context: any, cb: any) => {
+  const {
+    queryStringParameters: { token },
+  } = event;
 
-export default epsagon.lambdaWrapper(async event => {
-    const {
-      queryStringParameters: { token },
-    } = event
-    const sections = token.split('.')
-    // get the kid from the headers prior to verification
-    const header = jose.util.base64url.decode(sections[0])
-    header = JSON.parse(header)
-    const kid = header.kid
-    // download the public keys
-    https.get(keys_url, function(response) {
-        if (response.statusCode == 200) {
-            response.on('data', function(body) {
-                const keys = JSON.parse(body)['keys']
-                // search for the kid in the downloaded public keys
-                const key_index = -1
-                for (const i=0; i < keys.length; i++) {
-                        if (kid == keys[i].kid) {
-                            key_index = i
-                            break
-                        }
-                }
-                if (key_index == -1) {
-                    console.log('Public key not found in jwks.json')
-                    return {
-                      statusCode: 500,
-                      bode: 'Public key not found in jwks.json'
-                    }
-                }
-                // construct the public key
-                jose.JWK.asKey(keys[key_index]).
-                then(function(result) {
-                    // verify the signature
-                    jose.JWS.createVerify(result).
-                    verify(token).
-                    then(function(result) {
-                        // now we can use the claims
-                        const claims = JSON.parse(result.payload)
-                        // additionally we can verify the token expiration
-                        const current_ts = Math.floor(new Date() / 1000)
-                        if (current_ts > claims.exp) {
-                            return {
-                              statusCode: 401,
-                              body: 'Token is expired'
-                            }
-                        }
-                        // and the Audience (use claims.client_id if verifying an access token)
-                        if (claims.aud != appClientId) {
-                          return {
-                            statusCode: 401,
-                            body: 'Token was not issued for this audience'
-                          }
-                        }
-                        return claims
-                    }).
-                    catch(function() {
-                        throw new Error('Signature verification failed')
-                    })
-                })
-            })
-        }
-    })
-})
+  // Leveraging AWS Cognito to authenticate users based on the id token
+  return request({ url: `https://cognito-idp.us-west-2.amazonaws.com/${USER_POOL_ID}//.well-known/jwks.json`, json: true }, (error, response, body) => {
+    if (error || response.statusCode !== 200) cb('Unauthorized');
+
+    const [key] = body.keys;
+    const jwkArray = _.pick(key, ['kty', 'n', 'e']);
+    const pem = jwkToPem(jwkArray);
+
+    // Verify the token
+    jwt.verify(token, pem, { issuer: COGNITO_ISSUER }, (err, decoded) => {
+      if (err) {
+        cb('Unauthorized');
+      } else {
+        const { sub, token_use, exp, iss, aud } = decoded as DecodedJWT;
+        // Extra checks to ensure that this cognito id token is valid
+        if (aud !== COGNITO_AUD) cb('Unauthorized');
+        if (iss !== COGNITO_ISSUER) cb('Unauthorized');
+        if (token_use !== 'id') cb('Unauthorized');
+        if (moment().isAfter(moment(exp * 1000))) cb('Unauthorized');
+        return cb(null, generatePolicy(sub, 'Allow', event.methodArn));
+      }
+    });
+  });
+};
