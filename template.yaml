@@ -758,9 +758,12 @@ Resources:
           - Effect: "Allow"
             Principal:
               Service:
-                "lambda.amazonaws.com"
+                - "lambda.amazonaws.com"
+                - "apigateway.amazonaws.com"
             Action:
               - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
 
   GatewayConnectFunction:
     Type: AWS::Serverless::Function
@@ -795,6 +798,8 @@ Resources:
                 - "apigateway.amazonaws.com"
             Action:
               - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
 
   AuthorizerFunction:
     Type: AWS::Serverless::Function
@@ -817,7 +822,6 @@ Resources:
     Type: AWS::ApiGatewayV2::Authorizer
     Properties:
       ApiId: !Ref WebSocketGateway
-      AuthorizerCredentialsArn: !GetAtt AuthorizerFunctionRole.Arn
       AuthorizerType: REQUEST
       AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations
       IdentitySource:
