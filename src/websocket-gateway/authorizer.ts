@@ -4,6 +4,8 @@ import * as jwkToPem from 'jwk-to-pem';
 import * as moment from 'moment';
 import * as request from 'request';
 
+import epsagon from '../epsagon'
+
 interface DecodedJWT {
   aud: string;
   iss: string;
@@ -26,7 +28,11 @@ interface APIGatewayWebsocketEvent {
   };
 }
 
-const { USER_POOL_ID } = process.env
+const {
+  USER_POOL_ID,
+  APP_CLIENT_ID
+} = process.env
+const COGNITO_ISSUER = `https://cognito-idp.us-west-2.amazonaws.com/${USER_POOL_ID}`
 
 function generatePolicy(principalId: string, effect: 'Allow' | 'Deny', resource: string) {
   return {
@@ -47,13 +53,13 @@ function generatePolicy(principalId: string, effect: 'Allow' | 'Deny', resource:
   };
 }
 
-export const authorizer = (event: APIGatewayWebsocketEvent, _context: any, cb: any) => {
+export default epsagon.lambdaWrapper((event: APIGatewayWebsocketEvent, _context: any, cb: any) => {
   const {
     queryStringParameters: { token },
   } = event;
 
   // Leveraging AWS Cognito to authenticate users based on the id token
-  return request({ url: `https://cognito-idp.us-west-2.amazonaws.com/${USER_POOL_ID}//.well-known/jwks.json`, json: true }, (error, response, body) => {
+  return request({ url: `${COGNITO_ISSUER}//.well-known/jwks.json`, json: true }, (error, response, body) => {
     if (error || response.statusCode !== 200) cb('Unauthorized');
 
     const [key] = body.keys;
@@ -67,7 +73,7 @@ export const authorizer = (event: APIGatewayWebsocketEvent, _context: any, cb: a
       } else {
         const { sub, token_use, exp, iss, aud } = decoded as DecodedJWT;
         // Extra checks to ensure that this cognito id token is valid
-        if (aud !== COGNITO_AUD) cb('Unauthorized');
+        if (aud !== APP_CLIENT_ID) cb('Unauthorized');
         if (iss !== COGNITO_ISSUER) cb('Unauthorized');
         if (token_use !== 'id') cb('Unauthorized');
         if (moment().isAfter(moment(exp * 1000))) cb('Unauthorized');
@@ -75,4 +81,4 @@ export const authorizer = (event: APIGatewayWebsocketEvent, _context: any, cb: a
       }
     });
   });
-};
+})
