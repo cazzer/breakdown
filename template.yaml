@@ -818,7 +818,14 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref AuthorizerFunction
       Principal: apigateway.amazonaws.com
-
+      SourceArn: !Join
+        - ""
+        - - "arn:aws:apigateway:"
+          - !Ref AWS::Region
+          - "::/restapis/"
+          - !Ref WebSocketGateway
+          - "/stages/"
+          - !Ref Stage
   WebSocketGateway:
     Type: AWS::ApiGatewayV2::Api
     Properties:
