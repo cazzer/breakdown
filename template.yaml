@@ -896,6 +896,21 @@ Resources:
         Fn::Sub:
             arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
 
+  AuthorizerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GatewayConnectFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ""
+        - - "arn:aws:apigateway:"
+          - !Ref AWS::Region
+          - "::/restapis/"
+          - !Ref WebSocketGateway
+          - "/stages/"
+          - !Ref Stage
+
   DisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
