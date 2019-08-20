@@ -1,7 +1,7 @@
-import * as _ from 'lodash'
-import * as jwt from 'jsonwebtoken'
-import * as jwkToPem from 'jwk-to-pem'
-import * as moment from 'moment'
+import pick from 'lodash/pick'
+import jwt from 'jsonwebtoken'
+import jwkToPem from 'jwk-to-pem'
+import moment from 'moment'
 import request from 'request'
 
 import epsagon from '../epsagon'
@@ -63,7 +63,7 @@ export default epsagon.lambdaWrapper((event: APIGatewayWebsocketEvent, _context:
     if (error || response.statusCode !== 200) cb('Unauthorized');
 
     const [key] = body.keys;
-    const jwkArray = _.pick(key, ['kty', 'n', 'e']);
+    const jwkArray = pick(key, ['kty', 'n', 'e']);
     const pem = jwkToPem(jwkArray);
 
     // Verify the token
