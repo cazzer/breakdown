@@ -865,18 +865,12 @@ Resources:
 
   OnConnectPermission:
     Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketGateway
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref GatewayConnectFunction
       Principal: apigateway.amazonaws.com
-      SourceArn: !Join
-        - ""
-        - - "arn:aws:apigateway:"
-          - !Ref AWS::Region
-          - "::/restapis/"
-          - !Ref WebSocketGateway
-          - "/stages/"
-          - !Ref Stage
 
   DisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
