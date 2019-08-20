@@ -736,7 +736,12 @@ Resources:
   GatewayConnectFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/websocket-gateway/connect.default
+      Handler: lib/websocket-gateway/connections.connect
+
+  GatewayDisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/connections.disconnect
 
   AuthorizerFunctionPolicy:
     Type: AWS::IAM::Policy
@@ -892,7 +897,16 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri:
         Fn::Sub:
-            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayDisconnectFunction.Arn}/invocations
+
+  OnDisconnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketGateway
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GatewayDisconnectFunction
+      Principal: apigateway.amazonaws.com
 
   GraphQLRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -915,6 +929,15 @@ Resources:
       IntegrationUri:
         Fn::Sub:
             arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
+
+  GraphqlPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketGateway
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GatewayConnectFunction
+      Principal: apigateway.amazonaws.com
 
   WebSocketDeployment2:
     Type: AWS::ApiGatewayV2::Deployment
