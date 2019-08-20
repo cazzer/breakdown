@@ -1,6 +1,6 @@
 import epsagon from '../epsagon'
 
-export const connect = epsagon.lambdaWrapper((event: any) => {
+export const connect = epsagon.lambdaWrapper(async (event: any) => {
   console.log(event)
 
   return {
@@ -9,7 +9,7 @@ export const connect = epsagon.lambdaWrapper((event: any) => {
   }
 })
 
-export const disconnect = epsagon.lambdaWrapper((event: any) => {
+export const disconnect = epsagon.lambdaWrapper(async (event: any) => {
   console.log(event)
 
   return {
