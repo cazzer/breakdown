@@ -896,7 +896,7 @@ Resources:
         Fn::Sub:
             arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
 
-  AuthorizerPermission:
+  OnConnectPermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
