@@ -733,43 +733,10 @@ Resources:
         - "*.thinstack.io"
       ValidationMethod: DNS
 
-  GatewayConnectFunctionPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: !Sub ${AWS::StackName}-gateway-connect-policy
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Resource: "*"
-            Effect: Allow
-            Action:
-              - "logs:*"
-              - "events:*"
-              - "dynamo:*"
-      Roles:
-        - !Ref GatewayConnectFunctionRole
-
-  GatewayConnectFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                - "lambda.amazonaws.com"
-                - "apigateway.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
-
   GatewayConnectFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/websocket-gateway/connect.default
-      Role: !GetAtt GatewayConnectFunctionRole.Arn
 
   AuthorizerFunctionPolicy:
     Type: AWS::IAM::Policy
