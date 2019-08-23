@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
 import { Divider } from '@material-ui/core'
+import Designer from 'react-designer'
 
 import ItemList from '../items'
 import { RedBox } from '../red-box'
@@ -83,6 +84,11 @@ class FocusView extends Component {
             </Grid>
             <Grid className={classes.title} item xs={12} xl={8}>
               <ValueView value={item.value} />
+              <Designer
+                height={400}
+                objects={[]}
+                width={600}
+              />
             </Grid>
             <Divider />
             {item.userIsWriter && (

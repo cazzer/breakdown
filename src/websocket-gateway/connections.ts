@@ -1,7 +1,19 @@
+import { DynamoDB } from 'aws-sdk'
+
 import epsagon from '../epsagon'
+
+const DDBDocClient = new DynamoDB.DocumentClient({ apiVersion: '2012-10-08' })
 
 export async function connect(event: any): Promise<object> {
   console.log(event)
+
+  await DDBDocClient.put({
+    Item: {
+      connection_id: event.requestContext.connectionId,
+      user_id: event.requestContext.authorizer.userId
+    },
+    TableName: process.env.CONNECTIONS_TABLE_NAME
+  }).promise()
 
   return {
     body: 'Connected',
@@ -11,6 +23,13 @@ export async function connect(event: any): Promise<object> {
 
 export async function disconnect(event: any): Promise<object> {
   console.log(event)
+
+  DDBDocClient.delete({
+    Key: {
+      connection_id: event.requestContext.connectionId
+    },
+    TableName: process.env.CONNECTIONS_TABLE_NAME
+  })
 
   return {
     body: 'Disconnected',

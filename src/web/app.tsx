@@ -56,6 +56,10 @@ const RedirectFocus = () => (
 
 const WebSocketProvider = (props) => {
 
+  const onConnect = () => {
+    console.log('connected')
+  }
+
   const onMessage = message => {
     console.log(message)
   }
@@ -65,6 +69,7 @@ const WebSocketProvider = (props) => {
       {({ token }) => (
         <WebSocket
           url={`${process.env.WEBSOCKET_URL}?token=${token}`}
+          onOpen={onConnect}
           onMessage={onMessage}
         >
           {props.children}
@@ -79,6 +84,7 @@ class ConnectedApp extends React.Component {
     return (
       <BrowserRouter>
         <ApolloProvider client={client}>
+          <WebSocketProvider>
             <Navigation />
             <BelowNavigation>
               <Switch>
@@ -91,6 +97,7 @@ class ConnectedApp extends React.Component {
                 <Route component={RedirectFocus} />
               </Switch>
             </BelowNavigation>
+          </WebSocketProvider>
         </ApolloProvider>
       </BrowserRouter>
     )

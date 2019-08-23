@@ -737,11 +737,34 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/websocket-gateway/connections.connect
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+    Policies:
+    - DynamoDBCrudPolicy:
+      TableName: !Ref ConnectionsTable
 
   GatewayDisconnectFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/websocket-gateway/connections.disconnect
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+    Policies:
+    - DynamoDBCrudPolicy:
+      TableName: !Ref ConnectionsTable
+
+  GatewayGraphQLFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/connections.disconnect
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+    Policies:
+    - DynamoDBCrudPolicy:
+      TableName: !Ref ConnectionsTable
 
   AuthorizerFunctionPolicy:
     Type: AWS::IAM::Policy
@@ -980,3 +1003,31 @@ Resources:
     Type: AWS::ApiGateway::Account
     Properties:
       CloudWatchRoleArn: !GetAtt ApiCloudWatchLogsRole.Arn
+
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "connection_id"
+          AttributeType: "S"
+        - AttributeName: "user_id"
+          AttributeType: "S"
+      GlobalSecondaryIndexes:
+      - IndexName: "user_id"
+        KeySchema:
+        - AttributeName: "user_id"
+          KeyType: "HASH"
+        Projection:
+          ProjectionType: "KEYS_ONLY"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+      KeySchema:
+      - AttributeName: "connection_id"
+        KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: connections
