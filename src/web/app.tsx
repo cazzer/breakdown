@@ -84,7 +84,6 @@ class ConnectedApp extends React.Component {
     return (
       <BrowserRouter>
         <ApolloProvider client={client}>
-          <WebSocketProvider>
             <Navigation />
             <BelowNavigation>
               <Switch>
@@ -97,7 +96,6 @@ class ConnectedApp extends React.Component {
                 <Route component={RedirectFocus} />
               </Switch>
             </BelowNavigation>
-          </WebSocketProvider>
         </ApolloProvider>
       </BrowserRouter>
     )

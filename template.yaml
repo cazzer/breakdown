@@ -1016,7 +1016,7 @@ Resources:
       - IndexName: "user_id"
         KeySchema:
         - AttributeName: "user_id"
-          KeyType: "HASH"
+          KeyType: "RANGE"
         Projection:
           ProjectionType: "KEYS_ONLY"
         ProvisionedThroughput:
