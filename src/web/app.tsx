@@ -71,9 +71,7 @@ const WebSocketProvider = (props) => {
           url={`${process.env.WEBSOCKET_URL}?token=${token}`}
           onOpen={onConnect}
           onMessage={onMessage}
-        >
-          {props.children}
-        </WebSocket>
+        />
       )}
     </AuthContext.Consumer>
   )
@@ -84,18 +82,19 @@ class ConnectedApp extends React.Component {
     return (
       <BrowserRouter>
         <ApolloProvider client={client}>
-            <Navigation />
-            <BelowNavigation>
-              <Switch>
-                <Route path="/home/:parentId/:childId?" component={SplitView} />
-                <Route path="/view/focus/:itemId/edit" component={EditItemView} />
-                <Route path="/view/focus/:itemId" component={FocusWrapperView} />
-                <Route path="/view/focus" component={RecentItemList} />
-                <Route path="/add" component={CreateItemView} />
-                <Route path="/search" component={Search} />
-                <Route component={RedirectFocus} />
-              </Switch>
-            </BelowNavigation>
+          <WebSocketProvider apolloClient={client} />
+          <Navigation />
+          <BelowNavigation>
+            <Switch>
+              <Route path="/home/:parentId/:childId?" component={SplitView} />
+              <Route path="/view/focus/:itemId/edit" component={EditItemView} />
+              <Route path="/view/focus/:itemId" component={FocusWrapperView} />
+              <Route path="/view/focus" component={RecentItemList} />
+              <Route path="/add" component={CreateItemView} />
+              <Route path="/search" component={Search} />
+              <Route component={RedirectFocus} />
+            </Switch>
+          </BelowNavigation>
         </ApolloProvider>
       </BrowserRouter>
     )

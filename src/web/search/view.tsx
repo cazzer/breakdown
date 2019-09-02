@@ -203,7 +203,7 @@ export default withStyles(styles)(Search)
 
 function StatefulSearch(props) {
   const [query, setQuery] = useState('')
-  const [createRelationship, { data, loading }] = useMutation(createRelationshipMutation)
+  const [createRelationship] = useMutation(createRelationshipMutation)
 
   const handleSearch = (event) => {
     setQuery(event.target.value)

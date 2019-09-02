@@ -16,7 +16,7 @@ const styles = theme => ({
   },
 })
 
-function SplitView(props: ReactPropTypes) {
+function SplitView(props) {
   const { classes, match } = props
 
   const { childId, parentId } = match.params
@@ -26,7 +26,7 @@ function SplitView(props: ReactPropTypes) {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={24}>
+      <Grid container spacing={10}>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
             <CreateItem oldItem={{ parentId: createItemParentId }} />
