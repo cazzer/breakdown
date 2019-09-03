@@ -82,7 +82,6 @@ class ConnectedApp extends React.Component {
     return (
       <BrowserRouter>
         <ApolloProvider client={client}>
-          <WebSocketProvider apolloClient={client} />
           <Navigation />
           <BelowNavigation>
             <Switch>

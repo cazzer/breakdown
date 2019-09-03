@@ -1,0 +1,375 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Breakdown
+Parameters:
+  EpsagonToken:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: EpsagonToken
+
+  DatabaseName:
+    Type: String
+    Default: breakdown
+
+  DatabaseUser:
+    Type: String
+    Default: postgres
+
+  DatabasePassword:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DatabasePassword
+
+  SentryDsn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: SentryDsn
+
+Globals:
+  Function:
+    Runtime: nodejs10.x
+    MemorySize: 192
+    Timeout: 10
+    Environment:
+      Variables:
+        EPSAGON_TOKEN: !Ref EpsagonToken
+
+Resources:
+  CloudFormationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+  AutomationPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - s3:*
+              - cloudformation:*
+              - iam:PassRole
+              - codebuild:*
+              - cloudwatch:*
+              - logs:*
+              - ec2:*
+              - iam:*
+              - lambda:*
+              - sns:*
+              - ssm:*
+              - rds:*
+              - ecr:*
+              - xray:*
+              - cloudfront:*
+              - route53:*
+              - apigateway:*
+              - cognito-idp:*
+              - codepipeline:*
+              - acm:*
+              - cognito-identity:*
+              - events:*
+              - dynamodb:*
+      Roles:
+        - !Ref PipelineRole
+        - !Ref CodebuildRole
+        - !Ref CloudFormationRole
+
+  GatewayConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/connections.connect
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+    Policies:
+    - DynamoDBCrudPolicy:
+      TableName: !Ref ConnectionsTable
+
+  GatewayDisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/connections.disconnect
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+    Policies:
+    - DynamoDBCrudPolicy:
+      TableName: !Ref ConnectionsTable
+
+  GatewayGraphQLFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/connections.disconnect
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+    Policies:
+    - DynamoDBCrudPolicy:
+      TableName: !Ref ConnectionsTable
+
+  AuthorizerFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-gateway-authorizer
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - "logs:*"
+              - "lambda:*"
+      Roles:
+        - !Ref AuthorizerFunctionRole
+
+  AuthorizerFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+                - "apigateway.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
+
+  AuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/websocket-gateway/authorizer.default
+      Role: !GetAtt AuthorizerFunctionRole.Arn
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+          APP_CLIENT_ID: !Ref UserPoolClient
+
+  AuthorizerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AuthorizerFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ""
+        - - "arn:aws:apigateway:"
+          - !Ref AWS::Region
+          - "::/restapis/"
+          - !Ref WebSocketGateway
+          - "/stages/"
+          - !Ref Stage
+
+  WebSocketGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: WebSocketGateway
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: $request.body.action
+
+  WebSocketAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      AuthorizerType: REQUEST
+      AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations
+      IdentitySource:
+        - route.request.querystring.token
+      Name: CognitoAuthorizer
+
+  AuthorizerPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-authorizer
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "execute-api:ManageConnections"
+            Resource:
+              - "arn:aws:execute-api:*:*:**/@connections/*"
+      Roles:
+        - !Ref AuthorizerRole
+        - !Ref AuthorizerFunctionRole
+
+  AuthorizerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "apigateway.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      RouteKey: $connect
+      AuthorizerId: !Ref WebSocketAuthorizer
+      AuthorizationType: CUSTOM
+      OperationName: ConnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ConnectInteg
+
+  ConnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      Description: Connect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
+
+  OnConnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketGateway
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GatewayConnectFunction
+      Principal: apigateway.amazonaws.com
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DisconnectInteg
+
+  DisconnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayDisconnectFunction.Arn}/invocations
+
+  OnDisconnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketGateway
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GatewayDisconnectFunction
+      Principal: apigateway.amazonaws.com
+
+  GraphQLRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      RouteKey: graphql
+      AuthorizationType: NONE
+      OperationName: GraphQL
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref GraphQLInteg
+
+  GraphQLInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketGateway
+      Description: GraphQL Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
+
+  GraphqlPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketGateway
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GatewayConnectFunction
+      Principal: apigateway.amazonaws.com
+
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: prod
+      Description: Production or nothing
+      DeploymentId: !Ref WebSocketDeployment2
+      ApiId: !Ref WebSocketGateway
+
+  APIGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: 'apigw-log-group'
+      RetentionInDays: 7
+
+  ApiCloudWatchLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs'
+
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiCloudWatchLogsRole.Arn
+
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "connection_id"
+          AttributeType: "S"
+        - AttributeName: "user_id"
+          AttributeType: "S"
+      GlobalSecondaryIndexes:
+      - IndexName: "user_id"
+        KeySchema:
+        - AttributeName: "user_id"
+          KeyType: "HASH"
+        Projection:
+          ProjectionType: "KEYS_ONLY"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+      KeySchema:
+      - AttributeName: "connection_id"
+        KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: connections
