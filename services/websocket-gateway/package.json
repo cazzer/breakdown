@@ -1,0 +1,20 @@
+{
+  "name": "websocket-gateway",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc ./src/* --outDir lib",
+    "deploy": "aws cloudformation deploy --template-file packaged-template.yaml --stack-name $npm_package_name --capabilities CAPABILITY_IAM",
+    "package": "aws cloudformation package --template-file ./template.yaml --output-template-file packaged-template.yaml --s3-bucket breakdown-pipelinebucket-8cpfqxwenpqa"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.524.0",
+    "epsagon": "^1.33.2",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.1",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "request": "^2.88.0"
+  }
+}

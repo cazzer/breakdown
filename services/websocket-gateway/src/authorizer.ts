@@ -1,10 +1,10 @@
 import pick from 'lodash/pick'
-import jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken'
 import jwkToPem from 'jwk-to-pem'
-import moment from 'moment'
+import * as moment from 'moment'
 import request from 'request'
 
-import epsagon from '../epsagon'
+import epsagon from './epsagon'
 
 interface DecodedJWT {
   aud: string;
