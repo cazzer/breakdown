@@ -5,9 +5,6 @@ const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
-  entry: {
-    app: './src/web'
-  },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     historyApiFallback: true,
@@ -20,9 +17,10 @@ module.exports = {
   module: {
     rules: [
       {
+        exclude: /node_modules/,
         test: /\.(j|t)sx?$/,
         use: [
-          'babel-loader',
+          'ts-loader',
         ]
       },
       {
@@ -36,6 +34,11 @@ module.exports = {
         test: /\.(graphql|gql)$/,
         exclude: /node_modules/,
         loader: 'graphql-tag/loader',
+      },
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        loader: "source-map-loader"
       }
     ]
   },
@@ -68,7 +71,7 @@ module.exports = {
       'WEBSOCKET_URL'
     ]),
     new HtmlWebpackPlugin({
-      template: './src/web/index.html'
+      template: './src/index.html'
     }),
     new CleanWebpackPlugin('dist')
   ]
