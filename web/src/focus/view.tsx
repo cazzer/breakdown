@@ -1,7 +1,6 @@
 import get from 'lodash/get'
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-apollo'
-import { compose } from 'redux'
 import { Route } from 'react-router-dom'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
@@ -40,69 +39,67 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-class FocusView extends Component<any> {
-  render() {
-    const classes = useStyles({})
-    const { item } = this.props
-    const directPermissions = get(item, ['permissionsByItemId', 'nodes'], [])
-      .map(permission => ({
-        id: permission.id,
-        itemId: permission.itemId,
-        role: permission.role,
-        userOrGroup: permission.usersAndGroupByUserOrGroupId
-      }))
-    const inheritedPermissions = get(item, ['itemByInheritsFrom', 'permissionsByItemId', 'nodes'], [])
-      .map(permission => ({
-        id: permission.id,
-        itemId: permission.itemId,
-        role: permission.role,
-        userOrGroup: permission.usersAndGroupByUserOrGroupId
-      }))
+function FocusView(props) {
+  const classes = useStyles({})
+  const { item } = props
+  const directPermissions = get(item, ['permissionsByItemId', 'nodes'], [])
+    .map(permission => ({
+      id: permission.id,
+      itemId: permission.itemId,
+      role: permission.role,
+      userOrGroup: permission.usersAndGroupByUserOrGroupId
+    }))
+  const inheritedPermissions = get(item, ['itemByInheritsFrom', 'permissionsByItemId', 'nodes'], [])
+    .map(permission => ({
+      id: permission.id,
+      itemId: permission.itemId,
+      role: permission.role,
+      userOrGroup: permission.usersAndGroupByUserOrGroupId
+    }))
 
-    return (
-      <div className={classes.root}>
-        <Paper className={classes.item}>
-          <Grid container>
-            <Grid item xs={12} sm={6}>
-              <Groups childId={item.id} />
-            </Grid>
-            <Grid item xs={12} sm={6} className={classes.permissions}>
-              <Users
-                permissions={directPermissions}
-                inherited={inheritedPermissions}
-                public={item.public}
-                rowReverse={true}
-              />
-            </Grid>
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.item}>
+        <Grid container>
+          <Grid item xs={12} sm={6}>
+            <Groups childId={item.id} />
           </Grid>
-          <Grid
-            container
-            className={classes.content}
-          >
-            <Grid item xs={12} xl={4}>
-              <Typography color="textPrimary" variant="h6">
-                {item.label}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} xl={8}>
-              <ValueView value={item.value} />
-            </Grid>
-            <Divider />
-            {item.userIsWriter && (
-              <Grid item xs={12}>
-                <Link to={`/view/focus/${item.id}/edit`}>
-                  <IconButton aria-label="Focus">
-                    <EditIcon />
-                  </IconButton>
-                </Link>
-                <DeleteItem id={item.id} />
-              </Grid>
-            )}
+          <Grid item xs={12} sm={6} className={classes.permissions}>
+            <Users
+              permissions={directPermissions}
+              inherited={inheritedPermissions}
+              public={item.public}
+              rowReverse={true}
+            />
           </Grid>
-        </Paper>
-      </div>
-    )
-  }
+        </Grid>
+        <Grid
+          container
+          className={classes.content}
+        >
+          <Grid item xs={12} xl={4}>
+            <Typography color="textPrimary" variant="h6">
+              {item.label}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} xl={8}>
+            <ValueView value={item.value} />
+          </Grid>
+          <Divider />
+          {item.userIsWriter && (
+            <Grid item xs={12}>
+              <Link to={`/view/focus/${item.id}/edit`}>
+                <IconButton aria-label="Focus">
+                  <EditIcon />
+                </IconButton>
+              </Link>
+              <DeleteItem id={item.id} />
+            </Grid>
+          )}
+        </Grid>
+      </Paper>
+    </div>
+  )
 }
 
 const LoadedFocusView = RedBox(FocusView)
