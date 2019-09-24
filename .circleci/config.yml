@@ -1,0 +1,127 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@0.1.13
+
+aliases:
+  - &workdir /home/circleci/build
+
+  - &container_config
+    docker:
+      - image: circleci/node:10
+    working_directory: *workdir
+
+  - &checkout checkout
+
+  - &install_aws_cli aws-cli/install
+
+  - &install_typescript_globally
+    run:
+      name: Install Typescript globally
+      command: yarn global add typescript
+
+  - &configure_aws_cli
+    aws-cli/configure:
+      aws-region: 'AWS_REGION'
+      aws-access-key-id: 'AWS_ACCESS_KEY_ID'
+      aws-secret-access-key: 'AWS_SECRET_ACCESS_KEY'
+
+  - &save_cache
+    save_cache:
+      paths:
+        - node_modules
+      key: dependencies-cache-{{ checksum "yarn.lock" }}
+
+  - &restore_cache
+    restore_cache:
+      keys:
+        - dependencies-cache-{{ checksum "yarn.lock" }}
+        # fallback to using the latest cache if no exact match is found
+        - dependencies-cache
+
+  - &install_dependencies
+    run:
+      name: Install Dependencies
+      command: yarn install --frozen-lockfile
+
+  - &build_source
+    run:
+      name: Build src into lib
+      command: yarn build
+
+  - &run_tests
+    run:
+      name: Run unit tests
+      command: yarn test
+
+  - &remove_source
+    run:
+      name: Remove src files
+      command: rm -rf src
+
+  - &package_stack
+    run:
+      name: Package into packaged-template.yaml
+      command: yarn package
+
+  - &save_to_workspace
+    persist_to_workspace:
+      root: *workdir
+      paths:
+        - packaged-template.yaml
+        - package.json
+        - lib/*
+
+  - &mount_workspace
+    attach_workspace:
+      at: *workdir
+
+  - &deploy
+    run:
+      name: Release everything
+      command: yarn deploy
+
+  - &deploy_production_filters
+    filters:
+      branches:
+        only: master
+
+jobs:
+  build:
+    <<: *container_config
+
+    steps:
+      - *checkout
+      - *install_aws_cli
+      - *configure_aws_cli
+      - *install_typescript_globally
+      - *restore_cache
+      - *install_dependencies
+      - *save_cache
+      - *build_source
+      - *run_tests
+      - *remove_source
+      - *package_stack
+      - *save_to_workspace
+
+  deploy:
+    <<: *container_config
+
+    steps:
+      - *install_aws_cli
+      - *configure_aws_cli
+      - *mount_workspace
+      - *deploy
+
+workflows:
+  version: 2
+  build-and-deploy-production:
+    jobs:
+      - build:
+          <<: *deploy_production_filters
+          context: aws-production
+      - deploy:
+          <<: *deploy_production_filters
+          context: aws-production
+          requires:
+            - build

@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import ArrowUpward from '@material-ui/icons/ArrowUpward'
 import { useQuery } from 'react-apollo'
-import parentsByChildId from './item-parents.gql'
+import {
+  itemParentsQuery
+} from './queries'
 
 interface GroupData {
   id: string
@@ -22,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
 function GroupsView(
   props: { groups: GroupData[] }
 ) {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <>
@@ -44,7 +46,7 @@ function GroupsView(
 export function Groups(
   props: { childId: string }
 ) {
-  const { data, loading } = useQuery(parentsByChildId, {
+  const { data, loading } = useQuery(itemParentsQuery, {
     variables: {
       condition: {
         childId: props.childId

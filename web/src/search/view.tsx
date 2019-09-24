@@ -13,7 +13,9 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CubeLoader } from '../loading'
 import CreateNewItem from './create-new-item'
-import createRelationshipMutation from '../groups/create-relationship-mutation.gql'
+import {
+  createRelationshipMutation
+} from '../groups/queries'
 import { addItemToAllItems } from '../cache-handlers'
 
 const styles = theme => ({
@@ -115,7 +117,7 @@ function ConnectedItemList(props: {
   return <props.component items={results} onClick={props.onClick} />
 }
 
-class Search extends React.Component {
+class Search extends React.Component<any> {
   handleSearch = event => {
     this.props.history.replace({
       pathname: this.props.location.pathname,
@@ -130,7 +132,7 @@ class Search extends React.Component {
   render() {
     const { classes } = this.props
     const query = decodeURIComponent(
-      queryString.parse(this.props.location.search).q || ''
+      queryString.parse(this.props.location.search).q[0] || ''
     )
     return (
       <div className={classes.root}>

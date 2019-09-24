@@ -30,7 +30,7 @@ export class AuthProvider extends React.Component {
         loading: false,
         loggedIn: true,
         user,
-        token: session.idToken.jwtToken
+        token: session.getIdToken().getJwtToken()
       })
     } catch (error) {
       return this.setState({
@@ -56,7 +56,7 @@ export class AuthProvider extends React.Component {
           loading: false,
           loggedIn: true,
           user,
-          token: session.idToken.jwtToken
+          token: session.getIdToken().getJwtToken()
         })
       } else {
         this.setState({

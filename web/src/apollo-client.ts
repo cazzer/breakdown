@@ -11,11 +11,11 @@ let ROLES: string
 
 const authLink = setContext(async () => {
   const session = await Auth.currentSession()
-  ROLES = session.idToken.payload.roles
+  ROLES = session.getIdToken().decodePayload().roles
 
   return {
     headers: {
-      Authorization: session.idToken.jwtToken
+      Authorization: session.getIdToken().getJwtToken()
     }
   }
 })

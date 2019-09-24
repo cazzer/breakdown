@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "common": "0.2.0",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.116",
+    "typescript": "^3.0.1"
+  },
+  "name": "cognito",
+  "version": "0.2.0",
+  "scripts": {
+    "build": "rm -rf lib/ && tsc",
+    "type-check": "tsc --noEmit"
+  },
+  "sideEffects": false
+}

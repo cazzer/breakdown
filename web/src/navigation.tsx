@@ -1,5 +1,5 @@
 import React from 'react'
-import { withStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
@@ -14,46 +14,47 @@ import { AuthContext } from './auth/withAuth'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Divider from '@material-ui/core/Divider'
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    flex: {
+      flexGrow: 1,
+    },
+    menuButton: {
+      marginLeft: -12,
+      marginRight: 20,
+    },
+    noOutline: {
+      outline: 'none'
+    },
+    belowNavigation: {
+      paddingTop: 64,
+      paddingBottom: 64
+    },
+    slideEnter: {
+      position: 'relative',
+      left: '100%'
+    },
+    slideEnterActive: {
+      position: 'relative',
+      transition: 'left 300ms cubic-bezier(0.230, 1.000, 0.320, 1.000)',
+      left: 0
+    },
+    slideExit: {
+      position: 'relative',
+      left: 0
+    },
+    slideExitActive: {
+      position: 'relative',
+      transition: 'left 300ms cubic-bezier(0.230, 1.000, 0.320, 1.000)',
+      left: '-100%'
+    },
+  })
+)
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  flex: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  noOutline: {
-    outline: 'none'
-  },
-  belowNavigation: {
-    paddingTop: 64,
-    paddingBottom: 64
-  },
-  slideEnter: {
-    position: 'relative',
-    left: '100%'
-  },
-  slideEnterActive: {
-    position: 'relative',
-    transition: 'left 300ms cubic-bezier(0.230, 1.000, 0.320, 1.000)',
-    left: 0
-  },
-  slideExit: {
-    position: 'relative',
-    left: 0
-  },
-  slideExitActive: {
-    position: 'relative',
-    transition: 'left 300ms cubic-bezier(0.230, 1.000, 0.320, 1.000)',
-    left: '-100%'
-  },
-})
-
-class Navigation extends React.Component {
+export default class Navigation extends React.Component<any> {
   state = {
     anchorEl: null,
   }
@@ -67,7 +68,7 @@ class Navigation extends React.Component {
   }
 
   render() {
-    const { classes } = this.props
+    const classes = useStyles({})
     const open = !!this.state.anchorEl
     return (
       <AppBar position="fixed">
@@ -122,13 +123,12 @@ class Navigation extends React.Component {
   }
 }
 
-export default withStyles(styles)(Navigation)
-
-const belowNavigation = ({ classes, children }) => (
-  <div className={classes.belowNavigation}>
-    {children}
-    <FloatingActionButtons />
-  </div>
-)
-
-export const BelowNavigation = withStyles(styles)(belowNavigation)
+export const BelowNavigation = ({ children }) => {
+  const classes = useStyles({})
+  return (
+    <div className={classes.belowNavigation}>
+      {children}
+      <FloatingActionButtons />
+    </div>
+  )
+}

@@ -9,9 +9,9 @@ import { Item } from './list-item'
 import { CubeLoader } from './loading'
 import { ItemInterface } from '../../typings'
 import {
-  ItemChildren as itemChildrenQuery,
-  RecentItems as recentItemsQuery
-} from './focus/item-by-id.gql'
+  itemChildrenQuery,
+  recentItemsQuery
+} from './focus/queries'
 import { SearchView } from './search/view'
 
 const useStyles = makeStyles((theme?: Theme) =>
@@ -27,7 +27,7 @@ function ItemsList(props: {
   parentId?: string
 }) {
   const items = props.items.filter(item => !!item)
-  const classes = useStyles()
+  const classes = useStyles({})
 
   if (!items.length) {
     return (

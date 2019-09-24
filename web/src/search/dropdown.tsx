@@ -11,7 +11,7 @@ import { useQuery, useMutation } from 'react-apollo'
 import React, { useState } from 'react'
 import Divider from '@material-ui/core/Divider'
 import { CubeLoader } from '../loading'
-import createItemMutation from '../edit/create-item.gql'
+import createItemMutation from '../edit/create-item'
 import { addToRecentItems } from '../cache-handlers'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -50,7 +50,10 @@ query SearchUsers($input: String!) {
 `
 
 const ConnectedItemList = (
-  props: { query: String }
+  props: {
+    handleItemClick: Function,
+    query: String
+  }
 ) => {
   const { data, loading } = useQuery(searchItems, {
     variables: {
@@ -85,7 +88,10 @@ const ConnectedItemList = (
 }
 
 const ConnectedUserList = (
-  props: { query: String }
+  props: {
+    handleItemClick: Function,
+    query: String
+  }
 ) => {
   const { data, loading } = useQuery(searchUsers, {
     variables: {
@@ -167,10 +173,10 @@ const Dropdown = ({
 )
 
 export default function Search(props: {
-  allowNew: boolean,
+  allowNew?: boolean,
   handleSelect: Function,
-  selectedItem: any,
-  source: string
+  selectedItem?: any,
+  source?: string
 }) {
   const [state, setState] = useState({
     anchorElement: null,
@@ -182,6 +188,7 @@ export default function Search(props: {
 
   const handleItemClick = item => () => {
     setState({
+      ...this.state,
       query: ''
     })
 
@@ -207,6 +214,7 @@ export default function Search(props: {
 
   const handleSearch = event => {
     setState({
+      ...this.state,
       anchorElement: event.target,
       query: event.target.value
     })

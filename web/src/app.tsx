@@ -46,7 +46,7 @@ const theme = createMuiTheme({
     type: 'dark'
   },
   typography: {
-    useNextVariants: true,
+    // useNextVariants: true,
   }
 })
 

@@ -4,57 +4,75 @@ import Markdown from 'react-markdown'
 import ReactPlayer from 'react-player'
 
 import { guessType } from './type-guesser'
-import { withStyles } from '@material-ui/core'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-const StyledMarkdown = withStyles(theme => ({
-  root: {
-    color: theme.palette.primary.contrastText
-  }
-}))(({ classes, className, source, preview = false }) => (
-  <div className={className || classes.root}>
-    <Markdown
-      source={source}
-      disallowedTypes={preview ? ['link'] : []}
-      unwrapDisallowed={preview}
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    image: {
+      margin: `${theme.spacing(1)}px 0`,
+      width: '100%'
+    },
+    link: {
+      color: theme.palette.primary.light,
+      textDecoration: 'underline'
+    },
+    root: {
+      color: theme.palette.primary.contrastText
+    },
+    player: {
+      margin: `${theme.spacing(1)}px 0`
+    }
+  })
+)
+
+const StyledMarkdown = ({
+  className = null,
+  source,
+  preview = false
+}) => {
+  const classes = useStyles({})
+  return (
+    <div className={className || classes.root}>
+      <Markdown
+        source={source}
+        disallowedTypes={preview ? ['link'] : []}
+        unwrapDisallowed={preview}
+      />
+    </div>
+  )
+}
+
+const StyledImage = ({ src }) => {
+  const classes = useStyles({})
+  return (
+    <img className={classes.image} src={src} />
+  )
+}
+
+const StyledPlayer = ({ url }) => {
+  const classes = useStyles({})
+  return (
+    <ReactPlayer
+      className={classes.player}
+      url={url}
+      width={'100%'}
     />
-  </div>
-))
-const StyledImage = withStyles(theme => ({
-  image: {
-    margin: `${theme.spacing(1)}px 0`,
-    width: '100%'
-  }
-}))(({ classes, src}) => (
-  <img className={classes.image} src={src} />
-))
+  )
+}
 
-const StyledPlayer = withStyles(theme => ({
-  root: {
-    margin: `${theme.spacing(1)}px 0`,
-  }
-}))(({ classes, url }) => (
-  <ReactPlayer
-    className={classes.root}
-    url={url}
-    width={'100%'}
-  />
-))
-
-const StyledLink = withStyles(theme => ({
-  root: {
-    color: theme.palette.primary.light,
-    textDecoration: 'underline'
-  }
-}))(({ classes, url }) => (
-  <a className={classes.root} href={url} target="_blank">
-    {url}
-  </a>
-))
+const StyledLink = ({ url }) => {
+  const classes = useStyles({})
+  return (
+    <a className={classes.link} href={url} target="_blank">
+      {url}
+    </a>
+  )
+}
 
 export default (props: {
-  className?: String,
-  value: String,
-  preview?: Boolean
+  className?: string,
+  value: string,
+  preview?: boolean
 }) => {
   const type = guessType(props.value)
   switch (type) {

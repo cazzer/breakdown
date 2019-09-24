@@ -40,7 +40,7 @@ export default function Users(
     rowReverse: false
   }
 ) {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   const directPermissionUserIds = props.permissions.map(permission => (
     permission.userOrGroup.id

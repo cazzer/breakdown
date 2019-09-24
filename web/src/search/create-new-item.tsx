@@ -5,7 +5,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { createItemMutation } from '../focus/item-by-id.gql'
+import { createItemMutation } from '../focus/queries'
 import { addToRecentItems } from '../cache-handlers'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function CreateNewItem(props) {
   const [createItem, { error, loading }] = useMutation(createItemMutation)
-  const classes = useStyles()
+  const classes = useStyles({})
 
   function handleCreateItem() {
     createItem({

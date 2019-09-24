@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import get from 'lodash/get'
 import React, { Component } from 'react'
 import { useQuery, useMutation } from 'react-apollo'
-import { withStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -14,7 +14,7 @@ import Typography from '@material-ui/core/Typography'
 import queryString from 'query-string'
 import uuidv4 from 'uuid/v4'
 
-import { Item as itemByIdQuery } from '../focus/item-by-id.gql'
+import { itemByIdQuery } from '../focus/queries'
 import ValueView from '../focus/value-view'
 import {
   addItemToAllItems,
@@ -22,38 +22,40 @@ import {
   updateItemInAllItems
 } from '../cache-handlers'
 import { EditGroups } from '../groups/edit'
-import createItem from './create-item.gql'
+import createItem from './create-item'
 import { CubeLoader } from '../loading'
 import EditPermissions from '../permissions/edit'
 
-const styles = theme => ({
-  content: {
-    display: 'flex',
-    padding: theme.spacing(2)
-  },
-  root: {
-    margin: theme.spacing(1)
-  },
-  labelContainer: {
-    position: 'relative'
-  },
-  margin: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1)
-  },
-  previewHeading: {
-    margin: `${theme.spacing(1)}px 0`
-  },
-  preview: {
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(1)
-  },
-  save: {
-    padding: theme.spacing(1)
-  },
-})
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    content: {
+      display: 'flex',
+      padding: theme.spacing(2)
+    },
+    root: {
+      margin: theme.spacing(1)
+    },
+    labelContainer: {
+      position: 'relative'
+    },
+    margin: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1)
+    },
+    previewHeading: {
+      margin: `${theme.spacing(1)}px 0`
+    },
+    preview: {
+      backgroundColor: theme.palette.background.default,
+      padding: theme.spacing(1)
+    },
+    save: {
+      padding: theme.spacing(1)
+    },
+  })
+)
 
-class EditItemForm extends Component {
+class EditItemForm extends Component<any, any> {
   constructor(props) {
     super(props)
 
@@ -61,6 +63,7 @@ class EditItemForm extends Component {
       id: uuidv4(),
       label: '',
       value: '',
+      public: false,
       ...props.item,
       __typename: undefined
     }
@@ -112,7 +115,7 @@ class EditItemForm extends Component {
   }
 
   render() {
-    const { classes } = this.props
+    const classes = useStyles({})
     const permissions = get(this.props.item, ['permissionsByItemId', 'nodes'], [])
       .map(permission => ({
         id: permission.id,
@@ -198,8 +201,6 @@ class EditItemForm extends Component {
   }
 }
 
-const StyledEditItem = withStyles(styles)(EditItemForm)
-
 export function CreateItem(props) {
   const [createItemMutation] = useMutation(createItem, {
     update: (cache, result) => {
@@ -209,7 +210,7 @@ export function CreateItem(props) {
   })
 
   return (
-    <StyledEditItem
+    <EditItemForm
       item={props.item}
       upsert={createItemMutation}
       isNew
@@ -265,7 +266,7 @@ export function EditItem(props) {
   })
 
   return (
-    <StyledEditItem
+    <EditItemForm
       item={props.item}
       onSave={props.onSave}
       upsert={editItemMutation}

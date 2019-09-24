@@ -21,8 +21,8 @@ import { guessType } from './focus/type-guesser'
 import ValueView from './focus/value-view'
 import { ItemInterface } from '../../typings'
 import { updateItemInItemChildren } from './cache-handlers'
-import { updateItem } from './focus/item-by-id.gql'
-import deleteRelationshipMutation from './groups/delete-relationship-mutation.gql'
+import { updateItemMutation} from './focus/queries'
+import { deleteRelationshipByIdMutation } from './groups/queries'
 import { removeChildFromParent } from './cache-handlers'
 
 
@@ -61,7 +61,7 @@ const useListItemStyles = makeStyles((theme?: Theme) =>
 function ValuePreview(props: {
   value: string
 }) {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <Paper className={classes.paper}>
@@ -82,7 +82,7 @@ const ItemEdit = (props: {
 }) => {
   const [ label, setLabel ] = useState(props.item.label || '')
   const [ value, setValue ] = useState(props.item.value || '')
-  const classes = useListItemStyles()
+  const classes = useListItemStyles({})
 
   const handleChangeLabel = (event) => {
     setLabel(event.target.value)
@@ -184,7 +184,7 @@ const ItemContent = ((props: {
   parentId: string
 }) => {
   const [ editState, setEdit ] = useState('hidden')
-  const [ editItemMutation ] = useMutation(updateItem, {
+  const [ editItemMutation ] = useMutation(updateItemMutation, {
     update: (cache, result) => {
       setEdit('hidden')
       const { item } = result.data.updateItemById
@@ -267,8 +267,8 @@ export function Item(props: {
   item: ItemInterface,
   parentId: string
 }) {
-  const classes = useStyles()
-  const [deleteRelationship, deleteResult] = useMutation(deleteRelationshipMutation)
+  const classes = useStyles({})
+  const [deleteRelationship, deleteResult] = useMutation(deleteRelationshipByIdMutation)
   const { item } = props
 
   const onUnlinkClick = () => {
@@ -290,8 +290,8 @@ export function Item(props: {
 
   return (
     <ListItem
-      className={classes.listItem}
       divider
+      button
     >
       <div className={classes.listItemLink}>
         <ItemContent

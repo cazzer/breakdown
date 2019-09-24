@@ -1,24 +1,26 @@
 import { DataProxy } from 'apollo-cache'
 
-import parentsByChildId from './groups/item-parents.gql'
 import {
-  Item as itemById,
-  ItemChildren as itemChildrenQuery,
-  RecentItems
-} from './focus/item-by-id.gql'
+  itemParentsQuery
+} from './groups/queries'
+import {
+  itemByIdQuery,
+  itemChildrenQuery,
+  recentItemsQuery
+} from './focus/queries'
 
 export function addPermissionToItem(
   cache: DataProxy,
   permission: any
 ) {
   const id = permission.itemId
-  const data = cache.readQuery({
-    query: itemById,
+  const data: any = cache.readQuery({
+    query: itemByIdQuery,
     variables: { id }
   })
 
   cache.writeQuery({
-    query: itemById,
+    query: itemByIdQuery,
     variables: { id },
     data: {
       itemById: {
@@ -40,13 +42,13 @@ export function removePermissionFromItem(
   cache: DataProxy,
   oldPermission: any
 ) {
-  const data = cache.readQuery({
-    query: itemById,
+  const data: any = cache.readQuery({
+    query: itemByIdQuery,
     variables: { id: oldPermission.itemId }
   })
 
   cache.writeQuery({
-    query: itemById,
+    query: itemByIdQuery,
     variables: { id: oldPermission.itemId },
     data: {
       itemById: {
@@ -62,11 +64,11 @@ export function removePermissionFromItem(
 
 export function removeFromRecentItems(
   cache: DataProxy,
-  removedItem: Object
+  removedItem: any
 ) {
   removeFromCache({
     cache,
-    query: RecentItems,
+    query: recentItemsQuery,
     dataKey: 'allItems',
     filter: item => item.id !== removedItem.id
   })
@@ -74,11 +76,11 @@ export function removeFromRecentItems(
 
 export function addToRecentItems(
   cache: DataProxy,
-  newItem: Object
+  newItem: any
 ) {
   addToCache({
     cache,
-    query: RecentItems,
+    query: recentItemsQuery,
     dataKey: 'allItems',
     item: newItem
   })
@@ -86,7 +88,7 @@ export function addToRecentItems(
 
 export function removeItemFromAllItems(
   cache: DataProxy,
-  removedItem: Object,
+  removedItem: any,
   parentId: string
 ) {
   removeFromCache({
@@ -115,7 +117,7 @@ export function addItemToAllItems(
 
 export function updateItemInAllItems(
   cache: DataProxy,
-  updatedItem: Object,
+  updatedItem: any,
 ) {
   updateInCache({
     cache,
@@ -127,14 +129,14 @@ export function updateItemInAllItems(
         ? updatedItem
         : item
     ),
-    query: itemById
+    query: itemByIdQuery
   })
 }
 
 export function updateItemInItemChildren (
   cache: DataProxy,
   parentId: string,
-  updatedItem: Object,
+  updatedItem: any
 ) {
   updateInCache({
     cache,
@@ -161,7 +163,7 @@ export function addParentToChild (
     variables: { condition: { childId } },
     dataKey: 'allItemRelationships',
     item: relationship,
-    query: parentsByChildId
+    query: itemParentsQuery
   })
 }
 
@@ -175,7 +177,7 @@ export function removeParentFromChild(
     variables: { condition: { childId } },
     dataKey: 'allItemRelationships',
     filter: (item: { id: string }) => item.id !== relationshipId,
-    query: parentsByChildId
+    query: itemParentsQuery
   })
 }
 

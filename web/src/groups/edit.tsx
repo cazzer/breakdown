@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
-import uuidv4 from 'uuid/v4'
 import { useMutation, useQuery } from 'react-apollo'
-import parentsByChildId from './item-parents.gql'
 import SearchDropdown from '../search/dropdown'
-import createRelationshipMutation from './create-relationship-mutation.gql'
-import deleteRelationshipMutation from './delete-relationship-mutation.gql'
+import {
+  createRelationshipMutation,
+  deleteRelationshipByIdMutation,
+  itemParentsQuery
+} from './queries'
 import {
   addParentToChild,
   removeParentFromChild
@@ -39,8 +40,8 @@ function EditGroupView(props: {
   isNew?: boolean,
   onDelete?: Function
 }) {
-  const classes = useStyles()
-  const [deleteRelationship, deleteResult] = useMutation(deleteRelationshipMutation)
+  const classes = useStyles({})
+  const [deleteRelationship, deleteResult] = useMutation(deleteRelationshipByIdMutation)
 
   const handleDelete = () => () => {
     if (props.onDelete) {
@@ -146,7 +147,7 @@ export function EditGroups(
     return <EditGroupsView groups={[]} />
   }
 
-  const { data, loading } = useQuery(parentsByChildId, {
+  const { data, loading } = useQuery(itemParentsQuery, {
     variables: {
       condition: {
         childId: props.childId

@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import React, { Component } from 'react'
-import { withStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
@@ -11,30 +11,31 @@ import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import { Link } from 'react-router-dom'
 
-const styles = theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  margin: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1)
-  },
-  withoutLabel: {
-    marginTop: theme.spacing(3),
-  },
-  textField: {
-    flexBasis: 200,
-  },
-  button: {
-    margin: theme.spacing(1)
-  },
-  input: {
-    display: 'none',
-  }
-})
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: 'flex',
+    },
+    margin: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1)
+    },
+    withoutLabel: {
+      marginTop: theme.spacing(3),
+    },
+    textField: {
+      flexBasis: 200,
+    },
+    button: {
+      margin: theme.spacing(1)
+    },
+    input: {
+      display: 'none',
+    }
+  })
+)
 
-class Login extends Component {
+export default class Register extends Component<any> {
   state = {
     password: '',
     showPassword: false,
@@ -68,7 +69,7 @@ class Login extends Component {
   }
 
   render() {
-    const { classes } = this.props
+    const classes = useStyles({})
     return (
       <Grid container>
         <Grid item xs={1} md={3} />
@@ -144,6 +145,3 @@ class Login extends Component {
     )
   }
 }
-
-
-export default withStyles(styles)(Login)

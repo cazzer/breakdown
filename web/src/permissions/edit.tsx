@@ -17,17 +17,19 @@ import get from 'lodash/get'
 import DeleteItem from '../delete-item'
 import SearchDropdown from '../search/dropdown'
 import { removePermissionFromItem, addPermissionToItem } from '../cache-handlers'
-import createPermissionMutation from './create-permission.gql'
-import deletePermissionMutation from './delete-permission.gql'
+import {
+  createPermissionMutation,
+  deletePermissionMutation
+} from './mutations'
 
 interface Permission {
   id: string
   role: string
-  timeCreated: dateType
+  timeCreated: Date
   userOrGroup: {
     id: string
     name: string
-  }
+  } | null
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -105,9 +107,11 @@ function EditPermission(props: {
 }
 
 function NewPermission(props) {
-  const [createPermission, result] = useMutation(createPermissionMutation)
+  const [createPermission] = useMutation(createPermissionMutation)
   const [permission, setPermission] = useState({
-    role: 'READER'
+    role: 'READER',
+    timeCreated: new Date(),
+    userOrGroup: null
   })
   const [disabled, setDisabled] = useState(false)
   const firstLetter = get(permission, ['userOrGroup', 'name'], '')
@@ -125,7 +129,7 @@ function NewPermission(props) {
   const handleChangeUserOrGroup = (userOrGroup: any) => {
     setPermission({
       ...permission,
-      timeCreated: Date.now(),
+      timeCreated: new Date(),
       userOrGroup
     })
   }
@@ -146,7 +150,9 @@ function NewPermission(props) {
         addPermissionToItem(proxy, result.data.createPermission.permission)
         setDisabled(false)
         setPermission({
-          role: 'READER'
+          role: 'READER',
+          timeCreated: new Date(),
+          userOrGroup: null
         })
       }
     })
@@ -211,7 +217,7 @@ export default function EditPermissions(props: {
   permissions: any[],
   public?: boolean
 }) {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <Grid container>

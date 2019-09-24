@@ -6,7 +6,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 
 import { removeItemFromAllItems, removeFromRecentItems } from './cache-handlers'
 
-class DeleteItem extends React.Component {
+class DeleteItem extends React.Component<any> {
   state = {
     disabled: false
   }
