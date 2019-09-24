@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import get from 'lodash/get'
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import { useQuery, useMutation } from 'react-apollo'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -55,50 +55,46 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-class EditItemForm extends Component<any, any> {
-  constructor(props) {
-    super(props)
+function EditItemForm(props) {
+  const [state, setState] = useState({
+    id: uuidv4(),
+    label: '',
+    value: '',
+    public: false,
+    ...props.item,
+    __typename: undefined
+  })
 
-    this.state = {
-      id: uuidv4(),
-      label: '',
-      value: '',
-      public: false,
-      ...props.item,
-      __typename: undefined
-    }
-  }
-
-  handleChange = name => event => {
-    this.setState({
+  const handleChange = name => event => {
+    setState({
       [name]: event.target.value,
     })
   }
 
-  handleParentUpdate = (parentId) => {
-    this.setState({
+  const handleParentUpdate = (parentId) => {
+    setState({
       parentId
     })
   }
 
-  handleSave = async () => {
+  const handleSave = async () => {
     const item = {
-      label: this.state.label,
-      public: this.state.public !== null
-        ? this.state.public
-        : this.props.item.public,
-      value: this.state.value,
+      label: state.label,
+      public: state.public !== null
+        ? state.public
+        : props.item.public,
+      value: state.value,
     }
 
-    this.setState({
+    setState({
       disabled: true
     })
 
-    await this.props.upsert({
+    await props.upsert({
       variables: {
-        itemInput: !this.props.isNew
+        itemInput: !props.isNew
           ? {
-            id: this.props.item.id,
+            id: props.item.id,
             itemPatch: item
           }
           : {
@@ -108,97 +104,95 @@ class EditItemForm extends Component<any, any> {
     })
   }
 
-  handleCheckPublic = event => {
-    this.setState({
+  const handleCheckPublic = event => {
+    setState({
       public: event.target.checked
     })
   }
 
-  render() {
-    const classes = useStyles({})
-    const permissions = get(this.props.item, ['permissionsByItemId', 'nodes'], [])
-      .map(permission => ({
-        id: permission.id,
-        itemId: permission.itemId,
-        role: permission.role,
-        timeCreated: permission.timeCreated,
-        userOrGroup: permission.usersAndGroupByUserOrGroupId
-      }))
+  const classes = useStyles({})
+  const permissions = get(props.item, ['permissionsByItemId', 'nodes'], [])
+    .map(permission => ({
+      id: permission.id,
+      itemId: permission.itemId,
+      role: permission.role,
+      timeCreated: permission.timeCreated,
+      userOrGroup: permission.usersAndGroupByUserOrGroupId
+    }))
 
-    return (
-      <Paper className={classes.root}>
-        <FormControl className={classes.content}>
-          <Grid container spacing={8}>
-            <Grid className={classes.labelContainer} item xs={12} md={6}>
-              <TextField
-                autoFocus
-                id="label"
-                label="label"
-                fullWidth
-                onChange={this.handleChange('label')}
-                type="text"
-                value={this.state.label}
-              />
-              <TextField
-                id="value"
-                label="body"
-                onChange={this.handleChange('value')}
-                fullWidth
-                multiline
-                rowsMax={12}
-                value={this.state.value || ''}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography className={classes.previewHeading} variant="h5">
-                Preview
-              </Typography>
-              <Paper className={classes.preview} elevation={1}>
-                <ValueView value={this.state.value} />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography className={classes.previewHeading} variant="h5">
-                Groups
-              </Typography>
-              <EditGroups childId={get(this.props, ['item', 'id'])} />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="h5">
-                Permissions
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={this.state.public !== null ? this.state.public : this.props.item.public}
-                    onChange={this.handleCheckPublic}
-                  />
-                }
-                label="Public"
-              />
-              <EditPermissions
-                itemId={this.props.item.id}
-                permissions={permissions}
-                public={this.props.item.public}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                color="primary"
-                disabled={this.state.disabled}
-                fullWidth
-                onClick={this.handleSave}
-                size="large"
-                variant="contained"
-              >
-                Save
-              </Button>
-            </Grid>
+  return (
+    <Paper className={classes.root}>
+      <FormControl className={classes.content}>
+        <Grid container spacing={8}>
+          <Grid className={classes.labelContainer} item xs={12} md={6}>
+            <TextField
+              autoFocus
+              id="label"
+              label="label"
+              fullWidth
+              onChange={handleChange('label')}
+              type="text"
+              value={state.label}
+            />
+            <TextField
+              id="value"
+              label="body"
+              onChange={handleChange('value')}
+              fullWidth
+              multiline
+              rowsMax={12}
+              value={state.value || ''}
+            />
           </Grid>
-        </FormControl>
-      </Paper>
-    )
-  }
+          <Grid item xs={12} md={6}>
+            <Typography className={classes.previewHeading} variant="h5">
+              Preview
+            </Typography>
+            <Paper className={classes.preview} elevation={1}>
+              <ValueView value={state.value} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography className={classes.previewHeading} variant="h5">
+              Groups
+            </Typography>
+            <EditGroups childId={get(props, ['item', 'id'])} />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h5">
+              Permissions
+            </Typography>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={state.public !== null ? state.public : props.item.public}
+                  onChange={handleCheckPublic}
+                />
+              }
+              label="Public"
+            />
+            <EditPermissions
+              itemId={props.item.id}
+              permissions={permissions}
+              public={props.item.public}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              color="primary"
+              disabled={state.disabled}
+              fullWidth
+              onClick={handleSave}
+              size="large"
+              variant="contained"
+            >
+              Save
+            </Button>
+          </Grid>
+        </Grid>
+      </FormControl>
+    </Paper>
+  )
 }
 
 export function CreateItem(props) {

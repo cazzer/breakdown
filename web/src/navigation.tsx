@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -54,73 +54,72 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export default class Navigation extends React.Component<any> {
-  state = {
+export default function Navigation() {
+  const [state, setState] = useState({
     anchorEl: null,
+  })
+
+  const handleMenu = event => {
+    setState({ anchorEl: event.currentTarget });
   }
 
-  handleMenu = event => {
-    this.setState({ anchorEl: event.currentTarget });
+  const handleClose = () => {
+    setState({ anchorEl: null });
   }
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  }
+  const classes = useStyles({})
+  const open = !!state.anchorEl
 
-  render() {
-    const classes = useStyles({})
-    const open = !!this.state.anchorEl
-    return (
-      <AppBar position="fixed">
-        <Toolbar>
-          <Link to="/view/focus" className={classes.flex}>
-            <Typography color="textPrimary" variant="h6">
-              Breakdown
-            </Typography>
-          </Link>
-          <div>
-            <IconButton
-              aria-owns={open ? 'menu-appbar' : null}
-              aria-haspopup="true"
-              onClick={this.handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <AuthContext.Consumer>
-              {({ clearCache, logout, user }) => (
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={this.state.anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
-                  onClose={this.handleClose}
-                >
-                  <ListSubheader className={classes.noOutline}>
-                    logged in as {user.username}
-                  </ListSubheader>
-                  <Divider />
-                  <MenuItem onClick={logout}>Logout</MenuItem>
-                  <MenuItem onClick={clearCache}>Clear Cache</MenuItem>
-                  <Divider />
-                  <ListSubheader className={classes.noOutline}>
-                    built {moment(process.env.BUILD_TIMESTAMP).calendar().toLowerCase()}
-                  </ListSubheader>
-                </Menu>
-              )}
-            </AuthContext.Consumer>
-          </div>
-        </Toolbar>
-      </AppBar>
-    )
-  }
+  return (
+    <AppBar position="fixed">
+      <Toolbar>
+        <Link to="/view/focus" className={classes.flex}>
+          <Typography color="textPrimary" variant="h6">
+            Breakdown
+          </Typography>
+        </Link>
+        <div>
+          <IconButton
+            aria-owns={open ? 'menu-appbar' : null}
+            aria-haspopup="true"
+            onClick={handleMenu}
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+          <AuthContext.Consumer>
+            {({ clearCache, logout, user }) => (
+              <Menu
+                id="menu-appbar"
+                anchorEl={state.anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
+              >
+                <ListSubheader className={classes.noOutline}>
+                  logged in as {user.username}
+                </ListSubheader>
+                <Divider />
+                <MenuItem onClick={logout}>Logout</MenuItem>
+                <MenuItem onClick={clearCache}>Clear Cache</MenuItem>
+                <Divider />
+                <ListSubheader className={classes.noOutline}>
+                  built {moment(process.env.BUILD_TIMESTAMP).calendar().toLowerCase()}
+                </ListSubheader>
+              </Menu>
+            )}
+          </AuthContext.Consumer>
+        </div>
+      </Toolbar>
+    </AppBar>
+  )
 }
 
 export const BelowNavigation = ({ children }) => {

@@ -131,9 +131,12 @@ class Search extends React.Component<any> {
 
   render() {
     const { classes } = this.props
-    const query = decodeURIComponent(
-      queryString.parse(this.props.location.search).q[0] || ''
-    )
+    const parsedQueryString = queryString.parse(this.props.location.search)
+    const q = typeof parsedQueryString.q === 'object'
+        ? parsedQueryString.q[0]
+        : parsedQueryString.q
+    const query = decodeURIComponent( q || '')
+
     return (
       <div className={classes.root}>
         <Grid container>

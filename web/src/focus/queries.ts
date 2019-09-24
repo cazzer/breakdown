@@ -46,6 +46,7 @@ query Item($id: UUID!) {
     ...fullItem
   }
 }
+${fullItem}
 `
 
 export const recentItemsQuery = gql`
@@ -59,6 +60,7 @@ query RecentItems {
     }
   }
 }
+${fullItem}
 `
 
 export const itemChildrenQuery = gql`
@@ -72,6 +74,7 @@ query ItemChildren($condition: ItemRelationshipCondition!) {
     }
   }
 }
+${fullItem}
 `
 
 export const createItemMutation = gql`
@@ -82,6 +85,7 @@ mutation createItemMutation($itemInput: CreateItemInput!) {
     }
   }
 }
+${fullItem}
 `
 
 export const updateItemMutation = gql`
@@ -92,4 +96,5 @@ mutation updateItem($itemInput: UpdateItemByIdInput!) {
     }
   }
 }
+${fullItem}
 `
