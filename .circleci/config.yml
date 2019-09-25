@@ -3,6 +3,30 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@0.1.13
 
+commands:
+  save_service_cache:
+    description: "Computes a checksum for a service directory"
+    parameters:
+      service_directory:
+        type: string
+    steps:
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-cache-{{ checksum "<< parameters.service-directory >>package.json" }}
+
+  restore_service_cache:
+    description: "Computes a checksum for a service directory"
+    parameters:
+      service_directory:
+        type: string
+    steps:
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ checksum "<< parameters.service-directory >>package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-cache
+
 aliases:
   - &workdir /home/circleci/build
 
@@ -26,102 +50,45 @@ aliases:
       aws-access-key-id: 'AWS_ACCESS_KEY_ID'
       aws-secret-access-key: 'AWS_SECRET_ACCESS_KEY'
 
-  - &save_cache
-    save_cache:
-      paths:
-        - node_modules
-      key: dependencies-cache-{{ checksum "yarn.lock" }}
-
-  - &restore_cache
-    restore_cache:
-      keys:
-        - dependencies-cache-{{ checksum "yarn.lock" }}
-        # fallback to using the latest cache if no exact match is found
-        - dependencies-cache
-
-  - &install_dependencies
-    run:
-      name: Install Dependencies
-      command: yarn install --frozen-lockfile
-
-  - &build_source
-    run:
-      name: Build src into lib
-      command: yarn build
-
-  - &run_tests
-    run:
-      name: Run unit tests
-      command: yarn test
-
-  - &remove_source
-    run:
-      name: Remove src files
-      command: rm -rf src
-
-  - &package_stack
-    run:
-      name: Package into packaged-template.yaml
-      command: yarn package
-
-  - &save_to_workspace
-    persist_to_workspace:
-      root: *workdir
-      paths:
-        - packaged-template.yaml
-        - package.json
-        - lib/*
-
-  - &mount_workspace
-    attach_workspace:
-      at: *workdir
-
   - &deploy
     run:
       name: Release everything
       command: yarn deploy
 
-  - &deploy_production_filters
+  - &deploy_integration_filters
     filters:
       branches:
-        only: master
+        only: integration
 
 jobs:
   build:
-    <<: *container_config
+    docker:
+      - image: circleci/node:10
+    working_directory: *workdir
 
     steps:
       - *checkout
       - *install_aws_cli
       - *configure_aws_cli
-      - *install_typescript_globally
-      - *restore_cache
-      - *install_dependencies
-      - *save_cache
-      - *build_source
-      - *run_tests
-      - *remove_source
-      - *package_stack
-      - *save_to_workspace
-
-  deploy:
-    <<: *container_config
-
-    steps:
-      - *install_aws_cli
-      - *configure_aws_cli
-      - *mount_workspace
-      - *deploy
+      - run:
+          command: cd web
+      - restore_service_cache:
+          service_directory: "web"
+      - save_service_cache:
+          service_directory: "web"
+      - run:
+          command: yarn
+      - run:
+          command: yarn build
+      - run:
+          command: rm -rf src
+      - run:
+          command: yarn package
 
 workflows:
   version: 2
-  build-and-deploy-production:
+  websocket-gateway:
     jobs:
       - build:
-          <<: *deploy_production_filters
+          <<: *deploy_integration_filters
           context: aws-production
-      - deploy:
-          <<: *deploy_production_filters
-          context: aws-production
-          requires:
-            - build
