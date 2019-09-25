@@ -68,8 +68,6 @@ jobs:
 
     steps:
       - *checkout
-      - *install_aws_cli
-      - *configure_aws_cli
       - run:
           command: cd web
       - restore_service_cache:
