@@ -72,12 +72,12 @@ jobs:
           command: cd ./web
       - restore_cache:
           keys:
-            - dependencies-cache-{{ checksum "package.json" }}
+            - dependencies-cache-{{ checksum "web/package.json" }}
             # fallback to using the latest cache if no exact match is found
             - dependencies-cache
       - restore_cache:
           keys:
-            - dependencies-cache-{{ checksum "package.json" }}
+            - dependencies-cache-{{ checksum "web/package.json" }}
             # fallback to using the latest cache if no exact match is found
             - dependencies-cache
       - run:
