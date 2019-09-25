@@ -91,4 +91,3 @@ workflows:
     jobs:
       - build:
           <<: *deploy_integration_filters
-          context: aws-production
