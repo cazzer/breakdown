@@ -75,11 +75,11 @@ jobs:
             - dependencies-cache-{{ checksum "web/package.json" }}
             # fallback to using the latest cache if no exact match is found
             - dependencies-cache
-      - restore_cache:
-          keys:
-            - dependencies-cache-{{ checksum "web/package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - dependencies-cache
+      - save_cache:
+          paths:
+            - web/node_modules
+          key:
+            dependencies-cache-{{ checksum "web/package.json" }}
       - run:
           command: yarn
       - run:
