@@ -71,9 +71,9 @@ jobs:
       - run:
           command: cd web
       - restore_service_cache:
-          service_directory: "web"
+          service_directory: "/"
       - save_service_cache:
-          service_directory: "web"
+          service_directory: "/"
       - run:
           command: yarn
       - run:
