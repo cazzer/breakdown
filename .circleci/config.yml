@@ -69,11 +69,17 @@ jobs:
     steps:
       - *checkout
       - run:
-          command: cd web
-      - restore_service_cache:
-          service_directory: "/"
-      - save_service_cache:
-          service_directory: "/"
+          command: cd ./web
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-cache
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-cache
       - run:
           command: yarn
       - run:
