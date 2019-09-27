@@ -33,7 +33,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:10
-    working_directory: ~/project/websocket-gateway
+    working_directory: ~/breakdown/services/websocket-gateway
 
     steps:
       - checkout:
