@@ -1,8 +1,8 @@
-import pick from 'lodash/pick'
+import * as pick from 'lodash/pick'
 import * as jwt from 'jsonwebtoken'
 import jwkToPem from 'jwk-to-pem'
 import * as moment from 'moment'
-import request from 'request'
+import * as request from 'request'
 
 import epsagon from './epsagon'
 
