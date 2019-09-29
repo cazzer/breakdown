@@ -22,6 +22,14 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: SentryDsn
 
+  UserPool:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: UserPool
+
+  UserPoolClient:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: UserPoolClient
+
 Globals:
   Function:
     Runtime: nodejs10.x
@@ -44,44 +52,6 @@ Resources:
                 - cloudformation.amazonaws.com
             Action:
               - sts:AssumeRole
-
-  AutomationPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: !Sub ${AWS::StackName}-policy
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Resource: "*"
-            Effect: Allow
-            Action:
-              - s3:*
-              - cloudformation:*
-              - iam:PassRole
-              - codebuild:*
-              - cloudwatch:*
-              - logs:*
-              - ec2:*
-              - iam:*
-              - lambda:*
-              - sns:*
-              - ssm:*
-              - rds:*
-              - ecr:*
-              - xray:*
-              - cloudfront:*
-              - route53:*
-              - apigateway:*
-              - cognito-idp:*
-              - codepipeline:*
-              - acm:*
-              - cognito-identity:*
-              - events:*
-              - dynamodb:*
-      Roles:
-        - !Ref PipelineRole
-        - !Ref CodebuildRole
-        - !Ref CloudFormationRole
 
   GatewayConnectFunction:
     Type: AWS::Serverless::Function
