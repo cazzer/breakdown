@@ -38,6 +38,10 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: SentryDsn
 
+  WebSocketUrl:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: WebSocketUrl
+
 Globals:
   Function:
     Runtime: nodejs10.x
@@ -285,14 +289,7 @@ Resources:
           - Name: CDN_DISTRIBUTION_ID
             Value: !Ref WebDistribution
           - Name: WEBSOCKET_URL
-            Value: !Join
-              - ''
-              - - 'wss://'
-                - !Ref WebSocketGateway
-                - '.execute-api.'
-                - !Ref AWS::Region
-                - '.amazonaws.com/'
-                - !Ref Stage
+            Value: !Ref WebSocketUrl
       ServiceRole: !Ref CodebuildRole
 
   Pipeline:
