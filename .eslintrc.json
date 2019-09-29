@@ -1,0 +1,3 @@
+{
+  "extends": "@volta/eslint-config-volta"
+}

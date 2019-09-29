@@ -1,0 +1,67 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@0.1.15
+
+aliases:
+  - &workdir /home/circleci/build
+
+  - &install_aws_cli aws-cli/install
+
+  - &install_typescript_globally
+    run:
+      name: Install Typescript globally
+      command: yarn global add typescript
+
+  - &configure_aws_cli
+    aws-cli/configure:
+      aws-region: 'AWS_REGION'
+      aws-access-key-id: 'AWS_ACCESS_KEY_ID'
+      aws-secret-access-key: 'AWS_SECRET_ACCESS_KEY'
+
+  - &deploy
+    run:
+      name: Release everything
+      command: yarn deploy
+
+  - &deploy_production_filters
+    filters:
+      branches:
+        only: master
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/breakdown/services/websocket-gateway
+
+    steps:
+      - checkout:
+          path: ~/breakdown
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-cache
+      - *install_aws_cli
+      - *configure_aws_cli
+      - run:
+          command: |
+            yarn
+            yarn build
+            rm -rf src
+            yarn package
+      - save_cache:
+          paths:
+            - node_modules
+          key:
+            dependencies-cache-{{ checksum "package.json" }}
+      - *deploy
+
+workflows:
+  version: 2
+  websocket-gateway:
+    jobs:
+      - build:
+          <<: *deploy_production_filters
+          context: aws-production

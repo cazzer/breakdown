@@ -1,8 +1,9 @@
 export interface ItemInterface {
-  id?: UUID
-  label: String,
-  parentId?: UUID,
-  value?: String,
+  id?: string
+  label: string
+  parentId?: string
+  value?: string
   userIsWriter?: boolean
-  relationshipId?: UUID
+  relationshipId?: string
+  timeUpdated: Date
 }

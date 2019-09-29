@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "graphql": "^14.2.1",
+    "lodash": "^4.17.15",
+    "pg": "^7.9.0",
+    "postgraphile": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.116",
+    "typescript": "^3.0.1"
+  },
+  "name": "postgraphile",
+  "version": "0.2.0",
+  "resolutions": {
+    "graphql": "14.2.1"
+  },
+  "scripts": {
+    "build": "rm -rf lib && tsc",
+    "type-check": "tsc --noEmit",
+    "sam-local": "sam local invoke PostgraphileFunction --event ../../assets/sample-api-request.json --docker-network breakdown_database",
+    "sam-local-debug": "sam local invoke PostgraphileFunction --event ../../assets/sample-api-request.json --docker-network breakdown_database -d 5858",
+    "sam-remote-debug": "source prod.env && echo $(cat prod.env) && sam local invoke PostgraphileFunction --event ../../assets/sample-api-request.json -d 5858"
+  }
+}
