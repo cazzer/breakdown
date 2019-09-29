@@ -312,6 +312,14 @@ Resources:
       FunctionName: !Ref GatewayConnectFunction
       Principal: apigateway.amazonaws.com
 
+  WebSocketDeployment2:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - ConnectRoute
+      - DisconnectRoute
+    Properties:
+      ApiId: !Ref WebSocketGateway
+
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
