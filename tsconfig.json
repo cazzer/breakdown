@@ -1,23 +1,15 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "lib": [
-        "dom",
-        "es2015",
-        "es2016"
-    ],
-    "jsx": "preserve",
-    "target": "es5",
-    "module": "es2015",
+    "esModuleInterop": true,
+    "target": "es6",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "removeComments": false,
-    "preserveConstEnums": true,
+    "outDir": "./lib/",
+    "skipLibCheck": true,
     "sourceMap": true
-  },
-  "exclude": [
-    "**/node_modules"
-  ]
+  }
 }

@@ -43,11 +43,6 @@ jobs:
             - dependencies-cache-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
             - dependencies-cache
-      - save_cache:
-          paths:
-            - node_modules
-          key:
-            dependencies-cache-{{ checksum "package.json" }}
       - *install_aws_cli
       - *configure_aws_cli
       - run:
@@ -56,6 +51,11 @@ jobs:
             yarn build
             rm -rf src
             yarn package
+      - save_cache:
+          paths:
+            - node_modules
+          key:
+            dependencies-cache-{{ checksum "package.json" }}
       - *deploy
 
 workflows:
