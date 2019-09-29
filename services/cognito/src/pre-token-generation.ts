@@ -1,5 +1,5 @@
-import db from '../database'
-import epsagon from '../epsagon'
+import db from './database'
+import epsagon from './epsagon'
 
 export default epsagon.lambdaWrapper(async (event) => {
   console.log(event)

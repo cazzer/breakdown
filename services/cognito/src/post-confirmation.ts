@@ -1,7 +1,7 @@
 import get from 'lodash/get'
 
-import db from '../database'
-import epsagon from '../epsagon'
+import db from './database'
+import epsagon from './epsagon'
 
 export default epsagon.lambdaWrapper(async (event, context) => {
   console.log(event)

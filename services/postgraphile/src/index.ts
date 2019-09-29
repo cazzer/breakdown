@@ -3,8 +3,8 @@ import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile'
 import { Pool } from 'pg'
 import { graphql } from 'graphql'
 
-import * as config from '../config'
-import epsagon from '../epsagon'
+import * as config from './config'
+import epsagon from './epsagon'
 
 const postgraphileSchemaPromise = createPostGraphileSchema(
   config.DB_ENDPOINT,
@@ -28,7 +28,7 @@ pool.on('error', error => {
 export default epsagon.lambdaWrapper(async (
   event: {
     keepWarm?: boolean,
-    requestContext: object,
+    requestContext: any,
     body: string
   }
 ) => {

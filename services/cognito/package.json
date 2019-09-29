@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "common": "0.2.0",
+    "epsagon": "^1.37.0",
+    "knex": "^0.19.4",
     "lodash": "^4.17.15"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import epsagon from '../epsagon'
+import epsagon from './epsagon'
 
 export default epsagon.lambdaWrapper(async (event) => {
   return {
