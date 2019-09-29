@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc ./src/*",
+    "build": "tsc",
     "deploy": "aws cloudformation deploy --template-file packaged-template.yaml --stack-name $npm_package_name --capabilities CAPABILITY_IAM",
     "package": "aws cloudformation package --template-file ./template.yaml --output-template-file packaged-template.yaml --s3-bucket breakdown-pipelinebucket-8cpfqxwenpqa"
   },
