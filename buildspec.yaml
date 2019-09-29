@@ -19,6 +19,9 @@ phases:
 artifacts:
   type: zip
   files:
-    - node_modules/**/*
-    - lib/**/*.js
+    - services/cognito/lib/**
+    - services/cognito/node_modules/**
+    - services/postgraphile/lib/**
+    - services/postgraphile/node_modules/**
+    - web/dist/**
     - $OUTPUT_TEMPLATE_FILE
