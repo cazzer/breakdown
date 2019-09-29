@@ -24,10 +24,10 @@ aliases:
       name: Release everything
       command: yarn deploy
 
-  - &deploy_integration_filters
+  - &deploy_production_filters
     filters:
       branches:
-        only: integration
+        only: master
 
 jobs:
   build:
@@ -63,5 +63,5 @@ workflows:
   websocket-gateway:
     jobs:
       - build:
-          <<: *deploy_integration_filters
+          <<: *deploy_production_filters
           context: aws-production
