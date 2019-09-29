@@ -104,7 +104,7 @@ Resources:
   PostgraphileFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/postgraphile.default
+      Handler: services/postgraphile/lib/index.default
       Role: !GetAtt PostgraphileFunctionRole.Arn
       Tracing: Active
       Environment:
@@ -485,7 +485,7 @@ Resources:
   PostConfirmationFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/cognito/post-confirmation.default
+      Handler: services/cognito/lib/post-confirmation.default
       Role: !GetAtt PostConfirmationFunctionRole.Arn
       Environment:
         Variables:
@@ -528,7 +528,7 @@ Resources:
   PreSignUpFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/cognito/pre-sign-up.default
+      Handler: services/cognito/lib/pre-sign-up.default
       Role: !GetAtt PreSignUpFunctionRole.Arn
 
   PreTokenGenerationFunctionPolicy:
@@ -564,7 +564,7 @@ Resources:
   PreTokenGenerationFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/cognito/pre-token-generation.default
+      Handler: services/cognito/lib/pre-token-generation.default
       Role: !GetAtt PreTokenGenerationFunctionRole.Arn
       Environment:
         Variables:
