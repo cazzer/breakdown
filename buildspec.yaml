@@ -10,7 +10,6 @@ phases:
       - yarn
   build:
     commands:
-      - cd web && yarn run build && cd ../
       - cd services/cognito && yarn run build && cd ../../
       - cd services/postgraphile && yarn run build && cd ../../
   post_build:
@@ -24,5 +23,4 @@ artifacts:
     - services/cognito/node_modules/**
     - services/postgraphile/lib/**
     - services/postgraphile/node_modules/**
-    - web/dist/**
     - $OUTPUT_TEMPLATE_FILE
