@@ -29,6 +29,20 @@ aliases:
       branches:
         only: master
 
+  - &restore-cache
+    restore_cache:
+      keys:
+        - dependencies-cache-{{ checksum "package.json" }}
+        # fallback to using the latest cache if no exact match is found
+        - dependencies-cache
+
+  - &save-cache
+    save_cache:
+      paths:
+        - node_modules
+      key:
+        dependencies-cache-{{ checksum "package.json" }}
+
 jobs:
   build:
     docker:
@@ -38,11 +52,7 @@ jobs:
     steps:
       - checkout:
           path: ~/breakdown
-      - restore_cache:
-          keys:
-            - dependencies-cache-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - dependencies-cache
+      - *restore-cache
       - *install_aws_cli
       - *configure_aws_cli
       - run:
@@ -51,17 +61,40 @@ jobs:
             yarn build
             rm -rf src
             yarn package
-      - save_cache:
-          paths:
-            - node_modules
-          key:
-            dependencies-cache-{{ checksum "package.json" }}
+      - *save-cache
       - *deploy
+
+  build-web:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/breakdown/web
+
+    steps:
+      - checkout:
+          path: ~/breakdown
+      - *restore-cache
+      - *install_aws_cli
+      - *configure_aws_cli
+      - run:
+          command: |
+            yarn
+            yarn build
+            rm -rf src
+            yarn package
+      - *save-cache
+      - run:
+          name: Deploy
+          command: |
+            aws cloudfront create-invalidation --distribution-id $CDN_DISTRIBUTION_ID --paths "/*"
+            aws s3 cp web/dist/ s3://$S3_BUCKET --recursive --acl public-read
 
 workflows:
   version: 2
   websocket-gateway:
     jobs:
       - build:
+          <<: *deploy_production_filters
+          context: aws-production
+      - build-web:
           <<: *deploy_production_filters
           context: aws-production

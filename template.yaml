@@ -255,43 +255,6 @@ Resources:
             Value: !Ref LambdaSourceBucket
       ServiceRole: !Ref CodebuildRole
 
-  CodebuildWebProject:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Artifacts:
-        Type: "CODEPIPELINE"
-      Source:
-        Type: "CODEPIPELINE"
-        BuildSpec: web-buildspec.yaml
-      Environment:
-        ComputeType: "BUILD_GENERAL1_MEDIUM"
-        Image: "aws/codebuild/nodejs:10.1.0"
-        Type: "LINUX_CONTAINER"
-        EnvironmentVariables:
-          - Name: OUTPUT_TEMPLATE_FILE
-            Value: 'packaged-template.yaml'
-          - Name: TEMPLATE_FILE
-            Value: 'template.yaml'
-          - Name: S3_BUCKET
-            Value: !Ref WebBucket
-          - Name: AWS_REGION
-            Value: !Ref AWS::Region
-          - Name: IDENTITY_POOL_ID
-            Value: !Ref IdentityPool
-          - Name: USER_POOL_ID
-            Value: !Ref UserPool
-          - Name: USER_POOL_WEB_CLIENT_ID
-            Value: !Ref UserPoolClient
-          - Name: GRAPHQL_ENDPOINT
-            Value: "https://api.thinstack.io/v1/graphql"
-          - Name: SENTRY_DSN
-            Value: !Ref SentryDsn
-          - Name: CDN_DISTRIBUTION_ID
-            Value: !Ref WebDistribution
-          - Name: WEBSOCKET_URL
-            Value: !Ref WebSocketUrl
-      ServiceRole: !Ref CodebuildRole
-
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -330,19 +293,6 @@ Resources:
                 - Name: Source
               OutputArtifacts:
                 - Name: LambdaBuild
-              RunOrder: 1
-            - Name: BuildWeb
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref CodebuildWebProject
-              InputArtifacts:
-                - Name: Source
-              OutputArtifacts:
-                - Name: WebBuild
               RunOrder: 1
         - Name: Deploy
           Actions:
