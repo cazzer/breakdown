@@ -10,11 +10,12 @@ phases:
       - yarn
   build:
     commands:
-      - yarn run build
+      - cd web && yarn run build && cd ../
+      - cd services/cognito && yarn run build && cd ../../
+      - cd services/postgraphile && yarn run build && cd ../../
   post_build:
     commands:
       - yarn install --production
-      - find ./node_modules/ -type f -exec touch -t 201601011200 '{}' \;
       - aws cloudformation package --template-file $TEMPLATE_FILE --s3-bucket $S3_BUCKET --output-template-file $OUTPUT_TEMPLATE_FILE
 artifacts:
   type: zip
