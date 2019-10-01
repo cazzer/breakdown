@@ -51,14 +51,6 @@ Resources:
         ApiRole: !Ref ApiRole
         UserPoolId: !Ref UserPool
 
-  ApiMapping:
-    Type: AWS::ApiGateway::BasePathMapping
-    Properties:
-      BasePath: v1
-      Stage: prod
-      DomainName: !Ref ApiDomain
-      RestApiId: !Ref Api
-
   PostgraphileFunctionPolicy:
     Type: AWS::IAM::Policy
     Properties:
