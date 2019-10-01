@@ -33,13 +33,12 @@ aliases:
     restore_cache:
       keys:
         - dependencies-cache-{{ checksum "package.json" }}
-        # fallback to using the latest cache if no exact match is found
-        - dependencies-cache
 
   - &save-cache
     save_cache:
       paths:
         - node_modules
+        - package.json
       key:
         dependencies-cache-{{ checksum "package.json" }}
 
@@ -47,6 +46,10 @@ aliases:
       - checkout:
           path: ~/breakdown
       - *restore-cache
+      - run:
+          name: This reckless command will cause an non-zero exit if the cache doens't exist.
+          command: |
+            ls node_modules
       - *install_aws_cli
       - *configure_aws_cli
       - run:
