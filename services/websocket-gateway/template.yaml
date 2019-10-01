@@ -56,7 +56,7 @@ Resources:
   GatewayConnectFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/websocket-gateway/connections.connect
+      Handler: lib/connections.connect
     Environment:
       Variables:
         CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
@@ -67,7 +67,7 @@ Resources:
   GatewayDisconnectFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/websocket-gateway/connections.disconnect
+      Handler: lib/connections.disconnect
     Environment:
       Variables:
         CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
@@ -78,7 +78,7 @@ Resources:
   GatewayGraphQLFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/websocket-gateway/connections.disconnect
+      Handler: lib/connections.disconnect
     Environment:
       Variables:
         CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
@@ -120,7 +120,7 @@ Resources:
   AuthorizerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/websocket-gateway/authorizer.default
+      Handler: lib/authorizer.default
       Role: !GetAtt AuthorizerFunctionRole.Arn
       Environment:
         Variables:

@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Name: breakdown/postgraphile
+Description: The GraphQL interface for Breakdown
+Parameters:
+  EpsagonToken:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: EpsagonToken
+
+  DatabaseName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DB_NAME
+
+  DatabaseHost:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DB_HOST
+
+  DatabaseUser:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DB_USER
+
+  DatabasePassword:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DatabasePassword
+
+  ApiDomain:
+    Type: String
+    Default: api.thinstack.io
+
+  UserPool:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: UserPool
+
+
+Globals:
+  Function:
+    Runtime: nodejs10.x
+    MemorySize: 192
+    Timeout: 10
+    Environment:
+      Variables:
+        EPSAGON_TOKEN: !Ref EpsagonToken
+
+Resources:
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      DefinitionUri: swagger.yaml
+      StageName: prod
+      Variables:
+        ApiHandler: !Ref PostgraphileFunction
+        ApiRole: !Ref ApiRole
+        UserPoolId: !Ref UserPool
+
+  ApiMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: v1
+      Stage: prod
+      DomainName: !Ref ApiDomain
+      RestApiId: !Ref Api
+
+  PostgraphileFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+              - "logs:*"
+              - "events:*"
+              - "rds:*"
+              - "ec2:*"
+      Roles:
+        - !Ref PostgraphileFunctionRole
+
+  PostgraphileFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  PostgraphileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lib/index.default
+      Role: !GetAtt PostgraphileFunctionRole.Arn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_NAME: !Ref DatabaseName
+          DB_PASSWORD: !Ref DatabasePassword
+          DB_SCHEMA: !Ref DatabaseName
+          DB_USER: !Ref DatabaseUser
+      Events:
+        KeepWarm:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Input: '{"requestContext": { "authorizer": {} }, "body": "{\"operationName\":\"introspect\",\"query\":\"query introspect { __schema { types { name fields { name } } } } \"}" }'
+
+  ApiPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource:
+              - !GetAtt PostgraphileFunction.Arn
+            Effect: "Allow"
+            Action:
+              - "lambda:InvokeFunction"
+      Roles:
+        - !Ref ApiRole
+
+  ApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                "apigateway.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"

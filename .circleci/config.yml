@@ -43,13 +43,7 @@ aliases:
       key:
         dependencies-cache-{{ checksum "package.json" }}
 
-jobs:
-  build:
-    docker:
-      - image: circleci/node:10
-    working_directory: ~/breakdown/services/websocket-gateway
-
-    steps:
+  - &node-build-steps
       - checkout:
           path: ~/breakdown
       - *restore-cache
@@ -63,6 +57,23 @@ jobs:
             yarn package
       - *save-cache
       - *deploy
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/breakdown/services/websocket-gateway
+
+    steps:
+      *node-build-steps
+
+  build-postgraphile:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/breakdown/services/postgraphile
+
+    steps:
+      *node-build-steps
 
   build-web:
     docker:
@@ -94,6 +105,14 @@ workflows:
       - build:
           <<: *deploy_production_filters
           context: aws-production
+  web:
+    jobs:
       - build-web:
+          <<: *deploy_production_filters
+          context: aws-production
+
+  postgraphile:
+    jobs:
+      - build-postgraphile:
           <<: *deploy_production_filters
           context: aws-production
