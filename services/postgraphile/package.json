@@ -19,6 +19,7 @@
     "type-check": "tsc --noEmit",
     "sam-local": "sam local invoke PostgraphileFunction --event ../../assets/sample-api-request.json --docker-network breakdown_database",
     "sam-local-debug": "sam local invoke PostgraphileFunction --event ../../assets/sample-api-request.json --docker-network breakdown_database -d 5858",
-    "sam-remote-debug": "source prod.env && echo $(cat prod.env) && sam local invoke PostgraphileFunction --event ../../assets/sample-api-request.json -d 5858"
+    "sam-remote-debug": "source prod.env && echo $(cat prod.env) && sam local invoke PostgraphileFunction --event ../../assets/sample-api-request.json -d 5858",
+    "package": "aws cloudformation package --template-file ./template.yaml --output-template-file packaged-template.yaml --s3-bucket breakdown-pipelinebucket-8cpfqxwenpqa"
   }
 }
