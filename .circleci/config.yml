@@ -46,10 +46,6 @@ aliases:
       - checkout:
           path: ~/breakdown
       - *restore-cache
-      - run:
-          name: This reckless command will cause an non-zero exit if the cache doens't exist.
-          command: |
-            ls node_modules
       - *install_aws_cli
       - *configure_aws_cli
       - run:
