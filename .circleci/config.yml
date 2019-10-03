@@ -146,26 +146,17 @@ workflows:
   websocket-gateway:
     jobs:
       - build-websocket-gateway:
-          docker:
-            - image: circleci/node:10
-          working_directory: ~/breakdown/services/websocket-gateway
           <<: *deploy_production_filters
           context: aws-production
 
   web:
     jobs:
       - build-web:
-          docker:
-            - image: circleci/node:10
-          working_directory: ~/breakdown/web
           <<: *deploy_production_filters
           context: aws-production
 
   postgraphile:
     jobs:
       - build-postgraphile:
-          docker:
-            - image: circleci/node:10
-          working_directory: ~/breakdown/services/postgraphile
           <<: *deploy_production_filters
           context: aws-production
