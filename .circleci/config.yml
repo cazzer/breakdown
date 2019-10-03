@@ -39,14 +39,12 @@ aliases:
   - &test-build-flag
       run:
         name: Exit if build flag exists
-        command: ls
-
-  - &save-build-flag
-    save_cache:
-      paths:
-        build.flag
-      key:
-        dependencies-cache-{{ checksum "package.json" }}
+        command: |
+          FILE=build.flag
+          if test -f "$FILE"; then
+              echo "$FILE exist"
+              circleci step halt
+          fi
 
   - &generate-lock-file
       run:
@@ -65,6 +63,17 @@ aliases:
         key: dependencies-cache-{{ checksum "yarn.lock" }}
 
 commands:
+  save-build-flag:
+    steps:
+      - run:
+          name: Create build flag
+          command: touch build.flag
+      - save_cache:
+          paths:
+            - build.flag
+          key:
+            dependencies-cache-{{ checksum "package.json" }}
+
   node-build-steps:
     steps:
       - checkout:
@@ -86,7 +95,7 @@ commands:
       - run:
           name: Deploy
           command: yarn deploy
-      - *save-build-flag
+      - save-build-flag
 
 jobs:
   build-websocket-gateway:
@@ -130,7 +139,7 @@ jobs:
           command: |
             aws cloudfront create-invalidation --distribution-id $CDN_DISTRIBUTION_ID --paths "/*"
             aws s3 cp dist/ s3://$WEB_S3_BUCKET --recursive --acl public-read
-      - *save-build-flag
+      - save-build-flag
 
 workflows:
   version: 2
