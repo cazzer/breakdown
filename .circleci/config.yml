@@ -4,7 +4,9 @@ orbs:
   aws-cli: circleci/aws-cli@0.1.15
 
 aliases:
-  - &workdir /home/circleci/build
+  - &docker-image
+    docker:
+      - image: circleci/node:10
 
   - &install_aws_cli aws-cli/install
 
@@ -21,7 +23,7 @@ aliases:
 
   - &deploy
     run:
-      name: Release everything
+      name: Deploy
       command: yarn deploy
 
   - &deploy_production_filters
@@ -29,42 +31,71 @@ aliases:
       branches:
         only: master
 
-  - &restore-cache
-    restore_cache:
-      keys:
-        - dependencies-cache-{{ checksum "package.json" }}
+  - &restore-build-flag
+      restore_cache:
+        keys:
+          - dependencies-cache-{{ checksum "package.json" }}
 
-  - &save-cache
+  - &test-build-flag
+      run:
+        name: Exit if build flag exists
+        command: ls
+
+  - &save-build-flag
     save_cache:
       paths:
-        - node_modules
-        - package.json
+        build.flag
       key:
         dependencies-cache-{{ checksum "package.json" }}
 
-  - &node-build-steps
+  - &generate-lock-file
+      run:
+        name: Generate lock file
+        command: yarn generate-lock-entry >> yarn.lock
+
+  - &restore-cache
+      restore_cache:
+        keys:
+          - dependencies-cache-{{ checksum "yarn.lock" }}
+
+  - &save-cache
+      save_cache:
+        paths:
+          - node_modules
+        key: dependencies-cache-{{ checksum "yarn.lock" }}
+
+commands:
+  node-build-steps:
+    steps:
       - checkout:
           path: ~/breakdown
+      - *restore-build-flag
+      - *test-build-flag
+      - *generate-lock-file
       - *restore-cache
       - *install_aws_cli
       - *configure_aws_cli
       - run:
+          name: Build
           command: |
             yarn
             yarn build
             rm -rf src
             yarn package
       - *save-cache
-      - *deploy
+      - run:
+          name: Deploy
+          command: yarn deploy
+      - *save-build-flag
 
 jobs:
-  build:
+  build-websocket-gateway:
     docker:
       - image: circleci/node:10
     working_directory: ~/breakdown/services/websocket-gateway
 
     steps:
-      *node-build-steps
+      - node-build-steps
 
   build-postgraphile:
     docker:
@@ -72,7 +103,7 @@ jobs:
     working_directory: ~/breakdown/services/postgraphile
 
     steps:
-      *node-build-steps
+      - node-build-steps
 
   build-web:
     docker:
@@ -82,6 +113,9 @@ jobs:
     steps:
       - checkout:
           path: ~/breakdown
+      - *restore-build-flag
+      - *test-build-flag
+      - *generate-lock-file
       - *restore-cache
       - *install_aws_cli
       - *configure_aws_cli
@@ -96,22 +130,33 @@ jobs:
           command: |
             aws cloudfront create-invalidation --distribution-id $CDN_DISTRIBUTION_ID --paths "/*"
             aws s3 cp dist/ s3://$WEB_S3_BUCKET --recursive --acl public-read
+      - *save-build-flag
 
 workflows:
   version: 2
   websocket-gateway:
     jobs:
       - build:
+          docker:
+            - image: circleci/node:10
+          working_directory: ~/breakdown/services/websocket-gateway
           <<: *deploy_production_filters
           context: aws-production
+
   web:
     jobs:
-      - build-web:
+      - build:
+          docker:
+            - image: circleci/node:10
+          working_directory: ~/breakdown/web
           <<: *deploy_production_filters
           context: aws-production
 
   postgraphile:
     jobs:
-      - build-postgraphile:
+      - build:
+          docker:
+            - image: circleci/node:10
+          working_directory: ~/breakdown/services/postgraphile
           <<: *deploy_production_filters
           context: aws-production
