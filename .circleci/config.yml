@@ -145,7 +145,7 @@ workflows:
   version: 2
   websocket-gateway:
     jobs:
-      - build:
+      - build-websocket-gateway:
           docker:
             - image: circleci/node:10
           working_directory: ~/breakdown/services/websocket-gateway
@@ -154,7 +154,7 @@ workflows:
 
   web:
     jobs:
-      - build:
+      - build-web:
           docker:
             - image: circleci/node:10
           working_directory: ~/breakdown/web
@@ -163,7 +163,7 @@ workflows:
 
   postgraphile:
     jobs:
-      - build:
+      - build-postgraphile:
           docker:
             - image: circleci/node:10
           working_directory: ~/breakdown/services/postgraphile
