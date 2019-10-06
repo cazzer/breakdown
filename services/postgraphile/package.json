@@ -3,7 +3,8 @@
     "graphql": "^14.2.1",
     "lodash": "^4.17.15",
     "pg": "^7.9.0",
-    "postgraphile": "^4.4.4"
+    "postgraphile": "^4.4.4",
+    "postgraphile-core": "^4.4.5"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.116",
