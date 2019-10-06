@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.524.0",
-    "epsagon": "^1.33.2",
+    "epsagon": "^1.37.0",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.1",
     "lodash": "^4.17.15",
