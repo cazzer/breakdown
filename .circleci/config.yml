@@ -43,7 +43,7 @@ aliases:
           FILE=build.flag
           if test -f "$FILE"; then
               echo "$FILE exist"
-              exit 1
+              circleci step halt
           fi
 
   - &generate-lock-file
