@@ -10,7 +10,7 @@
     "typescript": "^3.0.1"
   },
   "name": "postgraphile",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "resolutions": {
     "graphql": "14.2.1"
   },
