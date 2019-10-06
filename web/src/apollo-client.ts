@@ -41,7 +41,7 @@ export default new ApolloClient({
     }),
     authLink,
     new HttpLink({
-      uri: process.env.GRAPHQL_ENDPOINT
+      uri: process.env.GRAPHQL_ENDPOINT,
     })
   ]),
   cache,

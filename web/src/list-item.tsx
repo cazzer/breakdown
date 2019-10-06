@@ -78,7 +78,7 @@ const ItemEdit = (props: {
   disabled: boolean
   item: ItemInterface,
   onSaveClick: Function,
-  onCancelClick: Function
+  onCancelClick: any
 }) => {
   const [ label, setLabel ] = useState(props.item.label || '')
   const [ value, setValue ] = useState(props.item.value || '')

@@ -90,6 +90,7 @@ commands:
             yarn
             yarn build
             rm -rf src
+            yarn --production
             yarn package
       - *save-cache
       - run:

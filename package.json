@@ -1,8 +1,10 @@
 {
   "name": "breakdown",
-  "workspaces": [
-    "services/**",
-    "web"
-  ],
+  "workspaces": {
+    "packages": [
+      "services/**",
+      "web"
+    ]
+  },
   "private": true
 }
