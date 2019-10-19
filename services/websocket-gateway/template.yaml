@@ -74,7 +74,7 @@ Resources:
   GatewayGraphQLFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/connections.disconnect
+      Handler: lib/connections.graphql
       Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref ConnectionsTable
@@ -236,7 +236,7 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri:
         Fn::Sub:
-            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayConnectFunction.Arn}/invocations
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GatewayGraphQLFunction.Arn}/invocations
 
   GraphqlPermission:
     Type: AWS::Lambda::Permission
@@ -244,7 +244,7 @@ Resources:
       - WebSocketGateway
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref GatewayConnectFunction
+      FunctionName: !Ref GatewayGraphQLFunction
       Principal: apigateway.amazonaws.com
 
   WebSocketDeployment2:
