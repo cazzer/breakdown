@@ -59,25 +59,25 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/connections.connect
-    Policies:
-    - DynamoDBCrudPolicy:
-        TableName: !Ref ConnectionsTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref ConnectionsTable
 
   GatewayDisconnectFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/connections.disconnect
-    Policies:
-    - DynamoDBCrudPolicy:
-      TableName: !Ref ConnectionsTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref ConnectionsTable
 
   GatewayGraphQLFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/connections.disconnect
-    Policies:
-    - DynamoDBCrudPolicy:
-      TableName: !Ref ConnectionsTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref ConnectionsTable
 
 # WebSocket API ----------------------------------------------------------------
   WebSocketGateway:
