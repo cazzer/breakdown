@@ -16,6 +16,7 @@
     "type-check": "tsc --noEmit"
   },
   "sideEffects": false,
+  "private": true,
   "workspaces": {
     "nohoist": [
       "**"
