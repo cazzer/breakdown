@@ -38,6 +38,7 @@ Globals:
     Environment:
       Variables:
         EPSAGON_TOKEN: !Ref EpsagonToken
+        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
 
 Resources:
   CloudFormationRole:
@@ -53,13 +54,11 @@ Resources:
             Action:
               - sts:AssumeRole
 
+# WebSocket Endpoints ----------------------------------------------------------
   GatewayConnectFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/connections.connect
-    Environment:
-      Variables:
-        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
     Policies:
     - DynamoDBCrudPolicy:
       TableName: !Ref ConnectionsTable
@@ -68,9 +67,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/connections.disconnect
-    Environment:
-      Variables:
-        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
     Policies:
     - DynamoDBCrudPolicy:
       TableName: !Ref ConnectionsTable
@@ -79,9 +75,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lib/connections.disconnect
-    Environment:
-      Variables:
-        CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
     Policies:
     - DynamoDBCrudPolicy:
       TableName: !Ref ConnectionsTable
