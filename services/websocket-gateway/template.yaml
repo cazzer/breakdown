@@ -61,7 +61,7 @@ Resources:
       Handler: lib/connections.connect
     Policies:
     - DynamoDBCrudPolicy:
-      TableName: !Ref ConnectionsTable
+        TableName: !Ref ConnectionsTable
 
   GatewayDisconnectFunction:
     Type: AWS::Serverless::Function
