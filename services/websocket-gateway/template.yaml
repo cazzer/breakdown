@@ -86,46 +86,25 @@ Resources:
     - DynamoDBCrudPolicy:
       TableName: !Ref ConnectionsTable
 
-  AuthorizerFunctionPolicy:
-    Type: AWS::IAM::Policy
+# WebSocket API ----------------------------------------------------------------
+  WebSocketGateway:
+    Type: AWS::ApiGatewayV2::Api
     Properties:
-      PolicyName: !Sub ${AWS::StackName}-gateway-authorizer
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Resource: "*"
-            Effect: Allow
-            Action:
-              - "logs:*"
-              - "lambda:*"
-      Roles:
-        - !Ref AuthorizerFunctionRole
+      Name: WebSocketGateway
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: $request.body.action
 
-  AuthorizerFunctionRole:
-    Type: AWS::IAM::Role
+# Authorizer -------------------------------------------------------------------
+  WebSocketAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
     Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                - "lambda.amazonaws.com"
-                - "apigateway.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
-
-  AuthorizerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: lib/authorizer.default
-      Role: !GetAtt AuthorizerFunctionRole.Arn
-      Environment:
-        Variables:
-          USER_POOL_ID: !Ref UserPool
-          APP_CLIENT_ID: !Ref UserPoolClient
+      ApiId: !Ref WebSocketGateway
+      AuthorizerCredentialsArn: !GetAtt AuthorizerFunctionRole.Arn
+      AuthorizerType: REQUEST
+      AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations
+      IdentitySource:
+        - route.request.querystring.token
+      Name: CognitoAuthorizer
 
   AuthorizerPermission:
     Type: AWS::Lambda::Permission
@@ -142,40 +121,32 @@ Resources:
           - "/stages/"
           - !Ref Stage
 
-  WebSocketGateway:
-    Type: AWS::ApiGatewayV2::Api
+  AuthorizerFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      Name: WebSocketGateway
-      ProtocolType: WEBSOCKET
-      RouteSelectionExpression: $request.body.action
+      Handler: lib/authorizer.default
+      Role: !GetAtt AuthorizerFunctionRole.Arn
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+          APP_CLIENT_ID: !Ref UserPoolClient
 
-  WebSocketAuthorizer:
-    Type: AWS::ApiGatewayV2::Authorizer
-    Properties:
-      ApiId: !Ref WebSocketGateway
-      AuthorizerType: REQUEST
-      AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations
-      IdentitySource:
-        - route.request.querystring.token
-      Name: CognitoAuthorizer
-
-  AuthorizerPolicy:
+  AuthorizerFunctionPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: !Sub ${AWS::StackName}-authorizer
+      PolicyName: !Sub ${AWS::StackName}-gateway-authorizer
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Effect: Allow
+          - Resource: "*"
+            Effect: Allow
             Action:
-              - "execute-api:ManageConnections"
-            Resource:
-              - "arn:aws:execute-api:*:*:**/@connections/*"
+              - "logs:*"
+              - "lambda:InvokeFunction"
       Roles:
-        - !Ref AuthorizerRole
         - !Ref AuthorizerFunctionRole
 
-  AuthorizerRole:
+  AuthorizerFunctionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -184,7 +155,8 @@ Resources:
           - Effect: "Allow"
             Principal:
               Service:
-                "apigateway.amazonaws.com"
+                - "lambda.amazonaws.com"
+                - "apigateway.amazonaws.com"
             Action:
               - "sts:AssumeRole"
 
