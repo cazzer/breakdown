@@ -10,6 +10,10 @@ Parameters:
     Type: String
     Default: breakdown
 
+  DatabaseHost:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DB_HOST
+
   DatabaseUser:
     Type: String
     Default: postgres
@@ -78,6 +82,13 @@ Resources:
       Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref ConnectionsTable
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_NAME: !Ref DatabaseName
+          DB_PASSWORD: !Ref DatabasePassword
+          DB_SCHEMA: !Ref DatabaseName
+          DB_USER: !Ref DatabaseUser
 
 # WebSocket API ----------------------------------------------------------------
   WebSocketGateway:
