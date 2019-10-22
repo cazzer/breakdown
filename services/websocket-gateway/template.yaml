@@ -74,7 +74,7 @@ Resources:
   GatewayGraphQLFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lib/connections.graphql
+      Handler: lib/graphql.default
       Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref ConnectionsTable
