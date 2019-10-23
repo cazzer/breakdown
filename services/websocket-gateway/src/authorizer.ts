@@ -38,7 +38,10 @@ function generatePolicy(principalId: string, effect: 'Allow' | 'Deny', resource:
   return {
     principalId,
     context: {
-      userId: principalId, // The authorized userId that will be passed to the event object on each request
+      userId: principalId,
+      // the follow are the claims used by the /graphql handler
+      sub: principalId,
+      roles: ''
     },
     policyDocument: {
       Version: '2012-10-17',
