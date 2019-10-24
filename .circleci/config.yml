@@ -109,7 +109,7 @@ jobs:
       - run:
           name: Create new deployment
           command: |
-            aws apigateway create-deployment --rest-api-id eqtdu2n3u0 --stage-name prod --description "Circle initiated deployment"
+            aws apigatewayv2 create-deployment --api-id eqtdu2n3u0 --stage-name prod --description "Circle initiated deployment"
 
   build-postgraphile:
     docker:
