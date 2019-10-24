@@ -40,8 +40,10 @@ function generatePolicy(principalId: string, effect: 'Allow' | 'Deny', resource:
     context: {
       userId: principalId,
       // the follow are the claims used by the /graphql handler
-      sub: principalId,
-      roles: ''
+      claims: {
+        sub: principalId,
+        roles: ''
+      }
     },
     policyDocument: {
       Version: '2012-10-17',
