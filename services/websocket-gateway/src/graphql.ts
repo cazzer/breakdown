@@ -32,7 +32,7 @@ export default epsagon.lambdaWrapper(async (
     body: string
   }
 ) => {
-  console.log(event.requestContext.authorizer)
+  console.log('Authorizer:\n', event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
   const roles = get(event, 'requestContext.authorizer.claims.roles', userId)
   const graphqlInput = JSON.parse(event.body)
