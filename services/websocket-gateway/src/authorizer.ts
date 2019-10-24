@@ -24,7 +24,6 @@ interface APIGatewayWebsocketEvent {
     connectionId: string;
     authorizer: {
       userId: string;
-      claims: any
     };
   };
 }
@@ -41,10 +40,8 @@ function generatePolicy(principalId: string, effect: 'Allow' | 'Deny', resource:
     context: {
       userId: principalId,
       // the follow are the claims used by the /graphql handler
-      claims: {
-        sub: principalId,
-        roles: ''
-      }
+      sub: principalId,
+      roles: ''
     },
     policyDocument: {
       Version: '2012-10-17',
