@@ -24,6 +24,7 @@ interface APIGatewayWebsocketEvent {
     connectionId: string;
     authorizer: {
       userId: string;
+      claims: any
     };
   };
 }
