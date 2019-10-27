@@ -1,6 +1,6 @@
 {
   "name": "websocket-gateway",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -21,6 +21,9 @@
     "request": "^2.88.0"
   },
   "private": true,
+  "resolutions": {
+    "graphql": "14.2.1"
+  },
   "workspaces": {
     "nohoist": [
       "**"
