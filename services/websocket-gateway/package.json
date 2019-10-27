@@ -1,6 +1,6 @@
 {
   "name": "websocket-gateway",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "aws-sdk": "^2.556.0",
     "epsagon": "^1.37.0",
+    "graphql": "^14.5.8",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.1",
     "lodash": "^4.17.15",
