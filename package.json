@@ -1,5 +1,8 @@
 {
   "name": "breakdown",
+  "resolutions": {
+    "graphql": "14.2.1"
+  },
   "workspaces": [
     "services/**",
     "web"
