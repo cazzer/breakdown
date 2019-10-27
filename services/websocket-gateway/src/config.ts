@@ -11,4 +11,4 @@ export const DB_ENDPOINT = encodeURI(
 
 export const EPSAGON_TOKEN = process.env.EPSAGON_TOKEN
 export const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT
-export const WEBSOCKET_URL = 'wss://eqtdu2n3u0.execute-api.us-west-2.amazonaws.com/prod'
+export const WEBSOCKET_URL = 'eqtdu2n3u0.execute-api.us-west-2.amazonaws.com/prod'
