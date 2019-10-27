@@ -1,3 +1,4 @@
+import { ApiGatewayManagementApi } from 'aws-sdk'
 import get from 'lodash/get'
 import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile'
 import { Pool } from 'pg'
@@ -5,6 +6,11 @@ import { graphql } from 'graphql'
 
 import * as config from './config'
 import epsagon from './epsagon'
+
+const apigwManagementApi = new ApiGatewayManagementApi({
+  apiVersion: '2018-11-29',
+  endpoint: config.WEBSOCKET_URL,
+})
 
 const postgraphileSchemaPromise = createPostGraphileSchema(
   config.DB_ENDPOINT,
@@ -35,6 +41,7 @@ export default epsagon.lambdaWrapper(async (
   console.log('Authorizer:\n', event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.sub')
   const roles = get(event, 'requestContext.authorizer.roles', userId)
+  const connectionId = event.requestContext.connectionId
   const graphqlInput = JSON.parse(event.body).body
   console.log(`GraphQL query:\n`, graphqlInput)
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
@@ -77,10 +84,10 @@ export default epsagon.lambdaWrapper(async (
     )
     console.log(`Finished ${graphqlInput.operationName} for ${userId}`)
     console.timeEnd(`${userId}/${graphqlInput.operationName}`)
-    return {
-      body: JSON.stringify(result),
-      statusCode: 200
-    }
+    return await apigwManagementApi.postToConnection({
+      ConnectionId: connectionId,
+      Data: JSON.stringify(result),
+    }).promise()
   } catch (error) {
     console.error(error)
     console.timeEnd(`${userId}/${graphqlInput.operationName}`)
