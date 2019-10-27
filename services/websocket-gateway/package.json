@@ -1,6 +1,6 @@
 {
   "name": "websocket-gateway",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -18,7 +18,8 @@
     "moment": "^2.24.0",
     "pg": "^7.12.1",
     "postgraphile": "^4.4.4",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "serialize-error": "^5.0.0"
   },
   "private": true,
   "resolutions": {

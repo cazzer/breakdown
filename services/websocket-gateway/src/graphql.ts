@@ -3,6 +3,7 @@ import get from 'lodash/get'
 import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile'
 import { Pool } from 'pg'
 import { graphql } from 'graphql'
+import { serializeError } from 'serialize-error'
 
 import * as config from './config'
 import epsagon from './epsagon'
@@ -83,12 +84,13 @@ export default epsagon.lambdaWrapper(async (
       }
     )
     console.log(`Finished ${graphqlInput.operationName} for ${userId}`, result)
-    const stringResult = JSON.stringify(result)
-    console.log('String result:\n', stringResult)
     console.timeEnd(`${userId}/${graphqlInput.operationName}`)
     return await apigwManagementApi.postToConnection({
       ConnectionId: connectionId,
-      Data: JSON.stringify(stringResult),
+      Data: JSON.stringify({
+        ...result,
+        errors: result.errors.map(serializeError)
+      }),
     }).promise()
   } catch (error) {
     console.error(error)
