@@ -82,6 +82,12 @@ Resources:
       Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref ConnectionsTable
+      - Statement:
+        - Effect: Allow
+          Action:
+          - 'execute-api:ManageConnections'
+          Resource:
+          - !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketGateway}/*'
       Environment:
         Variables:
           DB_HOST: !Ref DatabaseHost
