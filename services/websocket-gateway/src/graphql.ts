@@ -55,7 +55,7 @@ export default epsagon.lambdaWrapper(async (
     postgraphileSchema = await postgraphileSchemaPromise
   } catch (error) {
     console.error('Rebuilding schema after connection loss')
-    postgraphileSchema = createPostGraphileSchema(
+    postgraphileSchema = await createPostGraphileSchema(
       config.DB_ENDPOINT,
       config.DB_SCHEMA
     )
