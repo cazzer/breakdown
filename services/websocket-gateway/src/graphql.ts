@@ -42,7 +42,7 @@ export default epsagon.lambdaWrapper(async (
   console.log('Authorizer:\n', event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.sub')
   const roles = [
-    ...get(event, 'requestContext.authorizer.claims.roles').split(','),
+    ...get(event, 'requestContext.authorizer.roles', '').split(','),
     userId
   ]
   const connectionId = event.requestContext.connectionId
