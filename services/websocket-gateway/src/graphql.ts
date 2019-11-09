@@ -71,7 +71,7 @@ export default epsagon.lambdaWrapper(async (
         pgPool: pool,
         pgDefaultRole: 'application_user',
         pgSettings: {
-          'jwt.claims.roles': roles
+          'jwt.claims.roles': roles.join(',')
         }
       },
       async (context: object) => {
