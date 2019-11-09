@@ -92,11 +92,12 @@ export default epsagon.lambdaWrapper(async (
     )
     console.log(`Finished ${graphqlInput.operationName} for ${userId}`, result)
     console.timeEnd(`${userId}/${graphqlInput.operationName}`)
+    console.log('Result:\n', result)
     return await apigwManagementApi.postToConnection({
       ConnectionId: connectionId,
       Data: JSON.stringify({
         ...result,
-        errors: result.errors.map(serializeError)
+        errors: result.errors && result.errors.map(serializeError)
       }),
     }).promise()
   } catch (error) {
