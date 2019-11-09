@@ -44,12 +44,13 @@ export default epsagon.lambdaWrapper(async (
   const roles = [
     ...get(event, 'requestContext.authorizer.roles', '').split(','),
     userId
-  ]
+  ].join(',')
   const connectionId = event.requestContext.connectionId
   const graphqlInput = JSON.parse(event.body).body
   console.log(`GraphQL query:\n`, graphqlInput)
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
   console.time(`${userId}/${graphqlInput.operationName}`)
+  console.log('Roles:\n', roles)
 
   let postgraphileSchema: any
 
@@ -71,7 +72,7 @@ export default epsagon.lambdaWrapper(async (
         pgPool: pool,
         pgDefaultRole: 'application_user',
         pgSettings: {
-          'jwt.claims.roles': roles.join(',')
+          'jwt.claims.roles': roles
         }
       },
       async (context: object) => {
