@@ -1,6 +1,6 @@
 {
   "name": "websocket-gateway",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "main": "index.js",
   "license": "MIT",
   "scripts": {

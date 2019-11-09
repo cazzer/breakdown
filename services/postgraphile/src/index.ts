@@ -34,12 +34,15 @@ export default epsagon.lambdaWrapper(async (
 ) => {
   console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
-  const roles = get(event, 'requestContext.authorizer.claims.roles', userId)
+  const roles = [
+    ...get(event, 'requestContext.authorizer.claims.roles').split(','),
+    userId
+  ]
   const graphqlInput = JSON.parse(event.body)
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
   console.time(`${userId}/${graphqlInput.operationName}`)
 
-  let postgraphileSchema
+  let postgraphileSchema: any
 
   console.log('Awaiting schema')
   try {

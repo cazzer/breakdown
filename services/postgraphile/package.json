@@ -11,7 +11,7 @@
     "typescript": "^3.0.1"
   },
   "name": "postgraphile",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "resolutions": {
     "graphql": "14.2.1"
   },
