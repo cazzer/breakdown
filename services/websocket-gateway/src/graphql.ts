@@ -49,7 +49,10 @@ export default epsagon.lambdaWrapper(async (
     userId
   ].join(',')
   const connectionId = event.requestContext.connectionId
-  const graphqlInput = JSON.parse(event.body).body
+  const {
+    body: graphqlInput,
+    __requestId
+  } = JSON.parse(event.body)
   console.log(`GraphQL query:\n`, graphqlInput)
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
   console.time(`${userId}/${graphqlInput.operationName}`)
@@ -97,7 +100,8 @@ export default epsagon.lambdaWrapper(async (
       ConnectionId: connectionId,
       Data: JSON.stringify({
         ...result,
-        errors: result.errors && result.errors.map(serializeError)
+        errors: result.errors && result.errors.map(serializeError),
+        __requestId
       }),
     }).promise()
   } catch (error) {
