@@ -99,7 +99,7 @@ export default epsagon.lambdaWrapper(async (
     return await apigwManagementApi.postToConnection({
       ConnectionId: connectionId,
       Data: JSON.stringify({
-        data: result,
+        ...result,
         errors: result.errors && result.errors.map(serializeError),
         __requestId
       }),
