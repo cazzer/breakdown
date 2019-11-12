@@ -35,9 +35,12 @@ export default epsagon.lambdaWrapper(async (
   console.log(event.requestContext.authorizer)
   const userId = get(event, 'requestContext.authorizer.claims.sub')
   const roles = [
-    ...get(event, 'requestContext.authorizer.claims.roles').split(','),
+    ...get(event, 'requestContext.authorizer.roles', '')
+      .split(',')
+      // remove empty strings
+      .filter(uuid => uuid),
     userId
-  ]
+  ].join(',')
   const graphqlInput = JSON.parse(event.body)
   console.log(`Starting ${graphqlInput.operationName} for ${userId}`)
   console.time(`${userId}/${graphqlInput.operationName}`)
