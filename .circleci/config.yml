@@ -77,7 +77,7 @@ commands:
   node-build-steps:
     steps:
       - checkout:
-          path: ~/breakdown
+          path: ~/
       - *restore-build-flag
       - *test-build-flag
       - *generate-lock-file
@@ -126,7 +126,7 @@ jobs:
 
     steps:
       - checkout:
-          path: ~/breakdown
+          path: ~/
       - *restore-build-flag
       - *test-build-flag
       - *generate-lock-file
