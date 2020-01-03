@@ -43,7 +43,11 @@ export default function createClient(token: string) {
           )
         if (networkError) console.log(`[Network error]: ${networkError}`)
       }),
-      createWebSocketLink(socket),
+      // createWebSocketLink(socket),
+      authLink,
+      new HttpLink({
+        uri: process.env.GRAPHQL_ENDPOINT,
+      })
     ]),
     cache,
     defaultOptions: {

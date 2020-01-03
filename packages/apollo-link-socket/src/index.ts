@@ -18,7 +18,7 @@ export default function createWebSocketLink(
 
   socket.onmessage = (message) => {
     const response = JSON.parse(message.data)
-    const observer = requestCache[response.__requestId]
+    const { observer } = requestCache[response.__requestId]
 
     if (!observer) {
         return
@@ -44,7 +44,10 @@ export default function createWebSocketLink(
             },
             __requestId
           }))
-          requestCache[__requestId] = observer
+          requestCache[__requestId] = {
+            observer,
+            subscription: false
+          }
         })
         .catch(error => {
           console.error(`Socket Error:::::::\n`, error)

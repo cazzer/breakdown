@@ -8,11 +8,18 @@ import createWebSocketLink from 'apollo-link-socket'
 
 const PORT = 7999
 
+let client
 let server
+let socket
 
 beforeEach(() => {
   server = new WebSocket.Server({
     port: PORT
+  })
+  socket = new WebSocket(`http://localhost:${PORT}`)
+  client = new ApolloClient({
+    cache: new InMemoryCache(),
+    link: createWebSocketLink(socket)
   })
 
   server.on('connection', (socket) => {
@@ -31,35 +38,46 @@ beforeEach(() => {
       }))
     })
   })
+
+  server.on('error', (error) => {
+    console.error(error)
+  })
 })
 
-afterEach(() => {
-  server.close()
+afterEach((done) => {
+  server.close(done)
 })
 
 describe('Apollo WebSocketLink', () => {
-  it('Connects to a WebSocket', () => {
-    const socket = new WebSocket(`http://localhost:${PORT}`)
-    createWebSocketLink(socket)
-
-    server.on('connection', () => {
-      expect(true)
-    })
-  })
-
   it('Resolves a request by ID', async () => {
-    expect.assertions(1)
+    expect.assertions(3)
 
-    const socket = new WebSocket(`http://localhost:${PORT}`)
-    const client = new ApolloClient({
-      cache: new InMemoryCache(),
-      link: createWebSocketLink(socket)
-    })
-
-    await client.query({
+    const result = await client.query({
       query: gql`query TestQuery { query { id } }`
     })
 
-    expect(true).toBe(true)
+    expect(result).toHaveProperty('data')
+    expect(result).toHaveProperty('loading')
+    expect(result.loading).toBe(false)
+  })
+
+  it('Resolves a request multiple times for a subscription', async () => {
+    expect.assertions(2)
+
+    debugger
+    client
+      .subscribe({
+        query: gql`subscription TestSubscription { query { id } }`
+      })
+      .subscribe({
+        next(data) {
+          console.log(data)
+          expect(true).toBe(true)
+        },
+        error(error) {
+          console.error(error)
+          fail(error)
+        }
+      })
   })
 })

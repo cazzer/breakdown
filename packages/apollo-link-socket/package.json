@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc --build tsconfig.json",
+    "debugTests": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test": "yarn jest --verbose"
   },
   "dependencies": {
