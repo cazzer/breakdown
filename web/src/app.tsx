@@ -13,7 +13,7 @@ import WebSocket from 'react-websocket'
 
 import Login from './auth/login'
 import Register from './auth/register'
-import client from './apollo-client'
+import createClient from './apollo-client'
 import Search from './search/view'
 import SplitView from './views/split'
 import { FocusWrapperView } from './focus/view'
@@ -77,27 +77,27 @@ const WebSocketProvider = (props) => {
   )
 }
 
-class ConnectedApp extends React.Component {
-  render() {
-    return (
-      <BrowserRouter>
-        <ApolloProvider client={client}>
-          <Navigation />
-          <BelowNavigation>
-            <Switch>
-              <Route path="/home/:parentId/:childId?" component={SplitView} />
-              <Route path="/view/focus/:itemId/edit" component={EditItemView} />
-              <Route path="/view/focus/:itemId" component={FocusWrapperView} />
-              <Route path="/view/focus" component={RecentItemList} />
-              <Route path="/add" component={CreateItemView} />
-              <Route path="/search" component={Search} />
-              <Route component={RedirectFocus} />
-            </Switch>
-          </BelowNavigation>
-        </ApolloProvider>
-      </BrowserRouter>
-    )
-  }
+function ConnectedApp({ token }) {
+  const client = createClient(token)
+
+  return (
+    <BrowserRouter>
+      <ApolloProvider client={client}>
+        <Navigation />
+        <BelowNavigation>
+          <Switch>
+            <Route path="/home/:parentId/:childId?" component={SplitView} />
+            <Route path="/view/focus/:itemId/edit" component={EditItemView} />
+            <Route path="/view/focus/:itemId" component={FocusWrapperView} />
+            <Route path="/view/focus" component={RecentItemList} />
+            <Route path="/add" component={CreateItemView} />
+            <Route path="/search" component={Search} />
+            <Route component={RedirectFocus} />
+          </Switch>
+        </BelowNavigation>
+      </ApolloProvider>
+    </BrowserRouter>
+  )
 }
 
 const ConnectedLogin = (props) => (
@@ -136,12 +136,12 @@ class App extends React.Component {
       <MuiThemeProvider theme={theme}>
         <AuthProvider>
           <AuthContext.Consumer>
-            {({ loading, loggedIn }) => {
+            {({ loading, loggedIn, token }) => {
               if (loading) {
                 return <CubeLoader />
               }
               return loggedIn
-                ? <ConnectedApp />
+                ? <ConnectedApp token={token} />
                 : <AuthApp />
             }}
           </AuthContext.Consumer>

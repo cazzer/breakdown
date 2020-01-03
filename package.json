@@ -5,6 +5,7 @@
   },
   "workspaces": [
     "services/**",
+    "packages/**",
     "web"
   ],
   "private": true

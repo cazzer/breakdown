@@ -7,6 +7,8 @@ import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
 import { setContext } from 'apollo-link-context'
 
+import createWebSocketLink from 'apollo-link-socket'
+
 let ROLES: string
 
 const authLink = setContext(async () => {
@@ -28,49 +30,53 @@ persistCache({
   storage: window.localStorage,
 })
 
-export default new ApolloClient({
-  link: ApolloLink.from([
-    onError(({ graphQLErrors, networkError }) => {
-      if (graphQLErrors)
-        graphQLErrors.map(({ message, locations, path }) =>
-          console.log(
-            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-          ),
-        )
-      if (networkError) console.log(`[Network error]: ${networkError}`)
-    }),
-    authLink,
-    new HttpLink({
-      uri: process.env.GRAPHQL_ENDPOINT,
-    })
-  ]),
-  cache,
-  defaultOptions: {
-    watchQuery: {
-      fetchPolicy: 'cache-and-network'
-    }
-  },
-  resolvers: {
-    Item: {
-      userIsWriter(item) {
-        const direct = item.permissionsByItemId && !!item.permissionsByItemId.nodes.find(
-          permission => (
-            ROLES.indexOf(permission.usersAndGroupByUserOrGroupId.id) > -1
-            && permission.role === 'WRITER'
+export default function createClient(token: string) {
+  const socket: WebSocket = new WebSocket(`wss://eqtdu2n3u0.execute-api.us-west-2.amazonaws.com/prod?token=${token}`)
+  return new ApolloClient({
+    link: ApolloLink.from([
+      onError(({ graphQLErrors, networkError }) => {
+        if (graphQLErrors)
+          graphQLErrors.map(({ message, locations, path }) =>
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+            ),
           )
-        )
-        const inherited = item.itemByInheritsFrom && !!item.itemByInheritsFrom.permissionsByItemId.nodes.find(
-          permission => (
-            ROLES.indexOf(permission.usersAndGroupByUserOrGroupId.id) > -1
-            && permission.role === 'WRITER'
+        if (networkError) console.log(`[Network error]: ${networkError}`)
+      }),
+      // createWebSocketLink(socket),
+      authLink,
+      new HttpLink({
+        uri: process.env.GRAPHQL_ENDPOINT,
+      })
+    ]),
+    cache,
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'cache-and-network'
+      }
+    },
+    resolvers: {
+      Item: {
+        userIsWriter(item) {
+          const direct = item.permissionsByItemId && !!item.permissionsByItemId.nodes.find(
+            permission => (
+              ROLES.indexOf(permission.usersAndGroupByUserOrGroupId.id) > -1
+              && permission.role === 'WRITER'
+            )
           )
-        )
+          const inherited = item.itemByInheritsFrom && !!item.itemByInheritsFrom.permissionsByItemId.nodes.find(
+            permission => (
+              ROLES.indexOf(permission.usersAndGroupByUserOrGroupId.id) > -1
+              && permission.role === 'WRITER'
+            )
+          )
 
-        return direct || inherited
-      },
-      userIsOwner() {
-        return false
+          return direct || inherited
+        },
+        userIsOwner() {
+          return false
+        }
       }
     }
-  }
-})
+  })
+}
