@@ -45,7 +45,10 @@ export class AuthProvider extends React.Component {
     })
 
     try {
-      const result = await Auth.signIn(username, password)
+      const result = await Auth.signIn(
+        username,
+        password,
+      )
       if (result.signInUserSession.idToken) {
         const session = await Auth.currentSession()
         const user = await Auth.currentUserInfo()
