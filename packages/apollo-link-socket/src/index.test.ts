@@ -62,10 +62,10 @@ describe('Apollo WebSocketLink', () => {
   })
 
   it('Resolves a request multiple times for a subscription', async () => {
-    expect.assertions(2)
+    expect.assertions(1)
 
     debugger
-    client
+    await client
       .subscribe({
         query: gql`subscription TestSubscription { query { id } }`
       })
