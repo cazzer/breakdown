@@ -188,7 +188,7 @@ export default function Search(props: {
 
   const handleItemClick = item => () => {
     setState({
-      ...this.state,
+      ...state,
       query: ''
     })
 
@@ -214,7 +214,7 @@ export default function Search(props: {
 
   const handleSearch = event => {
     setState({
-      ...this.state,
+      ...state,
       anchorElement: event.target,
       query: event.target.value
     })

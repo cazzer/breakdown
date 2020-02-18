@@ -160,7 +160,7 @@ class Search extends React.Component<any> {
             <>
               <Grid item xs={6}>
                 <Typography color="textSecondary">
-                  something new
+                  create something new
                 </Typography>
                 <CreateNewItem label={query} onCreate={this.handleCreateNew} />
               </Grid>
