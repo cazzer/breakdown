@@ -1,5 +1,6 @@
 import React from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import Badge from '@material-ui/core/Badge'
 import Tooltip from '@material-ui/core/Tooltip'
 import Avatar from '@material-ui/core/Avatar'
 import PublicIcon from '@material-ui/icons/Public'
@@ -14,18 +15,40 @@ interface UserData {
   }
 }
 
+enum UserPermissions {
+  READER = 'READER',
+  WRITER = 'WRITER'
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     avatar: {
-      marginRight: theme.spacing(1)
+      marginLeft: theme.spacing(2)
+    },
+    tinyText: {
+      fontSize: '.5em'
     },
     container: {
       display: 'flex',
+      marginRight: theme.spacing(1)
     },
     rowReverse: {
       flexDirection: 'row-reverse'
     }
   })
+)
+
+function renderUserPermission(role) {
+  switch (role) {
+    case UserPermissions.WRITER:
+      return 'R+W'
+    default:
+      return 'R'
+  }
+}
+
+const SpanClass = (props) => (
+  <span className={props.className}>{props.children}</span>
 )
 
 export default function Users(
@@ -54,21 +77,37 @@ export default function Users(
       [classes.rowReverse]: props.rowReverse
     })}>
       {props.public && (
-        <Tooltip title="public">
+        <Tooltip arrow title="public">
           <Avatar className={classes.avatar}>
             <PublicIcon />
           </Avatar>
         </Tooltip>
       )}
       {props.permissions.map(permission => (
-        <Tooltip key={permission.id} title={permission.userOrGroup.name}>
-          <Avatar className={classes.avatar}>
-            {
-              permission.userOrGroup.name
-                .substring(0, 1)
-                .toUpperCase()
+        <Tooltip
+          arrow
+          className={classes.avatar}
+          key={permission.id}
+          title={permission.userOrGroup.name}
+        >
+          <Badge
+            anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+            badgeContent={
+              <SpanClass className={classes.tinyText}>
+                {renderUserPermission(permission.role)}
+              </SpanClass>
             }
-          </Avatar>
+            color="primary"
+            overlap="circle"
+          >
+            <Avatar>
+              {
+                permission.userOrGroup.name
+                  .substring(0, 1)
+                  .toUpperCase()
+              }
+            </Avatar>
+          </Badge>
         </Tooltip>
       ))}
       {inheritedPermissions.map(permission => (
