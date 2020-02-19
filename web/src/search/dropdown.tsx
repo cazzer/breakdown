@@ -174,6 +174,7 @@ const Dropdown = ({
 
 export default function Search(props: {
   allowNew?: boolean,
+  autoFocus?: boolean,
   handleSelect: Function,
   selectedItem?: any,
   source?: string
@@ -224,7 +225,7 @@ export default function Search(props: {
     <>
       <TextField
         autoComplete="off"
-        autoFocus
+        autoFocus={props.autoFocus}
         id="search"
         onChange={handleSearch}
         onFocus={handleSearch}

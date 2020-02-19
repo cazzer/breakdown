@@ -15,7 +15,6 @@ import Login from './auth/login'
 import Register from './auth/register'
 import createClient from './apollo-client'
 import Search from './search/view'
-import SplitView from './views/split'
 import { FocusWrapperView } from './focus/view'
 import { CreateItemView, EditItemView } from './edit/view'
 import Navigation, { BelowNavigation } from './navigation'
@@ -86,7 +85,6 @@ function ConnectedApp({ token }) {
         <Navigation />
         <BelowNavigation>
           <Switch>
-            <Route path="/home/:parentId/:childId?" component={SplitView} />
             <Route path="/view/focus/:itemId/edit" component={EditItemView} />
             <Route path="/view/focus/:itemId" component={FocusWrapperView} />
             <Route path="/view/focus" component={RecentItemList} />
