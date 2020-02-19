@@ -5,8 +5,8 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import TextField from '@material-ui/core/TextField'
-import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import queryString from 'query-string'
 import { useMutation, useQuery } from 'react-apollo'
 import React, { useState } from 'react'
@@ -18,19 +18,21 @@ import {
 } from '../groups/queries'
 import { addItemToAllItems } from '../cache-handlers'
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(1)
-  },
-  search: {
-    fontSize: theme.typography.h2.fontSize
-  },
-  paper: {
-    padding: theme.spacing(2),
-    color: theme.palette.text.secondary,
-  }
-})
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+      padding: theme.spacing(1)
+    },
+    search: {
+      fontSize: theme.typography.h2.fontSize
+    },
+    paper: {
+      padding: theme.spacing(2),
+      color: theme.palette.text.secondary,
+    }
+  })
+)
 
 const ItemLinkList = ({ items }) => (
   <List>
@@ -117,96 +119,93 @@ function ConnectedItemList(props: {
   return <props.component items={results} onClick={props.onClick} />
 }
 
-class Search extends React.Component<any> {
-  handleSearch = event => {
-    this.props.history.replace({
-      pathname: this.props.location.pathname,
+export default function Search(props) {
+  const handleSearch = event => {
+    props.history.replace({
+      pathname: props.location.pathname,
       search: `?q=${encodeURIComponent(event.target.value)}`
     })
   }
 
-  handleCreateNew = newItem => {
-    this.props.history.push(`view/focus/${newItem.id}`)
+  const handleCreateNew = newItem => {
+    props.history.push(`view/focus/${newItem.id}`)
   }
 
-  render() {
-    const { classes } = this.props
-    const parsedQueryString = queryString.parse(this.props.location.search)
-    const q = typeof parsedQueryString.q === 'object'
-        ? parsedQueryString.q[0]
-        : parsedQueryString.q
-    const query = decodeURIComponent( q || '')
+  const classes = useStyles({})
+  const parsedQueryString = queryString.parse(props.location.search)
+  const q = typeof parsedQueryString.q === 'object'
+      ? parsedQueryString.q[0]
+      : parsedQueryString.q
+  const query = decodeURIComponent( q || '')
 
-    return (
-      <div className={classes.root}>
-        <Grid container>
-          <Grid item xs={12}>
-            <FormControl
-              fullWidth
-            >
-              <TextField
-                autoComplete="off"
-                autoFocus
-                id="search"
-                label="search"
-                onChange={this.handleSearch}
-                type="text"
-                inputProps={{ className: classes.search }}
-                value={query}
-              />
-            </FormControl>
-          </Grid>
-          {query.length ? (
-            <>
-              <Grid item xs={6}>
-                <Typography color="textSecondary">
-                  create something new
-                </Typography>
-                <CreateNewItem label={query} onCreate={this.handleCreateNew} />
-              </Grid>
-              <Grid item xs={6}>
-                {query.length < 2 ? (
-                  <Typography
-                    color="textSecondary"
-                    align="center"
-                    variant="caption"
-                    paragraph={true}
-                  >
-                    keep typing to search
-                  </Typography>
-                ) : (
-                  <>
-                    <Typography color="textSecondary">
-                      search results
-                    </Typography>
-                    <ConnectedItemList component={ItemLinkList} term={query} />
-                  </>
-                )}
-              </Grid>
-            </>
-          )
-          : (
-            <Grid item xs={12}>
-              <Typography
-                color="textSecondary"
-                align="center"
-                variant="caption"
-                paragraph={true}
-              >
-                what are you looking for?
-              </Typography>
-            </Grid>
-          )}
-
+  return (
+    <div className={classes.root}>
+      <Grid container>
+        <Grid item xs={12}>
+          <FormControl
+            fullWidth
+          >
+            <TextField
+              autoComplete="off"
+              autoFocus
+              id="search"
+              label="search"
+              onChange={handleSearch}
+              type="text"
+              inputProps={{ className: classes.search }}
+              value={query}
+            />
+          </FormControl>
         </Grid>
-      </div>
+        {query.length ? (
+          <>
+            <Grid item xs={6}>
+              <Typography color="textSecondary">
+                create something new
+              </Typography>
+              <CreateNewItem label={query} onCreate={handleCreateNew} />
+            </Grid>
+            <Grid item xs={6}>
+              {query.length < 2 ? (
+                <Typography
+                  color="textSecondary"
+                  align="center"
+                  variant="caption"
+                  paragraph={true}
+                >
+                  keep typing to search
+                </Typography>
+              ) : (
+                <>
+                  <Typography color="textSecondary">
+                    search results
+                  </Typography>
+                  <ConnectedItemList component={ItemLinkList} term={query} />
+                </>
+              )}
+            </Grid>
+          </>
+        )
+        : (
+          <Grid item xs={12}>
+            <Typography
+              color="textSecondary"
+              align="center"
+              variant="caption"
+              paragraph={true}
+            >
+              what are you looking for?
+            </Typography>
+          </Grid>
+        )}
+
+      </Grid>
+    </div>
     )
-  }
 }
 
-export default withStyles(styles)(Search)
-
-function StatefulSearch(props) {
+export function SearchView(props) {
+  const classes = useStyles({})
   const [query, setQuery] = useState('')
   const [createRelationship] = useMutation(createRelationshipMutation)
 
@@ -235,7 +234,7 @@ function StatefulSearch(props) {
   }
 
   return (
-    <div className={props.classes.root}>
+    <div className={classes.root}>
       <Grid container>
         <Grid item xs={12}>
           <FormControl
@@ -247,7 +246,7 @@ function StatefulSearch(props) {
               label="search"
               onChange={handleSearch}
               type="text"
-              inputProps={{ className: props.classes.search }}
+              inputProps={{ className: classes.search }}
               value={query}
             />
           </FormControl>
@@ -305,6 +304,3 @@ function StatefulSearch(props) {
     </div>
   )
 }
-
-export const SearchView = withStyles(styles)(StatefulSearch)
-
