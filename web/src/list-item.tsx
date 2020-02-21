@@ -212,7 +212,9 @@ const ItemContent = ((props: {
   }
 
   const onEditClick = () => {
-    setEdit('edit')
+    if (item.userIsWriter) {
+      setEdit('edit')
+    }
   }
 
   const onSaveClick = (newItem: ItemInterface) => {
@@ -249,17 +251,13 @@ const ItemContent = ((props: {
               onSaveClick={onSaveClick}
               onCancelClick={onCancelClick}
             />
+          ) : (
+            <div onClick={onEditClick}>
+              <ItemView { ...item } />
+            </div>
           )
-          : <ItemView { ...item } />
         }
       </Grid>
-      {item.userIsWriter && (editState === 'show') && (
-        <Grid item xs={1}>
-          <IconButton onClick={onEditClick}>
-            <EditIcon />
-          </IconButton>
-        </Grid>
-      )}
     </Grid>
   )
 })
