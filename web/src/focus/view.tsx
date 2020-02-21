@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import React, { useState } from 'react'
+import React from 'react'
 import { useQuery } from 'react-apollo'
 import { Route } from 'react-router-dom'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -61,10 +61,10 @@ function FocusView(props) {
     <div className={classes.root}>
       <Paper className={classes.item}>
         <Grid container>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <Groups childId={item.id} />
           </Grid>
-          <Grid item xs={12} sm={6} className={classes.permissions}>
+          <Grid item xs={6} className={classes.permissions}>
             <Users
               permissions={directPermissions}
               inherited={inheritedPermissions}
