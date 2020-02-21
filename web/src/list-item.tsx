@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import gql from 'graphql-tag'
 import { useMutation } from 'react-apollo'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -10,7 +9,6 @@ import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
-import EditIcon from '@material-ui/icons/Edit'
 import UnlinkIcon from '@material-ui/icons/LinkOff'
 import moment from 'moment'
 import Paper from '@material-ui/core/Paper'
@@ -113,7 +111,7 @@ const ItemEdit = (props: {
         value={value}
         fullWidth
         multiline
-        rowsMax={6}
+        rowsMax={20}
       />
       <Grid container spacing={2} className={classes.listItemButtons}>
         <Grid item xs={6}>
@@ -288,10 +286,7 @@ export function Item(props: {
   }
 
   return (
-    <ListItem
-      divider
-      button
-    >
+    <ListItem divider>
       <div className={classes.listItemLink}>
         <ItemContent
           item={item}
