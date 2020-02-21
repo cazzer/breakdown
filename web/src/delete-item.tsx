@@ -3,6 +3,7 @@ import React from 'react'
 import { useMutation } from 'react-apollo'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import { removeItemFromAllItems, removeFromRecentItems } from './cache-handlers'
 
@@ -27,13 +28,19 @@ class DeleteItem extends React.Component<any> {
 
   render() {
     return (
-      <IconButton
-        aria-label="Delete"
-        disabled={this.state.disabled}
-        onClick={this.handleDeleteClick}
+      <Tooltip
+        arrow
+        title="Delete this item"
+        placement="left"
       >
-        <DeleteIcon />
-      </IconButton>
+        <IconButton
+          aria-label="Delete"
+          disabled={this.state.disabled}
+          onClick={this.handleDeleteClick}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
     )
   }
 }

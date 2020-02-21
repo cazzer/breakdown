@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
@@ -304,15 +305,27 @@ export function Item(props: {
       </div>
       {item.userIsWriter && (
         <div className={classes.listItemActions}>
-          <Link to={`/view/focus/${item.id}/`}>
-            <IconButton aria-label="Focus">
-              <ZoomInIcon />
-            </IconButton>
-          </Link>
+          <Tooltip
+            arrow
+            title="Expand this item and it's children"
+            placement="left"
+          >
+            <Link to={`/view/focus/${item.id}/`}>
+              <IconButton aria-label="Focus">
+                <ZoomInIcon />
+              </IconButton>
+            </Link>
+          </Tooltip>
           {props.item.relationshipId && (
-            <IconButton onClick={onUnlinkClick}>
-              <UnlinkIcon />
-            </IconButton>
+            <Tooltip
+              arrow
+              title="Remove this item from this parent"
+              placement="left"
+            >
+              <IconButton onClick={onUnlinkClick}>
+                <UnlinkIcon />
+              </IconButton>
+            </Tooltip>
           )}
           <DeleteItem id={item.id} parentId={props.parentId} />
         </div>
