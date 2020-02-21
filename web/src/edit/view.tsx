@@ -71,12 +71,6 @@ function EditItemForm(props) {
     })
   }
 
-  const handleParentUpdate = (parentId) => {
-    setState({
-      parentId
-    })
-  }
-
   const handleSave = async () => {
     const item = {
       label: state.label,
