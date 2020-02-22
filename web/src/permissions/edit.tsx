@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function EditPermission(props: {
+export function EditPermission(props: {
   permission: Permission
 }) {
   const [deletePermission] = useMutation(deletePermissionMutation)
@@ -97,7 +97,7 @@ function EditPermission(props: {
             Read
           </ToggleButton>
           <ToggleButton key="WRITER" value="WRITER">
-            Write
+            Read + Write
           </ToggleButton>
         </ToggleButtonGroup>
       </CardContent>
