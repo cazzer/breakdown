@@ -2,6 +2,7 @@ import React from 'react'
 import Typography from '@material-ui/core/Typography'
 import Markdown from 'react-markdown'
 import ReactPlayer from 'react-player'
+import cx from 'classnames'
 
 import { guessType } from './type-guesser'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -17,7 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'underline'
     },
     root: {
-      color: theme.palette.primary.contrastText
+      color: theme.palette.primary.contrastText,
+      fontFamily: theme.typography.fontFamily
     },
     player: {
       margin: `${theme.spacing(1)}px 0`
@@ -32,7 +34,7 @@ const StyledMarkdown = ({
 }) => {
   const classes = useStyles({})
   return (
-    <div className={className || classes.root}>
+    <div className={cx(className, classes.root)}>
       <Markdown
         source={source}
         disallowedTypes={preview ? ['link'] : []}

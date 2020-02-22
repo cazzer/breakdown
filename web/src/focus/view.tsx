@@ -59,7 +59,7 @@ function FocusView(props) {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.item}>
+      <div className={classes.item}>
         <Grid container>
           <Grid item xs={6}>
             <Groups childId={item.id} />
@@ -97,7 +97,7 @@ function FocusView(props) {
             </Grid>
           )}
         </Grid>
-      </Paper>
+      </div>
     </div>
   )
 }

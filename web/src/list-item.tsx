@@ -300,7 +300,7 @@ export function Item(props: {
         <div className={classes.listItemActions}>
           <Tooltip
             arrow
-            title="Expand this item and it's children"
+            title="Expand this item's group"
             placement="left"
           >
             <Link to={`/view/focus/${item.id}/`}>
@@ -312,7 +312,7 @@ export function Item(props: {
           {props.item.relationshipId && (
             <Tooltip
               arrow
-              title="Remove this item from this parent"
+              title="Remove this item from this group"
               placement="left"
             >
               <IconButton onClick={onUnlinkClick}>
