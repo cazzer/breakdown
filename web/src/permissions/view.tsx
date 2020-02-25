@@ -5,14 +5,16 @@ import ButtonBase from '@material-ui/core/ButtonBase'
 import Dialog from '@material-ui/core/Dialog'
 import Tooltip from '@material-ui/core/Tooltip'
 import Avatar from '@material-ui/core/Avatar'
+import AvatarGroup from '@material-ui/lab/AvatarGroup'
 import PublicIcon from '@material-ui/icons/Public'
 import cx from 'classnames'
 
-import { EditPermission } from '../permissions/edit'
+import { EditPermission, NewPermission } from '../permissions/edit'
 
 interface UserData {
   id: string
   role: string
+  timeCreated: Date
   userOrGroup: {
     id: string
     name: string
@@ -26,8 +28,8 @@ enum UserPermissions {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    avatar: {
-      marginLeft: theme.spacing(2)
+    avatarBorderRadius: {
+      borderRadius: '50%'
     },
     tinyText: {
       fontSize: '.5em'
@@ -59,11 +61,13 @@ export default function Users(
   props: {
     permissions: UserData[],
     inherited?: UserData[],
+    itemId: string,
     public?: boolean,
     rowReverse?: boolean
   } = {
     permissions: [],
     inherited: [],
+    itemId: '',
     rowReverse: false
   }
 ) {
@@ -89,64 +93,77 @@ export default function Users(
     <div className={cx(classes.container, {
       [classes.rowReverse]: props.rowReverse
     })}>
-      {props.public && (
-        <Tooltip arrow title="public">
-          <Avatar className={classes.avatar}>
-            <PublicIcon />
-          </Avatar>
-        </Tooltip>
-      )}
-      {props.permissions.map(permission => (
+      <AvatarGroup>
+        {props.public && (
+          <Tooltip arrow title="public">
+            <Avatar>
+              <PublicIcon />
+            </Avatar>
+          </Tooltip>
+        )}
+        {props.permissions.map(permission => (
+          <ButtonBase
+            className={classes.avatarBorderRadius}
+            disableRipple={true}
+            key={permission.id}
+            onClick={editPermission(permission)}
+          >
+            <Tooltip
+              arrow
+              title={permission.userOrGroup.name}
+            >
+              <Badge
+                anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                badgeContent={
+                  <SpanClass className={classes.tinyText}>
+                    {renderUserPermission(permission.role)}
+                  </SpanClass>
+                }
+                color="primary"
+                overlap="circle"
+              >
+                <Avatar>
+                  {
+                    permission.userOrGroup.name
+                      .substring(0, 1)
+                      .toUpperCase()
+                  }
+                </Avatar>
+              </Badge>
+            </Tooltip>
+          </ButtonBase>
+        ))}
+        {inheritedPermissions.map(permission => (
+          <Tooltip key={permission.id} title={`${permission.userOrGroup.name} (inherited)`}>
+            <Avatar>
+              {
+                permission.userOrGroup.name
+                  .substring(0, 1)
+                  .toUpperCase()
+              }
+            </Avatar>
+          </Tooltip>
+        ))}
+        {permissionModal &&
+          <Dialog
+            open={!!permissionModal}
+            onClose={closeEditPermission}
+          >
+            {permissionModal.id ? (
+              <EditPermission permission={permissionModal} />
+            ) : (
+              <NewPermission itemId={props.itemId} />
+            )}
+          </Dialog>
+        }
         <ButtonBase
           disableRipple={true}
-          onClick={editPermission(permission)}
+          onClick={editPermission(true)}
+          className={classes.avatarBorderRadius}
         >
-          <Tooltip
-            arrow
-            className={classes.avatar}
-            key={permission.id}
-            title={permission.userOrGroup.name}
-          >
-            <Badge
-              anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-              badgeContent={
-                <SpanClass className={classes.tinyText}>
-                  {renderUserPermission(permission.role)}
-                </SpanClass>
-              }
-              color="primary"
-              overlap="circle"
-            >
-              <Avatar>
-                {
-                  permission.userOrGroup.name
-                    .substring(0, 1)
-                    .toUpperCase()
-                }
-              </Avatar>
-            </Badge>
-          </Tooltip>
+          <Avatar>+</Avatar>
         </ButtonBase>
-      ))}
-      {inheritedPermissions.map(permission => (
-        <Tooltip key={permission.id} title={`${permission.userOrGroup.name} (inherited)`}>
-          <Avatar className={classes.avatar}>
-            {
-              permission.userOrGroup.name
-                .substring(0, 1)
-                .toUpperCase()
-            }
-          </Avatar>
-        </Tooltip>
-      ))}
-      {permissionModal &&
-        <Dialog
-          open={!!permissionModal}
-          onClose={closeEditPermission}
-        >
-          <EditPermission permission={permissionModal} />
-        </Dialog>
-      }
+      </AvatarGroup>
     </div>
   )
 }

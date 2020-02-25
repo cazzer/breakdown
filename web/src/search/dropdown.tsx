@@ -136,7 +136,10 @@ const Dropdown = ({
   <Popper
     anchorEl={anchorElement}
     open={isOpen}
-    style={{ width: anchorElement.clientWidth }}
+    style={{
+      width: anchorElement.clientWidth,
+      zIndex: 10
+    }}
   >
     <Paper>
       <List>

@@ -47,6 +47,7 @@ function FocusView(props) {
       id: permission.id,
       itemId: permission.itemId,
       role: permission.role,
+      timeCreated: permission.timeCreated,
       userOrGroup: permission.usersAndGroupByUserOrGroupId
     }))
   const inheritedPermissions = get(item, ['itemByInheritsFrom', 'permissionsByItemId', 'nodes'], [])
@@ -54,6 +55,7 @@ function FocusView(props) {
       id: permission.id,
       itemId: permission.itemId,
       role: permission.role,
+      timeCreated: permission.timeCreated,
       userOrGroup: permission.usersAndGroupByUserOrGroupId
     }))
 
@@ -66,6 +68,7 @@ function FocusView(props) {
           </Grid>
           <Grid item xs={6} className={classes.permissions}>
             <Users
+              itemId={item.id}
               permissions={directPermissions}
               inherited={inheritedPermissions}
               public={item.public}

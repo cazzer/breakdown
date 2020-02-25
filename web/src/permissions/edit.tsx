@@ -105,7 +105,7 @@ export function EditPermission(props: {
   )
 }
 
-function NewPermission(props) {
+export function NewPermission(props) {
   const [createPermission] = useMutation(createPermissionMutation)
   const [permission, setPermission] = useState({
     role: 'READER',
