@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: '50%'
     },
     tinyText: {
-      fontSize: '.5em'
+      fontSize: '.6em'
     },
     container: {
       display: 'flex',
