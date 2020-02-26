@@ -71,7 +71,7 @@
     "webpack-merge": "^4.1.4"
   },
   "name": "web",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "resolutions": {
     "graphql": "14.2.1",
     "**/*/graphql": "14.2.1"
