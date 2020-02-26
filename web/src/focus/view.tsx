@@ -3,7 +3,6 @@ import React from 'react'
 import { useQuery } from 'react-apollo'
 import { Route } from 'react-router-dom'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { Link } from 'react-router-dom'
@@ -128,6 +127,7 @@ export function ConnectedFocusView({ match }) {
 export const FocusWrapperView = (props) => (
   <>
     <Route path="/view/focus/:itemId" component={ConnectedFocusView} />
+    <Divider />
     <ItemList parentId={get(props.match.params, 'itemId', null)} />
   </>
 )

@@ -19,7 +19,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     root: {
       color: theme.palette.primary.contrastText,
-      fontFamily: theme.typography.fontFamily
+      fontFamily: theme.typography.fontFamily,
+      overflow: 'auto'
     },
     player: {
       margin: `${theme.spacing(1)}px 0`

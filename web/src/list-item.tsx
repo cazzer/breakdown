@@ -235,12 +235,7 @@ const ItemContent = ((props: {
   }
 
   return (
-    <Grid
-      container
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <Grid item xs={11}>
+    <>
         {editState === 'edit' || editState === 'disabled'
           ? (
             <ItemEdit
@@ -255,8 +250,7 @@ const ItemContent = ((props: {
             </div>
           )
         }
-      </Grid>
-    </Grid>
+        </>
   )
 })
 
