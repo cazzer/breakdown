@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme?: Theme) =>
       flexGrow: 1
     },
     listItemLink: {
-      width: '100%'
+      width: '100%',
+      overflow: 'auto'
     },
     listItemActions: {
       display: 'flex',
@@ -280,7 +281,7 @@ export function Item(props: {
   }
 
   return (
-    <ListItem divider>
+    <ListItem divider className={classes.listItem}>
       <div className={classes.listItemLink}>
         <ItemContent
           item={item}
