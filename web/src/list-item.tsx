@@ -281,6 +281,15 @@ export function Item(props: {
     })
   }
 
+  const timeCreatedMoment = moment(item.timeCreated)
+  const timeUpdatedMoment = moment(item.timeUpdated)
+  const updatedTimeDifference =timeCreatedMoment.diff(timeUpdatedMoment)
+  const timestamp = `Created ${timeCreatedMoment.calendar()}${
+    updatedTimeDifference !== 0
+      ? `, updated ${timeUpdatedMoment.calendar()}`
+      : ''
+  }`
+
   return (
     <ListItem divider className={classes.listItem}>
       <div className={classes.listItemLink}>
@@ -289,7 +298,7 @@ export function Item(props: {
           parentId={props.parentId}
         />
         <Typography variant="caption" color="textSecondary">
-          Edited {moment(item.timeUpdated).calendar()}
+          {timestamp}
         </Typography>
       </div>
       {item.userIsWriter && (
