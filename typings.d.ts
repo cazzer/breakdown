@@ -5,5 +5,6 @@ export interface ItemInterface {
   value?: string
   userIsWriter?: boolean
   relationshipId?: string
+  timeCreated: Date,
   timeUpdated: Date
 }
