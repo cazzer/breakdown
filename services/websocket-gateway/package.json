@@ -9,7 +9,7 @@
     "package": "aws cloudformation package --template-file ./template.yaml --output-template-file packaged-template.yaml --s3-bucket breakdown-pipelinebucket-8cpfqxwenpqa"
   },
   "dependencies": {
-    "aws-sdk": "^2.556.0",
+    "aws-sdk": "^2.814.0",
     "epsagon": "^1.37.0",
     "graphql": "^14.5.8",
     "jsonwebtoken": "^8.5.1",
