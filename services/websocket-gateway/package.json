@@ -12,7 +12,7 @@
     "aws-sdk": "^2.556.0",
     "epsagon": "^1.37.0",
     "graphql": "^14.5.8",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwk-to-pem": "^2.0.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
